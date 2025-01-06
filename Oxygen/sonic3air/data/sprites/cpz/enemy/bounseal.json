@@ -1,0 +1,6 @@
+{
+	"coldPeaksZone.bounseal_0x00": { "File": "bounseal.bmp", "Rect": "8,8,31,41", "Center": "16,22" },
+	"coldPeaksZone.bounseal_0x01": { "File": "bounseal.bmp", "Rect": "55,8,31,41", "Center": "16,22" },
+	"coldPeaksZone.bounseal_0x02": { "File": "bounseal.bmp", "Rect": "102,8,31,56", "Center": "16,37" },
+	"coldPeaksZone.bounseal_0x03": { "File": "bounseal.bmp", "Rect": "149,8,31,56", "Center": "16,37" },
+}

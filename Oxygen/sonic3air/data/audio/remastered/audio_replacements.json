@@ -122,5 +122,5 @@
 	"1F_proto":			 { "File": "1F_proto.ogg", "Type": "Music", "LoopStart": "35324" },	
 	"26_proto":			 { "File": "26_proto.ogg", "Type": "Music", "LoopStart": "93053" },
 	"2D_proto":			 { "File": "2D_proto.ogg", "Type": "Music", "LoopStart": "108514" },
-	"2E_proto":			 { "File": "2E_proto.ogg", "Type": "Music", "LoopStart": "58416" }
+	"2E_proto":			 { "File": "2E_proto.ogg", "Type": "Music", "LoopStart": "58416" },
 }

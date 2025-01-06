@@ -1,0 +1,18 @@
+{
+	"cpz1_layout": { "File": "zone0x_cpz/Layout/1.bin" },
+	"cpz1_objects": { "File": "zone0x_cpz/Object Pos/1.bin" },
+	"cpz1_rings": { "File": "zone0x_cpz/Ring Pos/1.bin" },
+	
+	"cpz_chunks_primary": { "File": "zone0x_cpz/Chunks/Primary.bin" },
+	"cpz1_chunks_secondary": { "File": "zone0x_cpz/Chunks/Act 1 Secondary.bin" },
+	
+	"cpz_blocks_primary": { "File": "zone0x_cpz/Blocks/Primary.bin" },
+	"cpz1_blocks_secondary": { "File": "zone0x_cpz/Blocks/Act 1 Secondary.bin" },
+	
+	"cpz_tiles_primary": { "File": "zone0x_cpz/Tiles/Primary.bin" },
+	"cpz1_tiles_secondary": { "File": "zone0x_cpz/Tiles/Act 1 Secondary.bin" },
+	
+	"cpz1_palette": { "File": "zone0x_cpz/Palettes/1.bin" },
+	
+	"cpz1_collision": { "File": "zone0x_cpz/Collision/1.bin" },
+}

@@ -1,0 +1,41 @@
+{	
+	"coldpeakszone_darkness":  { "File": "night-makes-everything-dark.png", "Rect": "0,0,500,224", "Center": "0,0" },
+	
+	"coldpeakszone_bridge":  { "File": "bridge.png", "Rect": "0,0,16,16", "Center": "0,0" },
+	"coldpeakszone_collapsingbridge":  { "File": "bridge2.png", "Rect": "0,0,32,16", "Center": "0,0" },
+	"coldpeakszone_collapsingbridge2":  { "File": "bridge2.png", "Rect": "0,0,32,32", "Center": "0,0" },
+	
+	"coldpeakszone_unbreakwall":  { "File": "walls.bmp", "Rect": "0,0,64,128", "Center": "32,0" },
+	"coldpeakszone_knuxwall":  { "File": "walls.bmp", "Rect": "64,0,64,128", "Center": "32,64" },
+	"coldpeakszone_walldebris":  { "File": "walldebris.bmp", "Rect": "0,0,32,32", "Center": "16,16" },
+	
+	"coldPeaksZone_titlecard":  { "File": "tctext-coldpeaks.bmp", "Rect": "0,0,152,24", "Center": "152,0" },
+	
+	"icecapzone_teleportercannon":  { "File": "cannon_teleporter.bmp", "Rect": "0,0,64,73", "Center": "32,36" },
+	"icecapzone_ringshooter_countdown":  { "File": "ringshooter_countdown.png", "Rect": "0,0,64,73", "Center": "16,36" },
+	"icecapzone_teleporter_countdown4":  { "File": "teleporter_countdown3.png", "Rect": "0,0,1,1", "Center": "0,0" },
+	"icecapzone_teleporter_countdown3":  { "File": "teleporter_countdown3.png", "Rect": "0,0,64,73", "Center": "16,36" },
+	"icecapzone_teleporter_countdown2":  { "File": "teleporter_countdown2.png", "Rect": "0,0,64,73", "Center": "16,36" },
+	"icecapzone_teleporter_countdown1":  { "File": "teleporter_countdown1.png", "Rect": "0,0,64,73", "Center": "16,36" },
+	"icecapzone_teleporter_countdown0":  { "File": "teleporter_countdown0.png", "Rect": "0,0,64,73", "Center": "16,36" },
+	
+	"icecapzone_ringshooter_trail":  { "File": "ringshootertrail.png", "Rect": "0,0,48,200", "Center": "24,100" },
+	
+	"SHCColdPeaksZone.tip_actselect_mode1_1": { "File": "tip_actselect_mode1_1.png", "Rect": "0,0,320,224"},
+	"SHCColdPeaksZone.tip_actselect_mode1_2": { "File": "tip_actselect_mode1_2.png", "Rect": "0,0,320,224"},
+	
+	"coldpeakszone_piranhaplant_1": { "File": "piranhaplant.png", "Rect": "0,0,16,24"},
+	"coldpeakszone_piranhaplant_2": { "File": "piranhaplant.png", "Rect": "0,24,16,24"},
+	
+	"coldpeakszone_iceblock_0x00": { "File": "ice_block.bmp", "Rect": "0,0,48,48", "Center": "24,24" },
+	"coldpeakszone_iceblock_0x01": { "File": "ice_block.bmp", "Rect": "48,0,48,48", "Center": "24,24" },
+	"coldpeakszone_iceblock_0x02": { "File": "ice_block.bmp", "Rect": "96,0,48,48", "Center": "24,24" },
+	"coldpeakszone_iceblock_0x03": { "File": "ice_block.bmp", "Rect": "0,48,48,48", "Center": "24,24" },
+	"coldpeakszone_iceblock_0x04": { "File": "ice_block.bmp", "Rect": "48,48,48,48", "Center": "24,24" },
+	"coldpeakszone_iceblock_0x05": { "File": "ice_block.bmp", "Rect": "96,48,48,48", "Center": "24,24" },
+	"coldpeakszone_iceblock_0x06": { "File": "ice_block.bmp", "Rect": "0,96,32,32", "Center": "16,16" },
+	
+	"coldpeakszone_icechunk": { "File": "ice_chunk.bmp", "Rect": "0,0,80,128", "Center": "40,64" },
+	
+	"coldpeakszone_fbzcrashconflict": { "File": "can you reorder your mods thank you.png" },
+}

@@ -1,0 +1,57 @@
+{
+	"coldPeaksZone.mechaTails.idle":  { "File": "mechatails.bmp", "Rect": "1,1,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.charge.1":  { "File": "mechatails.bmp", "Rect": "50,1,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.charge.2":  { "File": "mechatails.bmp", "Rect": "99,1,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.dash.1":  { "File": "mechatails.bmp", "Rect": "148,1,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.dash.2":  { "File": "mechatails.bmp", "Rect": "197,1,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.dash.3":  { "File": "mechatails.bmp", "Rect": "246,1,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.defeat.1":  { "File": "mechatails.bmp", "Rect": "1,50,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.defeat.2":  { "File": "mechatails.bmp", "Rect": "50,50,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.defeat.3":  { "File": "mechatails.bmp", "Rect": "99,50,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.roll.1":  { "File": "mechatails.bmp", "Rect": "148,50,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.roll.2":  { "File": "mechatails.bmp", "Rect": "197,50,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.roll.3":  { "File": "mechatails.bmp", "Rect": "246,50,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.laser":  { "File": "mechatails.bmp", "Rect": "1,99,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.cutscene.1":  { "File": "mechatails.bmp", "Rect": "148,99,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.cutscene.2":  { "File": "mechatails.bmp", "Rect": "197,99,48,48", "Center": "23,24" },
+	"coldPeaksZone.mechaTails.cutscene.3":  { "File": "mechatails.bmp", "Rect": "246,99,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.cutscene.4":  { "File": "mechatails.bmp", "Rect": "99,183,48,48", "Center": "23,21" },
+	"coldPeaksZone.mechaTails.snowball.1":  { "File": "mechatails.bmp", "Rect": "1,148,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.snowball.2":  { "File": "mechatails.bmp", "Rect": "50,148,48,48", "Center": "24,24" },
+	
+	"coldPeaksZone.mechaTails.tails.1":  { "File": "mechatails.bmp", "Rect": "50,99,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.tails.2":  { "File": "mechatails.bmp", "Rect": "99,99,48,48", "Center": "24,24" },
+	
+	"coldPeaksZone.mechaTails.giblet.1":  { "File": "mechatails.bmp", "Rect": "99,50,24,24", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.giblet.2":  { "File": "mechatails.bmp", "Rect": "123,50,24,24", "Center": "0,24" },
+	"coldPeaksZone.mechaTails.giblet.3":  { "File": "mechatails.bmp", "Rect": "99,74,24,24", "Center": "24,0" },
+	"coldPeaksZone.mechaTails.giblet.4":  { "File": "mechatails.bmp", "Rect": "123,74,24,24", "Center": "0,0" },
+	
+	"coldPeaksZone.mechaTails.other.energyball.1":  { "File": "mechatails.bmp", "Rect": "148,183,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.other.energyball.2":  { "File": "mechatails.bmp", "Rect": "197,183,48,48", "Center": "24,24" },
+	"coldPeaksZone.mechaTails.other.energyball.3":  { "File": "mechatails.bmp", "Rect": "246,183,48,48", "Center": "24,24" },
+	
+	"coldPeaksZone.mechaTails.other.explosion.1":  { "File": "explosions.bmp", "Rect": "8,8,16,16", "Center": "8,8" },
+	"coldPeaksZone.mechaTails.other.explosion.2":  { "File": "explosions.bmp", "Rect": "32,8,24,24", "Center": "12,12" },
+	"coldPeaksZone.mechaTails.other.explosion.3":  { "File": "explosions.bmp", "Rect": "64,8,24,24", "Center": "12,12" },
+	"coldPeaksZone.mechaTails.other.explosion.4":  { "File": "explosions.bmp", "Rect": "96,8,24,24", "Center": "12,12" },
+	"coldPeaksZone.mechaTails.other.explosion.5":  { "File": "explosions.bmp", "Rect": "128,8,24,24", "Center": "12,12" },
+	"coldPeaksZone.mechaTails.other.explosion.6":  { "File": "explosions.bmp", "Rect": "160,8,24,16", "Center": "12,12" },
+	
+	"coldPeaksZone.mechaTails.other.dropdashdust.1":  { "File": "mechatails.bmp", "Rect": "105,158,32,24", "Center": "16,12" },
+	"coldPeaksZone.mechaTails.other.dropdashdust.2":  { "File": "mechatails.bmp", "Rect": "138,158,32,24", "Center": "16,12" },
+	"coldPeaksZone.mechaTails.other.dropdashdust.3":  { "File": "mechatails.bmp", "Rect": "171,158,32,24", "Center": "16,12" },
+	"coldPeaksZone.mechaTails.other.dropdashdust.4":  { "File": "mechatails.bmp", "Rect": "204,158,32,24", "Center": "16,12" },
+	"coldPeaksZone.mechaTails.other.dropdashdust.5":  { "File": "mechatails.bmp", "Rect": "237,158,32,24", "Center": "16,12" },
+	
+	"coldPeaksZone.mechaTails.other.snowball.big":  { "File": "snowball.bmp", "Rect": "0,0,64,64", "Center": "32,32" },
+	"coldPeaksZone.mechaTails.other.snowball.small":  { "File": "snowball_piece.bmp", "Rect": "0,0,24,24", "Center": "12,12" },
+	
+	"coldPeaksZone.mechaTails.dashgfx.1":  { "File": "mechatails.bmp", "Rect": "270,155,7,27", "Center": "4,27" },
+	"coldPeaksZone.mechaTails.dashgfx.2":  { "File": "mechatails.bmp", "Rect": "278,155,16,27", "Center": "8,27" },
+	"coldPeaksZone.mechaTails.dashgfx.3":  { "File": "mechatails_lbzgfx.bmp", "Rect": "0,0,62,170", "Center": "31,134" },
+	
+	"coldPeaksZone.mechaTails.other.surpriseflash":  { "File": "surpriseflash.png", "Rect": "0,0,500,224", "Center": "0,0" },
+	
+	"coldPeaksZone.mechaTails.other.laser":  { "File": "laser.png", "Rect": "0,0,24,184", "Center": "12,12" },
+}

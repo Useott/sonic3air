@@ -48,5 +48,7 @@
 	"zone13_act2a": { "File": "zone13_act2a.bmp" },
 	"zone13_act2b": { "File": "zone13_act2b.bmp" },
 	"zone14_act1a": { "File": "zone14_act1a.bmp" },
-	"zone14_act1b": { "File": "zone14_act1b.bmp" }
+	"zone14_act1b": { "File": "zone14_act1b.bmp" },
+	"zone15_act1a": { "File": "zone15_act1a.bmp" },
+	"zone15_act1b": { "File": "zone15_act1b.bmp" }
 }

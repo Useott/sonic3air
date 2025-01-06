@@ -84,4 +84,5 @@ include standalone/mainmenu/?
 include standalone/rendering/?
 include standalone/resources/?
 include standalone/special/?
+include standalone/useott/secret
 #endif

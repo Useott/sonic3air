@@ -106,6 +106,7 @@ void SharedDatabase::initialize()
 		addSecret(Secret::SECRET_LEVELSELECT,		true,  true,  true,   0, "Level Select", "Adds the original Sonic 3 & Knuckles Level Select menu to Extras.", "levelselect");
 		addSecret(Secret::SECRET_TITLE_SK,			true,  true,  true,   0, "Sonic & Knuckles Title", "You can now select the Sonic & Knuckles title screen in the Options menu.", "title_sk");
 		addSecret(Secret::SECRET_GAME_SPEED,		true,  true,  true,   0, "Game Speed Setting", "Ready for a new challenge? Make the game faster (or slower) in the Options menu.", "gamespeed");
+		addSecret(Secret::SECRET_COLD_PEAKS_ZONE,	true,  true,  true,   0, "Cold Peaks Zone", "A new zone has been placed between IceCap Zone and Launch Base Zone.", "coldpeaks");
 		addSecret(Secret::SECRET_DOOMSDAY_ZONE,		true,  false, true,   0, "Doomsday Zone", "", "");
 	}
 

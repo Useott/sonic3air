@@ -353,6 +353,24 @@
 	"peelout_charge":  { "File": "scd_peelout_charge.ogg", "Type": "Sound", "Channel": "AB" },		// Use spindash channel
 	"peelout_release": { "File": "scd_peelout_release.ogg", "Type": "Sound", "Channel": "AB" },		// Use spindash channel
 
-	"shc_splash": { "File": "shc_splash.ogg", "Type": "Sound" }
-
+	"shc_splash": { "File": "shc_splash.ogg", "Type": "Sound" },
+	
+	"pkmndp_route216night": { "Name": "Pokemon Diamond & Pearl - Route 216 (Night)", "File": "pkmndp_route216night.ogg", "Type": "Music", "LoopStart": "2160384", "SoundTestVisibility": "hidden" },
+	"pkmndp_route216night_fast": { "Name": "Pokemon Diamond & Pearl - Route 216 (Night)", "File": "pkmndp_route216night_fast.ogg", "Type": "Music", "LoopStart": "1728307", "SoundTestVisibility": "hidden" },
+	"pkmndp_route216day": { "Name": "Pokemon Diamond & Pearl - Route 216 (Day)", "File": "pkmndp_route216day.ogg", "Type": "Music", "LoopStart": "2114640", "SoundTestVisibility": "hidden" },
+	"pkmndp_route216day_fast": { "Name": "Pokemon Diamond & Pearl - Route 216 (Day)", "File": "pkmndp_route216day_fast.ogg", "Type": "Music", "LoopStart": "1691712", "SoundTestVisibility": "hidden" },
+	"kc_surprise": { "Name": "Knuckles' Chaotix - Surprise!", "File": "kc_surprise.ogg", "Type": "Music", "SoundTestVisibility": "hidden" },
+	"3db_boss1": { "Name": "Sonic 3D Blast - Boss 1", "File": "3db_boss1.ogg", "Type": "Music", "LoopStart": "591705", "SoundTestVisibility": "hidden" },
+	"3db_boss2": { "Name": "Sonic 3D Blast - Boss 2", "File": "3db_boss2.ogg", "Type": "Music", "LoopStart": "141416", "SoundTestVisibility": "hidden" },
+	
+	"mjmw_billiejean": { "Name": "Michael Jackson's Moonwalker - Billie Jean", "File": "mjmw_billiejean.ogg", "Type": "Music", "LoopStart": "3021164", "SoundTestVisibility": "hidden" },
+	
+	"coldpeakszone.mechatails.charge": { "File": "MSShoot.ogg", "Type": "Sound" },
+	"coldpeakszone.mechatails.dash": { "File": "MSChargeFire.ogg", "Type": "Sound" },
+	
+	"coldpeakszone.bounseal.bounce": { "File": "bounseal_bounce.ogg", "Type": "Sound" },
+	
+	"coldpeakszone.Freeze": { "File": "Freeze.ogg", "Type": "Sound" },
+	"coldpeakszone.Struggle": { "File": "Struggle.ogg", "Type": "Sound" },
+	"coldpeakszone.Shatter": { "File": "WindowShatter.ogg", "Type": "Sound" },
 }
