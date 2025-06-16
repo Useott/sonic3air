@@ -498,6 +498,44 @@ namespace
 		return (uint16)numColors;
 	}
 
+	uint64 System_getSystemClockData(uint8 format)
+	{
+		const std::time_t current_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		std::string formatstring = "";
+
+		switch(format) {
+		case 0: // seconds
+			formatstring = "%S";
+			break;
+		case 1: // minutes
+			formatstring = "%M";
+			break;
+		case 2: // hours
+			formatstring = "%H";
+			break;
+		case 3: // day
+			formatstring = "%d";
+			break;
+		case 4: // week
+			formatstring = "%w";
+			break;
+		case 5: // month
+			formatstring = "%m";
+			break;
+		case 6: // year
+			formatstring = "%Y";
+			break;
+		default:// unix timestamp
+			const auto current_time_timestamp = std::chrono::system_clock::now();
+			uint64 timestamp = std::chrono::duration_cast<std::chrono::seconds>(current_time_timestamp.time_since_epoch()).count();
+			return timestamp;
+		}
+
+		char time_text[64];
+		strftime(time_text, sizeof time_text, std::string(formatstring).c_str(), std::localtime(&current_time));
+
+		return rmx::parseInteger(time_text);
+	}
 
 	void debugLogInternal(std::string_view valueString)
 	{
@@ -1230,6 +1268,9 @@ void LemonScriptBindings::registerBindings(lemon::Module& module)
 			.setParameters("flag");
 
 		builder.addNativeFunction("System.isDevModeActive", lemon::wrap(&System_isDevModeActive), defaultFlags);
+
+		builder.addNativeFunction("System.getSystemClockData", lemon::wrap(&System_getSystemClockData), defaultFlags)
+			.setParameters("format");
 
 
 		// Access external data

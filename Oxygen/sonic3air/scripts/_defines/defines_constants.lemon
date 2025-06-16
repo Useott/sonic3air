@@ -210,6 +210,21 @@ constant u32 PlatformFlags.MOBILE	= 0x0002	// Set on mobile devices with Android
 
 
 //-------------------------------------------------------//
+// Return value for "System.getSystemClockData"          //
+//-------------------------------------------------------//
+
+constant u8 TIME_SECONDS 	= 0
+constant u8 TIME_MINUTES 	= 1
+constant u8 TIME_HOUR	 	= 2
+constant u8 DATE_DAY	 	= 3
+constant u8 DATE_WEEKDAY 	= 4
+constant u8 DATE_MONTH	 	= 5
+constant u8 DATE_YEAR	 	= 6
+constant u8 UNIX_TIMESTAMP	= 0xff		// Can actually be any value as long as it's not any of the above
+
+
+
+//-------------------------------------------------------//
 // Misc                                                  //
 //-------------------------------------------------------//
 

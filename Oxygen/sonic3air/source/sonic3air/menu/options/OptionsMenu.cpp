@@ -60,7 +60,8 @@ namespace
 	{
 		ConditionalOption(option::SOUNDTRACK,				 true),
 		ConditionalOption(option::SOUNDTRACK_DOWNLOAD,		 true),
-		ConditionalOption(option::SOUND_TEST,				 true),
+		ConditionalOption(option::SOUND_TEST_MUSIC,			 true),
+		ConditionalOption(option::SOUND_TEST_SFX,			 true),
 		ConditionalOption(option::TITLE_THEME,				 true),
 		ConditionalOption(option::OUTRO_MUSIC,				 true),
 		ConditionalOption(option::COMPETITION_MENU_MUSIC,	 true),
@@ -336,7 +337,51 @@ void OptionsMenu::initialize()
 
 	// Fill sound test
 	{
-		mSoundTestAudioDefinitions.clear();
+		mSoundTestAudioDefinitionsMusic.clear();
+		const bool devModeEnabled = Configuration::instance().mDevMode.mEnabled;
+		const auto& audioDefinitions = AudioOut::instance().getAudioCollection().getAudioDefinitions();
+		for (const auto& [key, audioDefinition] : audioDefinitions)
+		{
+			bool visible = false;
+			const AudioCollection::AudioDefinition::Visibility visibility = audioDefinition.mSoundTestVisibility;
+			switch (visibility)
+			{
+			case AudioCollection::AudioDefinition::Visibility::ALWAYS_HIDDEN:	visible = false;  break;
+			case AudioCollection::AudioDefinition::Visibility::ALWAYS_VISIBLE:	visible = true;   break;
+			case AudioCollection::AudioDefinition::Visibility::DEV_MODE_ONLY:	visible = devModeEnabled;  break;
+
+			default:
+			{
+				// By default, show music & jingles only, not sound effects
+				if (audioDefinition.mType == AudioCollection::AudioDefinition::Type::MUSIC || audioDefinition.mType == AudioCollection::AudioDefinition::Type::JINGLE)
+				{
+					// Hide fast tracks
+					visible = (devModeEnabled || !rmx::endsWith(audioDefinition.mKeyString, "_fast"));
+				}
+				break;
+			}
+			}
+
+			if (visible)
+			{
+				mSoundTestAudioDefinitionsMusic.emplace_back(&audioDefinition);
+			}
+		}
+
+		std::sort(mSoundTestAudioDefinitionsMusic.begin(), mSoundTestAudioDefinitionsMusic.end(),
+			[](const AudioCollection::AudioDefinition* a, const AudioCollection::AudioDefinition* b) { return a->mKeyString < b->mKeyString; });
+
+		GameMenuEntry& entry = *mOptionEntries[option::SOUND_TEST_MUSIC].mGameMenuEntry;
+		entry.mOptions.clear();
+		for (size_t index = 0; index < mSoundTestAudioDefinitionsMusic.size(); ++index)
+		{
+			entry.addOption(mSoundTestAudioDefinitionsMusic[index]->mKeyString, (uint32)index);
+		}
+		entry.sanitizeSelectedIndex();
+	}
+
+	{
+		mSoundTestAudioDefinitionsSFX.clear();
 		const bool devModeEnabled = Configuration::instance().mDevMode.mEnabled;
 		const auto& audioDefinitions = AudioOut::instance().getAudioCollection().getAudioDefinitions();
 		for (const auto& [key, audioDefinition] : audioDefinitions)
@@ -348,33 +393,26 @@ void OptionsMenu::initialize()
 				case AudioCollection::AudioDefinition::Visibility::ALWAYS_HIDDEN:	visible = false;  break;
 				case AudioCollection::AudioDefinition::Visibility::ALWAYS_VISIBLE:	visible = true;   break;
 				case AudioCollection::AudioDefinition::Visibility::DEV_MODE_ONLY:	visible = devModeEnabled;  break;
-
 				default:
 				{
-					// By default, show music & jingles only, not sound effects
-					if (audioDefinition.mType == AudioCollection::AudioDefinition::Type::MUSIC || audioDefinition.mType == AudioCollection::AudioDefinition::Type::JINGLE)
-					{
-						// Hide fast tracks
-						visible = (devModeEnabled || !rmx::endsWith(audioDefinition.mKeyString, "_fast"));
-					}
+					if (audioDefinition.mType == AudioCollection::AudioDefinition::Type::SOUND)
+						visible = true;
 					break;
 				}
 			}
-
 			if (visible)
 			{
-				mSoundTestAudioDefinitions.emplace_back(&audioDefinition);
+				mSoundTestAudioDefinitionsSFX.emplace_back(&audioDefinition);
 			}
 		}
-
-		std::sort(mSoundTestAudioDefinitions.begin(), mSoundTestAudioDefinitions.end(),
+		std::sort(mSoundTestAudioDefinitionsSFX.begin(), mSoundTestAudioDefinitionsSFX.end(),
 			[](const AudioCollection::AudioDefinition* a, const AudioCollection::AudioDefinition* b) { return a->mKeyString < b->mKeyString; });
 
-		GameMenuEntry& entry = *mOptionEntries[option::SOUND_TEST].mGameMenuEntry;
+		GameMenuEntry& entry = *mOptionEntries[option::SOUND_TEST_SFX].mGameMenuEntry;
 		entry.mOptions.clear();
-		for (size_t index = 0; index < mSoundTestAudioDefinitions.size(); ++index)
+		for (size_t index = 0; index < mSoundTestAudioDefinitionsSFX.size(); ++index)
 		{
-			entry.addOption(mSoundTestAudioDefinitions[index]->mKeyString, (uint32)index);
+			entry.addOption(mSoundTestAudioDefinitionsSFX[index]->mKeyString, (uint32)index);
 		}
 		entry.sanitizeSelectedIndex();
 	}
@@ -649,9 +687,15 @@ void OptionsMenu::update(float timeElapsed)
 				{
 					switch (selectedEntry.mData)
 					{
-						case option::SOUND_TEST:
+						case option::SOUND_TEST_MUSIC:
 						{
-							playSoundtest(*mSoundTestAudioDefinitions[selectedEntry.selected().mValue]);
+							playSoundtest(*mSoundTestAudioDefinitionsMusic[selectedEntry.selected().mValue]);
+							break;
+						}
+
+						case option::SOUND_TEST_SFX:
+						{
+							playSoundtest(*mSoundTestAudioDefinitionsSFX[selectedEntry.selected().mValue]);
 							break;
 						}
 
@@ -1021,9 +1065,14 @@ void OptionsMenu::removeControllerSetupMenu()
 {
 }
 
-const AudioCollection::AudioDefinition* OptionsMenu::getSoundTestAudioDefinition(uint32 index) const
+const AudioCollection::AudioDefinition* OptionsMenu::getSoundTestAudioDefinitionMusic(uint32 index) const
 {
-	return ((size_t)index < mSoundTestAudioDefinitions.size()) ? mSoundTestAudioDefinitions[index] : nullptr;
+	return ((size_t)index < mSoundTestAudioDefinitionsMusic.size()) ? mSoundTestAudioDefinitionsMusic[index] : nullptr;
+}
+
+const AudioCollection::AudioDefinition* OptionsMenu::getSoundTestAudioDefinitionSFX(uint32 index) const
+{
+	return ((size_t)index < mSoundTestAudioDefinitionsSFX.size()) ? mSoundTestAudioDefinitionsSFX[index] : nullptr;
 }
 
 void OptionsMenu::setupOptionEntry(option::Option optionId, SharedDatabase::Setting::Type setting)
@@ -1360,7 +1409,7 @@ void OptionsMenu::refreshControlsDisplay()
 		else if (selectedEntry.mOptions.size() >= 2)
 		{
 			mGameMenuControlsDisplay.addControl("Change", false, "@input_icon_button_left", "@input_icon_button_right");
-			if (selectedEntry.mData == option::SOUND_TEST)
+			if (selectedEntry.mData == option::SOUND_TEST_MUSIC || selectedEntry.mData == option::SOUND_TEST_SFX)
 				mGameMenuControlsDisplay.addControl("Play", false, "@input_icon_button_A");
 		}
 		else
