@@ -98,11 +98,3 @@ framework/external/ogg-vorbis/libvorbis/xcode/vorbis.xcodeproj/xcuserdata
 Oxygen/sonic3air/build/_xcode/build/XCBuildData
 Oxygen/sonic3air/build/_xcode/build/sonic3air.build
 framework/external/sdl/SDL2/Xcode/SDL/build/SDL.build
-
-framework/
-Oxygen/sonic3air/build
-Oxygen/sonic3air/bin
-/librmx
-/Oxygen/lemonscript
-/Oxygen/oxygenengine
-Oxygen/sonic3air/config.json
