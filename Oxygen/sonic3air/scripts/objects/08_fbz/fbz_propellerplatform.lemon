@@ -62,7 +62,11 @@ function void fn03a5da()
 function void fn03a620()
 {
 	D0.u8 = u8[A0 + 0x27]
+#if STANDALONE
+	u8[A0 + 0x27] += 2 // Speed up wait time
+#else
 	++u8[A0 + 0x27]
+#endif
 	LookupSinCos()
 	D0.s16 >>= 5
 	D0.u16 += u16[A0 + 0x46]

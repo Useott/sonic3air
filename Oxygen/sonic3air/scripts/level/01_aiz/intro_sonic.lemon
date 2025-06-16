@@ -490,6 +490,7 @@ function void fn067900()
 #if STANDALONE
 	// Add just a little variation
 	objA0.velocity.y -= (getRandomNumber() & 0x1f) - 0x10
+	objA0.velocity.x += 0xe0
 #endif
 
 	fn067938()
@@ -506,6 +507,15 @@ function void fn067938()
 		if (D1.s16 < 0)
 		{
 			objA0.position.y.u16 += D1.u16
+		#if STANDALONE
+			if (objA0.state < 2)
+			{
+				objA0.state += 1
+				objA0.velocity.x /= 2
+				objA0.velocity.y = objA0.state == 1 ? -0x200 : -0x100
+			}
+			else
+		#endif
 			objA0.update_address = 0x06795c
 		}
 	}
