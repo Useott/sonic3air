@@ -66,6 +66,7 @@ private:
 			MOVING_GAMEREC,
 			MOVING_L,
 			MOVING_R,
+			S3K_DEBUG,
 			SCALING_DPAD,
 			SCALING_BUTTONS
 		};
@@ -81,7 +82,11 @@ private:
 		enum class SpecialType
 		{
 			NONE,
-			GAMEREC
+			GAMEREC,
+			DEBUG_MODE, 	// for S3AIR
+			FLIP_GRAVITY, 	// for S3AIR
+			NEXT_OBJECT, 	// for S3AIR
+			PREV_OBJECT, 	// for S3AIR
 		};
 
 		SpecialType mSpecialType = SpecialType ::NONE;
@@ -129,6 +134,7 @@ private:
 	bool mForceHidden = false;
 	float mVisibility = 0.0f;
 	bool mGameRecPressed = false;
+	bool mDebugModeButtonPressed = false;
 
 	ConfigMode mConfigMode;
 };

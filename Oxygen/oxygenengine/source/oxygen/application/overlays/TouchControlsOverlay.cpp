@@ -15,6 +15,7 @@
 #include "oxygen/resources/SpriteCollection.h"
 #include "oxygen/simulation/GameRecorder.h"
 #include "oxygen/simulation/Simulation.h"
+#include "oxygen/simulation/EmulatorInterface.h"
 
 
 namespace
@@ -105,6 +106,11 @@ void TouchControlsOverlay::buildTouchControls()
 	}
 	buildRectangularButton(mSetup.mStartButtonCenter, Vec2f(0.18f, 0.06f), "touch_overlay_start", &controller.Start, ConfigMode::State::MOVING_START);
 	buildRectangularButton(mSetup.mGameRecButtonCenter, Vec2f(0.15f, 0.06f), "touch_overlay_rec", nullptr, ConfigMode::State::MOVING_GAMEREC, TouchArea::SpecialType::GAMEREC, 0.1f);
+	const float scrw = ((float)FTX::screenWidth() / 2.0f) / (letterBoxRect.height / 2.0f);
+	buildRectangularButton(Vec2f(-scrw + 0.25f, -0.8f), Vec2f(0.25f, 0.25f), "invisible", nullptr, ConfigMode::State::S3K_DEBUG, TouchArea::SpecialType::DEBUG_MODE, 0.1f);
+	buildRectangularButton(Vec2f(scrw - 0.25f, -0.9f), Vec2f(0.2f, 0.1f), "invisible", nullptr, ConfigMode::State::S3K_DEBUG, TouchArea::SpecialType::FLIP_GRAVITY, 0.1f);
+	buildRectangularButton(Vec2f(0.25f, -0.85f), Vec2f(0.085f, 0.085f), "input_icon_touch_+", nullptr, ConfigMode::State::S3K_DEBUG, TouchArea::SpecialType::NEXT_OBJECT, 0.1f);
+	buildRectangularButton(Vec2f(-0.25f, -0.85f), Vec2f(0.075f, 0.075f), "input_icon_touch_-", nullptr, ConfigMode::State::S3K_DEBUG, TouchArea::SpecialType::PREV_OBJECT, 0.1f);
 
 	mLastScreenSize = FTX::screenSize();
 }
@@ -142,6 +148,7 @@ void TouchControlsOverlay::update(float timeElapsed)
 	}
 
 	mAutoHideTimer += timeElapsed;
+	float maxVisibility = EmulatorInterface::instance().readMemory8(0xfffff7ca) ? 0.5f : 1.0f;
 
 	// Update visibility
 	{
@@ -149,16 +156,20 @@ void TouchControlsOverlay::update(float timeElapsed)
 		const bool shouldBeVisible = !mForceHidden && (lastInputType == InputManager::InputType::TOUCH || lastInputType == InputManager::InputType::NONE) && (mAutoHideTimer < 4.0f);
 		if (shouldBeVisible)
 		{
-			if (mVisibility < 1.0f)
+			if (mVisibility < maxVisibility)
 			{
-				mVisibility = saturate(mVisibility + timeElapsed / 0.2f);
+				mVisibility = saturate(mVisibility + timeElapsed / 0.5f);
+			}
+			else if (mVisibility > maxVisibility + 0.1f)
+			{
+				mVisibility = saturate(mVisibility - timeElapsed / 0.5f);
 			}
 		}
 		else
 		{
 			if (mVisibility > 0.0f)
 			{
-				mVisibility = saturate(mVisibility - timeElapsed / 0.2f);
+				mVisibility = saturate(mVisibility - timeElapsed / 0.5f);
 			}
 			mConfigMode.mEnabled = false;
 		}
@@ -218,6 +229,15 @@ void TouchControlsOverlay::render()
 			if (visualElement.mReactToState == ConfigMode::State::MOVING_GAMEREC && !Application::instance().getSimulation().getGameRecorder().isRecording())
 				continue;
 
+			// Skip the debug mode buttons outside debug mode, as well as use point filtering
+			if (visualElement.mReactToState == ConfigMode::State::S3K_DEBUG)
+			{
+				if (EmulatorInterface::instance().readMemory16(0xfffffe08) == 0)
+					continue;
+
+				drawer.setSamplingMode(SamplingMode::POINT);
+			}
+
 			const bool pressed = (nullptr == visualElement.mControl) ? false : visualElement.mControl->isPressed();
 			const uint64 spriteKey = visualElement.mSpriteKeys[pressed ? 1 : 0];
 			const SpriteCollection::Item* item = SpriteCollection::instance().getSprite(spriteKey);
@@ -232,6 +252,10 @@ void TouchControlsOverlay::render()
 			const Vec2f scale = rect.getSize() / Vec2f(item->mSprite->getSize());
 
 			drawer.drawSprite(Vec2i(rect.getCenter()), spriteKey, color, scale);
+			if (visualElement.mReactToState == ConfigMode::State::S3K_DEBUG)
+			{
+				drawer.setSamplingMode(SamplingMode::BILINEAR);
+			}
 		}
 		drawer.setSamplingMode(SamplingMode::POINT);
 	}
@@ -326,6 +350,8 @@ void TouchControlsOverlay::updateControls()
 
 	// Update touch areas
 	bool gameRecPressed = false;
+	bool debugModeButtonPressed = false;
+	uint8 debugButtonType = 0;
 	if (!mInputManager->getActiveTouches().empty())
 	{
 		// There is at least one active touch, reset auto-hide
@@ -341,6 +367,30 @@ void TouchControlsOverlay::updateControls()
 					case TouchArea::SpecialType::GAMEREC:
 					{
 						gameRecPressed = true;
+						break;
+					}
+					case TouchArea::SpecialType::DEBUG_MODE:
+					{
+						debugModeButtonPressed = true;
+						debugButtonType = 1;
+						break;
+					}
+					case TouchArea::SpecialType::FLIP_GRAVITY:
+					{
+						debugModeButtonPressed = true;
+						debugButtonType = 2;
+						break;
+					}
+					case TouchArea::SpecialType::NEXT_OBJECT:
+					{
+						debugModeButtonPressed = true;
+						debugButtonType = 3;
+						break;
+					}
+					case TouchArea::SpecialType::PREV_OBJECT:
+					{
+						debugModeButtonPressed = true;
+						debugButtonType = 4;
 						break;
 					}
 					default:
@@ -360,6 +410,22 @@ void TouchControlsOverlay::updateControls()
 		if (gameRecPressed)
 		{
 			Application::instance().triggerGameRecordingSave();
+		}
+	}
+
+	if (debugModeButtonPressed != mDebugModeButtonPressed)
+	{
+		mDebugModeButtonPressed = debugModeButtonPressed;
+		if (debugModeButtonPressed)
+		{
+			switch (debugButtonType)
+			{
+				case 1: { EmulatorInterface::instance().writeMemory8(0x801004, 1); break; }
+				case 2: { EmulatorInterface::instance().writeMemory8(0x801005, 1); break; }
+				case 3: { EmulatorInterface::instance().writeMemory8(0x801006, 1); break; }
+				case 4: { EmulatorInterface::instance().writeMemory8(0x801006, -1); break; }
+				default: { break; }
+			}
 		}
 	}
 }

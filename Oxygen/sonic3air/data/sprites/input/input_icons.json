@@ -61,6 +61,9 @@
 	"input_icon_touch_start":{ "File": "input_icons.png", "Rect": "144,64,16,16", "Center": "8,8" },
 	"input_icon_touch_L":    { "File": "input_icons.png", "Rect": "160,64,16,16", "Center": "8,8" },
 	"input_icon_touch_R":    { "File": "input_icons.png", "Rect": "176,64,16,16", "Center": "8,8" },
+	
+	"input_icon_touch_+":  	 { "File": "input_icons.png", "Rect": "208,64,16,16", "Center": "8,8" },
+	"input_icon_touch_-":  	 { "File": "input_icons.png", "Rect": "224,64,16,16", "Center": "8,8" },
 
 	"input_icon_xbox_A":	{ "File": "input_icons.png", "Rect": "0,80,16,16", "Center": "8,8" },
 	"input_icon_xbox_B":	{ "File": "input_icons.png", "Rect": "16,80,16,16", "Center": "8,8" },
