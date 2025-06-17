@@ -89,7 +89,9 @@ namespace
 		ConditionalOption(option::RANDOM_SPECIALSTAGES,		 true),
 		ConditionalOption(option::SPECIAL_STAGE_REPEAT,		 true),
 		ConditionalOption(option::REGION,					 true),
-		ConditionalOption(option::GAME_SPEED,				 false, SharedDatabase::Secret::SECRET_GAME_SPEED)
+		ConditionalOption(option::GAME_SPEED,				 false, SharedDatabase::Secret::SECRET_GAME_SPEED),
+
+		ConditionalOption(option::SCREEN_SIZE,				 true)
 	};
 }
 
@@ -199,7 +201,9 @@ OptionsMenu::OptionsMenu(MenuBackground& menuBackground) :
 		setupOptionEntry(option::MHZ_ELEVATOR,				SharedDatabase::Setting::SETTING_MHZ_ELEVATOR);
 		setupOptionEntry(option::FBZ_ENTERCYLINDER,			SharedDatabase::Setting::SETTING_FBZ_ENTERCYLINDER);
 		setupOptionEntry(option::FBZ_SCREWDOORS,			SharedDatabase::Setting::SETTING_FBZ_SCREWDOORS);
-		setupOptionEntry(option::SOZ_PYRAMID,				SharedDatabase::Setting::SETTING_SOZ_PYRAMID);	
+		setupOptionEntry(option::SOZ_PYRAMID,				SharedDatabase::Setting::SETTING_SOZ_PYRAMID);
+
+		setupOptionEntry(option::SCREEN_SIZE,				SharedDatabase::Setting::SETTING_SCREEN_SIZE);
 
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ1,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ2,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
@@ -218,7 +222,8 @@ OptionsMenu::OptionsMenu(MenuBackground& menuBackground) :
 		.addOption("VISUALS",  Tab::Id::VISUALS)
 		.addOption("GAMEPLAY", Tab::Id::GAMEPLAY)
 		.addOption("CONTROLS", Tab::Id::CONTROLS)
-		.addOption("TWEAKS",   Tab::Id::TWEAKS);
+		.addOption("TWEAKS",   Tab::Id::TWEAKS)
+		.addOption("MORE",   Tab::Id::TOUR_OPTIONS);
 
 	for (int i = 0; i < Tab::Id::_NUM; ++i)
 	{
@@ -236,6 +241,7 @@ OptionsMenu::OptionsMenu(MenuBackground& menuBackground) :
 	createOptionMenuTab(Tab::Id::GAMEPLAY,	mOptionsConfig.mGameplayOptions);
 	createOptionMenuTab(Tab::Id::CONTROLS,	mOptionsConfig.mControlsOptions);
 	createOptionMenuTab(Tab::Id::TWEAKS,	mOptionsConfig.mTweaksOptions);
+	createOptionMenuTab(Tab::Id::TOUR_OPTIONS,	mOptionsConfig.mTourOptions);
 
 	// Post-processing
 	for (int i = 1; i < Tab::Id::_NUM; ++i)		// Exclude Mods tab

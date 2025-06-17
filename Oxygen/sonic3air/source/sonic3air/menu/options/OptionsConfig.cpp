@@ -65,6 +65,7 @@ void OptionsConfig::build()
 	buildGameplay();
 	buildControls();
 	buildTweaks();
+	buildTourOptions();
 }
 
 #define CATEGORY(_name_) configBuilder.addCategory(_name_);
@@ -694,6 +695,24 @@ void OptionsConfig::buildTweaks()
 		configBuilder.addSetting("Offscreen Player 2:", option::PLAYER2_OFFSCREEN)
 			.addOption("Not shown", 0)
 			.addOption("Show at border", 1);
+	}
+}
+
+void OptionsConfig::buildTourOptions()
+{
+	ConfigBuilder configBuilder(mTourOptions);
+
+	CATEGORY("Stable")
+	{
+
+	}
+
+	CATEGORY("Experimental")
+	{
+		configBuilder.addSetting("Aspect Ratio", option::SCREEN_SIZE)
+			.addOption("4:3", 0)
+			.addOption("16:9", 1)
+			.addOption("2:1", 2);
 	}
 }
 

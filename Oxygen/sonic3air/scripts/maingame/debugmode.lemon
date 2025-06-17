@@ -172,11 +172,11 @@ function void DebugMode.EvaluateInput()
 		char.position.y = D2
 	}
 
-	if (((control.pad1.state & CONTROL_A) && !System.hasPlatformFlag(PlatformFlags.MOBILE)) || (System.hasPlatformFlag(PlatformFlags.MOBILE) && touchdebug.selection_change != 0))
+	if (((control.pad1.state & CONTROL_A) && !touchdebug.use_touch_controls) || (touchdebug.use_touch_controls && touchdebug.selection_change != 0))
 	{
 		// Change selection
 		s8 change = 0
-		if (System.hasPlatformFlag(PlatformFlags.MOBILE))
+		if (touchdebug.use_touch_controls)
 		{
 			if (touchdebug.selection_change < 0)
 				change = -1
@@ -200,7 +200,7 @@ function void DebugMode.EvaluateInput()
 		}
 	}
 
-	if (control.pad1.pressed & CONTROL_C)
+	if (((control.pad1.pressed & CONTROL_C) && !touchdebug.use_touch_controls) || ((control.pad1.pressed & CONTROL_ABC) && touchdebug.use_touch_controls))
 	{
 		// Place new object
 		if (allocDynamicObjectStd())
@@ -222,7 +222,7 @@ function void DebugMode.EvaluateInput()
 		}
 	}
 
-	if (((control.pad1.pressed & CONTROL_B) && !(System.hasPlatformFlag(PlatformFlags.MOBILE))) || touchdebug.debug_toggle)
+	if (((control.pad1.pressed & CONTROL_B) && !touchdebug.use_touch_controls) || touchdebug.debug_toggle)
 	{
 		touchdebug.debug_toggle = 0
 		debug_mode.state = 0
@@ -274,7 +274,7 @@ function bool updateDebugModeRegular()
 	}
 	else
 	{
-		if (((control.pad1.pressed & CONTROL_B) && !(System.hasPlatformFlag(PlatformFlags.MOBILE))) || touchdebug.debug_toggle)
+		if (((control.pad1.pressed & CONTROL_B) && !touchdebug.use_touch_controls) || touchdebug.debug_toggle)
 		{
 			touchdebug.debug_toggle = 0
 			debug_mode.state = 0
@@ -340,7 +340,7 @@ function bool updateDebugModeInput(bool playingAsTails)
 		return false
 
 	// Gravity toggle
-	if (((control.pad1.pressed & CONTROL_A) && !(System.hasPlatformFlag(PlatformFlags.MOBILE))) || touchdebug.gravity_toggle)
+	if (((control.pad1.pressed & CONTROL_A) && !touchdebug.use_touch_controls) || touchdebug.gravity_toggle)
 	{
 		global.inv_gravity ^= 0x01
 		if (touchdebug.gravity_toggle == false)
@@ -355,7 +355,7 @@ function bool updateDebugModeInput(bool playingAsTails)
 	}
 
 	// Object mode toggle
-	if (((control.pad1.pressed & CONTROL_B) && !(System.hasPlatformFlag(PlatformFlags.MOBILE))) || touchdebug.debug_toggle)
+	if (((control.pad1.pressed & CONTROL_B) && !touchdebug.use_touch_controls) || touchdebug.debug_toggle)
 	{
 		player1.control_override = 0
 		if (control.pad1.state & CONTROL_C)
@@ -380,7 +380,7 @@ function bool updateDebugModeInput(bool playingAsTails)
 function bool debugModeRescue()
 {
 	// Get character out of damage state and into object placement mode
-	if (debug_mode.enabled && (((control.pad1.pressed & CONTROL_B) && !(System.hasPlatformFlag(PlatformFlags.MOBILE))) || touchdebug.debug_toggle))
+	if (debug_mode.enabled && (((control.pad1.pressed & CONTROL_B) && !touchdebug.use_touch_controls) || touchdebug.debug_toggle))
 	{
 		debug_mode.state = 1
 		player1.control_override = 0

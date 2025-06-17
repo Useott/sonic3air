@@ -144,6 +144,9 @@ namespace option
 		//HCZ_WATERPIPE,		// Left out of options as it's just too minor
 		//LBZ_CUPELEVATOR,		// Left out of options as it's just too minor
 
+		// Angel Island Tour Options
+		SCREEN_SIZE,
+
 		_CHECK_FOR_UPDATE,
 		RELEASE_CHANNEL,
 		_OPEN_HOMEPAGE,

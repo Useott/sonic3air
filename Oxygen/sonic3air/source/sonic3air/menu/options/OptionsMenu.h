@@ -65,6 +65,7 @@ private:
 			GAMEPLAY = 5,
 			CONTROLS = 6,
 			TWEAKS	 = 7,
+			TOUR_OPTIONS	 = 8,
 			_NUM
 		};
 		GameMenuEntries mMenuEntries;

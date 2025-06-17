@@ -153,6 +153,11 @@ void TouchControlsOverlay::update(float timeElapsed)
 	// Update visibility
 	{
 		const InputManager::InputType lastInputType = mInputManager->getLastInputType();
+
+		if (lastInputType == InputManager::InputType::TOUCH || lastInputType == InputManager::InputType::NONE)
+			EmulatorInterface::instance().writeMemory8(0x801007, 1);
+		else EmulatorInterface::instance().writeMemory8(0x801007, 0);
+
 		const bool shouldBeVisible = !mForceHidden && (lastInputType == InputManager::InputType::TOUCH || lastInputType == InputManager::InputType::NONE) && (mAutoHideTimer < 4.0f);
 		if (shouldBeVisible)
 		{
@@ -233,6 +238,9 @@ void TouchControlsOverlay::render()
 			if (visualElement.mReactToState == ConfigMode::State::S3K_DEBUG)
 			{
 				if (EmulatorInterface::instance().readMemory16(0xfffffe08) == 0)
+					continue;
+
+				if (EmulatorInterface::instance().readMemory16(0xfffff63a) != 0)
 					continue;
 
 				drawer.setSamplingMode(SamplingMode::POINT);

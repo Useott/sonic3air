@@ -45,7 +45,7 @@ function void Standalone.drawCharacterSpriteDirect(u8 character, s16 px, s16 py,
 		// Custom added sprites for Sonic's Drop Dash & Super Peel-Out
 		if (animationSpriteEx >= CHAR_ANIMSPRITE_SONIC_PEELOUT)
 		{
-			key = stringformat("sonic_peelout_%d", animationSpriteEx - CHAR_ANIMSPRITE_SONIC_PEELOUT)
+			key = stringformat("%ssonic_peelout_%d", super.active ? "super" : "", animationSpriteEx - CHAR_ANIMSPRITE_SONIC_PEELOUT)
 		}
 		else
 		{
@@ -132,7 +132,7 @@ function bool Standalone.drawCharacterSprite(u8 character, u8 variant, s16 px, s
 			{
 				animationSpriteEx = CHAR_ANIMSPRITE_SONIC_DROPDASH + ((level.framecounter >> 1) & 0x01)
 			}
-			else if (!super.active && animationSprite >= 0x21 && animationSprite <= 0x30)
+			else if (animationSprite >= 0x21 && animationSprite <= 0x30)
 			{
 				if (sonic.fastrunanim.timer > 0)
 				{
@@ -264,7 +264,7 @@ function bool Standalone.drawCharacterSprite(u8 character, u8 variant, s16 px, s
 			// Special handling for Drop Dash & Super Peel-Out
 			if (animationSpriteEx >= CHAR_ANIMSPRITE_SONIC_PEELOUT)
 			{
-				key = stringformat("sonic_peelout_%d", animationSpriteEx - CHAR_ANIMSPRITE_SONIC_PEELOUT)
+				key = stringformat("%ssonic_peelout_%d", super.active ? "super" : "", animationSpriteEx - CHAR_ANIMSPRITE_SONIC_PEELOUT)
 			}
 			else
 			{

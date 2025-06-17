@@ -296,17 +296,21 @@ function void Character.UpdateNormalState.Sonic()
 		}
 	}
 
-	if (Game.getSetting(SETTING_SUPERFAST_RUNANIM) && !super.active && abs(char.groundspeed) >= 0x0d00)
+	if (Game.getSetting(SETTING_SUPERFAST_RUNANIM))
 	{
-		sonic.fastrunanim.timer = 30
+		if (abs(char.groundspeed) >= 0x0d00)
+			sonic.fastrunanim.timer = 30
+		else if (sonic.fastrunanim.timer > 0)
+		{
+			if (abs(char.groundspeed) >= 0x0800)
+				--sonic.fastrunanim.timer
+			else
+				sonic.fastrunanim.timer = 0
+		}
 	}
-	else if (sonic.fastrunanim.timer > 0)
-	{
-		if (abs(char.groundspeed) >= 0x0800)
-			--sonic.fastrunanim.timer
-		else
-			sonic.fastrunanim.timer = 0
-	}
+	else if (char.spindash != 0x80)
+		sonic.fastrunanim.timer = 0
+
 #endif
 
 	if (level.vertical_wrap == 0xff00)

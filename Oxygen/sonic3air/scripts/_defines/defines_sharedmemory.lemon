@@ -36,6 +36,7 @@ define timeattack.animSpriteEx	= u16[0x801002]
 define touchdebug.debug_toggle		= u8[0x801004]
 define touchdebug.gravity_toggle	= u8[0x801005]
 define touchdebug.selection_change	= s8[0x801006]
+define touchdebug.use_touch_controls= u8[0x801007]
 
 
 // 0x801100 .. 0x8011ff
