@@ -1,7 +1,7 @@
 {
 	// Metadata
-	"ShortName": "Sonic 3 A.I.R.",
-	"FullName":  "Sonic 3 - Angel Island Revisited",
+	"ShortName": "Angel Island Tour",
+	"FullName":  "Sonic 3 - Angel Island Tour",
 
 	// ROM
 	"Rom":       "___internal/Sonic_Knuckles_wSonic3.bin",
