@@ -111,7 +111,7 @@ void ApplicationContextMenu::render()
 
 		{
 			const Recti textRect(rect.x + 5, rect.y - 21, 0, rect.height);
-			drawer.printText(global::mOxyfontRegular, textRect, "Sonic 3 A.I.R.", 4);
+			drawer.printText(global::mOxyfontRegular, textRect, "Angel Island Tour", 4);
 		}
 
 		Item* clickedItem = nullptr;
