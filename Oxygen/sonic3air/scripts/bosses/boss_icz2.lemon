@@ -237,11 +237,14 @@ function void fn071d9e()
 		// Spawn capsule
 		objA1.update_address = 0x086540
 		objA1.position.x.u16 = 0x4560 - getScreenExtend()
+	#if STANDALONE
+		objA1.position.x.u16 += 0x10
+	#endif
 		objA1.position.y.u16 = 0x06a3
 	}
 
 	D0.u16 = level.bossarea.left + 0x0130
-	screenmover_target.right = D0.u16 + getScreenExtend()
+	screenmover_target.right = D0.u16 + getScreenExtend() + 0x10
 
 	if (allocDynamicObjectStd())
 	{

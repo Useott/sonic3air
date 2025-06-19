@@ -62,5 +62,10 @@ function void Standalone.setupCustomDecorativeSprite()
 		objA0.box_size.x = 128
 		objA0.box_size.y = 128
 	}
+	else if (objA0.subtype2c == 0x35)
+	{
+		objA0.box_size.x = 128
+		objA0.box_size.y = 128
+	}
 }
 #endif

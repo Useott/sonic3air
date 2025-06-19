@@ -39,8 +39,9 @@ function void fn069ea0()
 	spawnChildObject(0x06a51e, 0x00, 0, 0)		// Water agitator pole
 
 #if STANDALONE
-	// There is this one chunk visible with broken palette
+	// There are these two chunks visible with broken palette
 	u8[0xffff8634] = 0xb5
+	u8[0xffff8714] = 0xb5
 #endif
 }
 

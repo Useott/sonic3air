@@ -104,7 +104,7 @@ function void fn08b73a()
 	if (objA0.render_flags & render_flag.VISIBLE)
 	{
 		objA0.flags38 ^= 0x01
-		if (objA0.flags38 & 0x01)
+		if (objA0.flags38 & 0x01 || (Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) < 3))
 		{
 			DrawObject()
 		}

@@ -80,6 +80,11 @@ function void fn06af32()
 	setupObjectAttributesFull(0x06bd20)
 
 	boss.remaining_hits = 8
+#if STANDALONE
+	// Move it to the center of the screen
+	if (getScreenWidth() > 400)
+		objA0.position.x.u16 += getScreenExtend() - 40
+#endif
 	objA0.velocity.y = 0x80
 	objA0.countdown_value = 0xef
 	objA0.countdown_callback = 0x06af80

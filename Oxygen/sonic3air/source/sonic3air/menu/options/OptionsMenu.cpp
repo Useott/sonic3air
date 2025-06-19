@@ -204,6 +204,8 @@ OptionsMenu::OptionsMenu(MenuBackground& menuBackground) :
 		setupOptionEntry(option::SOZ_PYRAMID,				SharedDatabase::Setting::SETTING_SOZ_PYRAMID);
 
 		setupOptionEntry(option::SCREEN_SIZE,				SharedDatabase::Setting::SETTING_SCREEN_SIZE);
+		setupOptionEntry(option::CLASSIC_SHIELD_SPRITE,		SharedDatabase::Setting::SETTING_CLASSIC_SHIELD_SPRITE);
+		setupOptionEntry(option::CLASSIC_TRANSPARENCY,		SharedDatabase::Setting::SETTING_CLASSIC_TRANSPARENCY);
 
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ1,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ2,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);

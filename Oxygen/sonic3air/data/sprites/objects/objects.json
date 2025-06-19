@@ -29,13 +29,21 @@
 	"monitor_icon_static":          { "File": "monitors.bmp", "Rect":"64,48,16,16", "Center": "8,8" },
 	"monitor_icon_robotnik":        { "File": "monitors.bmp", "Rect":"80,48,16,16", "Center": "8,8" },
 
-	// Classic Shield
-	"shield_classic_01": { "File": "shield_classic.png", "Rect": "0,0,48,48",  "Center": "24,24" },
-	"shield_classic_02": { "File": "shield_classic.png", "Rect": "48,0,48,48", "Center": "24,24" },
-	"shield_classic_03": { "File": "shield_classic.png", "Rect": "96,0,48,48", "Center": "24,24" },
-	"shield_classic_04": { "File": "shield_classic.png", "Rect": "144,0,48,48","Center": "24,24" },
-	"shield_classic_05": { "File": "shield_classic.png", "Rect": "192,0,48,48","Center": "24,24" },
-	"shield_classic_06": { "File": "shield_classic.png", "Rect": "240,0,48,48","Center": "24,24" },
+	// S1 Classic Shield
+	"shield_classic_01": { "File": "shield_classic.bmp", "Rect": "0,0,48,48",  "Center": "24,24" },
+	"shield_classic_02": { "File": "shield_classic.bmp", "Rect": "48,0,48,48", "Center": "24,24" },
+	"shield_classic_03": { "File": "shield_classic.bmp", "Rect": "96,0,48,48", "Center": "24,24" },
+	"shield_classic_04": { "File": "shield_classic.bmp", "Rect": "144,0,48,48","Center": "24,24" },
+	"shield_classic_05": { "File": "shield_classic.bmp", "Rect": "192,0,48,48","Center": "24,24" },
+	"shield_classic_06": { "File": "shield_classic.bmp", "Rect": "240,0,48,48","Center": "24,24" },
+	
+	// S2 Classic Shield
+	"shield_classic_01_s2": { "File": "shield_classic_s2.bmp", "Rect": "8,8,48,48",  "Center": "24,24" },
+	"shield_classic_02_s2": { "File": "shield_classic_s2.bmp", "Rect": "64,16,32,32", "Center": "16,16" },
+	"shield_classic_03_s2": { "File": "shield_classic_s2.bmp", "Rect": "104,16,32,32", "Center": "16,16" },
+	"shield_classic_04_s2": { "File": "shield_classic_s2.bmp", "Rect": "144,16,32,32","Center": "16,16" },
+	"shield_classic_05_s2": { "File": "shield_classic_s2.bmp", "Rect": "184,16,32,32","Center": "16,16" },
+	"shield_classic_06_s2": { "File": "shield_classic_s2.bmp", "Rect": "224,16,32,32","Center": "16,16" },
 	
 	// Bonus Bubble for Classic Shield
 	"bonusbubble_classicshield": { "File": "bonusbubble_classicshield.png", "Rect": "0,0,32,32", "Center": "16,16" },

@@ -2983,6 +2983,9 @@ function void SonicPressedJumpInMidAir()
 		#endif
 
 			char.groundspeed = char.velocity.x
+		#if STANDALONE
+			char.state = char.state.ROLLING
+		#endif
 		}
 		else
 		{

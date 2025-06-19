@@ -342,6 +342,8 @@ void SharedDatabase::setupSettings()
 	addSetting(IDPARAMS(Setting::SETTING_AUDIO_CONTINUE_SCREEN), Setting::SerializationType::ALWAYS);
 
 	addSetting(IDPARAMS(Setting::SETTING_SCREEN_SIZE), Setting::SerializationType::ALWAYS);
+	addSetting(IDPARAMS(Setting::SETTING_CLASSIC_SHIELD_SPRITE), Setting::SerializationType::ALWAYS);
+	addSetting(IDPARAMS(Setting::SETTING_CLASSIC_TRANSPARENCY), Setting::SerializationType::ALWAYS);
 
 	// Hidden settings
 	addSetting(IDPARAMS(Setting::SETTING_DROPDASH), Setting::SerializationType::HIDDEN);

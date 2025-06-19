@@ -112,7 +112,6 @@ constant u32 SETTING_GFX_ANTIFLICKER			= 0x00001a01
 constant u32 SETTING_LEVELLAYOUTS				= 0x00002002	// Select level layouts (incl. object and ring placements): 0 = Sonic 3 alone, 1 = Sonic 3 & Knuckles, 2 = Sonic 3 A.I.R.
 constant u32 SETTING_REGION_CODE				= 0x00003080	// Region code: Flag 0x80 is set outside of Japan, 0x40 for PAL regions
 constant u32 SETTING_TIME_ATTACK_GHOSTS			= 0x00003103
-constant u32 SETTING_SCREEN_SIZE				= 0x00003401	// 0 = 4:3, 1 = 16:9, 2 = 2:1
 
 // Config options with no effect on simulation
 constant u32 SETTING_AUDIO_TITLE_THEME			= 0x80400100
@@ -126,3 +125,12 @@ constant u32 SETTING_AUDIO_OUTRO				= 0x80400801
 constant u32 SETTING_AUDIO_COMPETITION_MENU		= 0x80400900
 constant u32 SETTING_AUDIO_CONTINUE_SCREEN		= 0x80400a01
 
+
+
+//-------------------------------------------------------//
+// Angel Island Tour Options                             //
+//-------------------------------------------------------//
+
+constant u32 SETTING_SCREEN_SIZE				= 0x00003401	// 0 = 4:3, 1 = 16:9, 2 = 2:1
+constant u32 SETTING_CLASSIC_SHIELD_SPRITE		= 0x80003501
+constant u32 SETTING_CLASSIC_TRANSPARENCY		= 0x80003600	// 0 = None, 1 = Shields only, 2 = Shields and Afterimages only, 3 = Full

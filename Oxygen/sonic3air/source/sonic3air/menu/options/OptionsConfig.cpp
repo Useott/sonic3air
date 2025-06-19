@@ -704,7 +704,15 @@ void OptionsConfig::buildTourOptions()
 
 	CATEGORY("Stable")
 	{
+		configBuilder.addSetting("Classic Shield", option::CLASSIC_SHIELD_SPRITE)
+			.addOption("Sonic 1", 0)
+			.addOption("Sonic 2", 1);
 
+		configBuilder.addSetting("Classic Transparency", option::CLASSIC_TRANSPARENCY)
+			.addOption("Disabled", 0)
+			.addOption("Shields only", 1)
+			.addOption("Shields and Afterimages only", 0)
+			.addOption("Full", 1);
 	}
 
 	CATEGORY("Experimental")

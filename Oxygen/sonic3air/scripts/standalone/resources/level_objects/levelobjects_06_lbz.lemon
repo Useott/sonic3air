@@ -1619,6 +1619,9 @@ function void LevelObjectTableBuilder.buildObjects_LBZ2()
 
 	LevelObjectTableBuilder.addObject(0x4410, 0x0440, OBJECTTABLE1_cd, 0x00, LVLOBJ_IGNORE_Y)
 
+	// Fix for a small gap in foreground, using a decorative sprite object with custom subtype 0x35
+	LevelObjectTableBuilder.addObject(0x4500, 0x0680, OBJECTTABLE1_2f, 0x35, 0)
+
 	u16[A0] = 0xffff
 	A0 += 2
 }

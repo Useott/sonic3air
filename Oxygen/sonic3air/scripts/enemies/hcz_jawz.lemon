@@ -53,6 +53,17 @@ function void Jawz.Update()
 		// "spawnChildObjects(0x06bdb2)" replaced by:
 		spawnChildObject(0x06b77c, 0x00, 0, 0)
 
+	#if STANDALONE
+		if (allocDynamicObjectStd())
+		{
+			// Create a freed critter
+			objA1.update_address = addressof(FreedAnimal.BaseUpdate)
+			objA1.position.x.u16 = objA0.position.x.u16
+			objA1.position.y.u16 = objA0.position.y.u16
+			u16[A1 + 0x3e] = objA0.value3e
+		}
+	#endif
+
 		Object.TriggerUnloading()
 	}
 	else

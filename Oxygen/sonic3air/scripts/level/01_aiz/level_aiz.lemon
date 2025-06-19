@@ -1189,7 +1189,7 @@ function void fn01c550()
 		u16[0xfffffc5e] = 0x020e
 	}
 
-	if (camera.position.x.u16 >= 0x2b00)
+	if (camera.position.x.u16 + getScreenWidth() >= 0x2c80)
 	{
 		u16[0xfffffc5e] = 0x0004
 	}
@@ -1199,7 +1199,11 @@ function void fn01c550()
 	}
 	if (camera.position.x.u16 >= 0x2d80)
 	{
+	#if STANDALONE
+		u16[0xfffffc5e] = u16[0xfffffc76]
+	#else
 		u16[0xfffffc5e] = isMainCharacter(CHARACTER_KNUCKLES) ? u16[0x04faea] : 0x0c02
+	#endif
 		move_area.left = 0x2d80
 		requestLoadingPatterns(0x5a)		// Boss sprites
 		camera.update_routine += 2
@@ -1456,7 +1460,11 @@ function void fn01c6f6()
 //# address-hook(0x01c746) end(0x01c75e)
 function void fn01c746()
 {
+#if STANDALONE
+	if (camera.position.x.u16 + getScreenWidth() >= 0x4040) // Fix for higher screen widths, mainly for our 2:1 screen resolution
+#else
 	if (camera.position.x.u16 >= 0x3f00)
+#endif
 	{
 		D0.u16 = 0x015a
 		level.vertical_wrap = D0.u16

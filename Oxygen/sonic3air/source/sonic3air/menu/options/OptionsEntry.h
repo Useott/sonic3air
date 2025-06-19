@@ -146,6 +146,8 @@ namespace option
 
 		// Angel Island Tour Options
 		SCREEN_SIZE,
+		CLASSIC_SHIELD_SPRITE,
+		CLASSIC_TRANSPARENCY,
 
 		_CHECK_FOR_UPDATE,
 		RELEASE_CHANNEL,
