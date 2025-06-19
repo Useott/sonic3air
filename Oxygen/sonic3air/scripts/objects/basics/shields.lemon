@@ -382,7 +382,7 @@ function void BubbleShield.Update()
 
 	Object.animationUpdate(0x019a7a)
 #if STANDALONE
-	if (objA0.animation.sprite <= 10 && Game.getSetting(SETTING_CLASSIC_TRANSPARENCY))
+	if (objA0.animation.sprite <= 10 && Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) == 0)
 	{
 		Object.animationUpdate(0x019a7a)
 		Object.animationUpdate(0x019a7a)

@@ -57,6 +57,12 @@
 	// HCZ 1 water front
 	"hcz_waterfront": { "File": "hcz_waterfront.bmp", "Rect": "0,0,48,32" },
 	
+	// Water waves
+	"waterwaves_00": { "File": "waterwaves.bmp", "Rect": "0,0,32,16" },
+	"waterwaves_01": { "File": "waterwaves.bmp", "Rect": "0,0,32,16" },
+	"waterwaves_02": { "File": "waterwaves.bmp", "Rect": "32,0,32,16" },
+	"waterwaves_03": { "File": "waterwaves.bmp", "Rect": "64,0,32,16" },
+	
 	// FBZ 2 egg robo head
 	"eggrobo_fbz_00": { "File": "eggrobo_fbz.png", "Rect":  "0,0,32,16", "Center": "16,8" },
 	"eggrobo_fbz_01": { "File": "eggrobo_fbz.png", "Rect":  "0,0,32,15", "Center": "16,7" },

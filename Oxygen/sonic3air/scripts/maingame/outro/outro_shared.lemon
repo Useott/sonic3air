@@ -70,6 +70,11 @@ function void fn05b18e()
 	//  - 0x05b204	-> u16[0xfffffa86] = 0x04  -> Rolling credits
 	//  - 0x05b2d4	-> u16[0xfffffa86] = 0x06  -> Do nothing any more (when character jumps to the camera, final pose, and final screen)
 	call tableLookupAddress(0x05b19a, u16[0xfffffa86])
+
+#if STANDALONE
+	// Prevent unintended graphics from appearing, mainly in 2:1
+	Renderer.enableDefaultPlane(1, false)
+#endif
 }
 
 

@@ -182,6 +182,10 @@ function void LevelResults.UpdateBonusCounting()
 	if (objA0.countdown_value != 0)
 	{
 		--objA0.countdown_value
+	#if STANDALONE
+		if (objA0.countdown_value == 260)
+			playMusic(MUSIC_LEVELCLEAR)
+	#endif
 		if (objA0.countdown_value != 289)
 			return
 
@@ -189,7 +193,9 @@ function void LevelResults.UpdateBonusCounting()
 		u8[0xffffb000 + 0x2c] = 30
 		u8[0xffffb04a + 0x2c] = 30
 
+	#if !STANDALONE
 		playMusic(MUSIC_LEVELCLEAR)
+	#endif
 		return
 	}
 

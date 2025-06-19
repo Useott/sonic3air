@@ -9,6 +9,6 @@
 	"lbz_deatheggchunk": { "File": "lbz_deatheggchunk.bmp" },
 
 	// DEZ backgrounds
-	"bg_dez1": { "File": "dez1_background.bmp" },
-	"bg_dez2": { "File": "dez2_background.bmp" }
+	"bg_dez1": { "File": "dez1_background.bmp", "Center": "224,0" },
+	"bg_dez2": { "File": "dez2_background.bmp", "Center": "224,0" }
 }

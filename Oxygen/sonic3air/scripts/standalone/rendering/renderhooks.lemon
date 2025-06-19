@@ -540,7 +540,7 @@ function bool Standalone.onWriteToSpriteTable(s16 px, s16 py, u16 renderQueue)
 		}
 
 		// Bubble Shield
-		if (objA0.update_address == 0x019922 && Game.getSetting(SETTING_CLASSIC_TRANSPARENCY))
+		if (objA0.update_address == 0x019922 && Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) == 0)
 		{
 			if (objA0.animation.sprite > 8)
 				objA0.value26 = objA0.animation.sprite
@@ -558,7 +558,7 @@ function bool Standalone.onWriteToSpriteTable(s16 px, s16 py, u16 renderQueue)
 		}
 
 		// Flame Shield
-		if (objA0.update_address == 0x019602 && Game.getSetting(SETTING_CLASSIC_TRANSPARENCY))
+		if (objA0.update_address == 0x019602 && Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) == 0)
 		{
 			if (objA0.animation.sprite > 8)
 				objA0.value26 = objA0.animation.sprite
@@ -1134,12 +1134,11 @@ function bool Standalone.onDrawVdpSpriteCompound(s16 px, s16 py, u8 size, u16 in
 		}
 	}
 
-	// HCZ water waves effect
-	if (objA0.update_address == 0x01f244)
+	// Water waves effect
 	if (objA0.update_address == 0x01f244)
 	{
 		u8 alpha = 160
-		if (Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) == 2)
+		if (Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) == 3)
 		{
 			if (global.framecounter % 2 == 0)
 				alpha = 255
@@ -1151,19 +1150,19 @@ function bool Standalone.onDrawVdpSpriteCompound(s16 px, s16 py, u8 size, u16 in
 		{
 			Renderer.clearSpriteTag()
 			px = (camera.position.x.u16 & 0xffe0) - camera.position.x.u16 - 0x10	// Extend a bit more to the left just for sprite interpolation
-			if (Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) == 2)
+			if (Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) == 3)
 			{
 				for (; px < s16(getScreenWidth()); px += 0x40)
 				{
-					Renderer.drawVdpSpriteWithAlpha(px, py, size, index, renderQueue, alpha)
-					Renderer.drawVdpSpriteWithAlpha(px + 0x20, py, size, index, renderQueue, 255 - alpha)
+					Renderer.drawCustomSprite(stringformat("waterwaves_0%d", objA0.animation.sprite % 4), px, py, 0, SPRITE_FLAG_PRIO, renderQueue, 0, alpha)
+					Renderer.drawCustomSprite(stringformat("waterwaves_0%d", objA0.animation.sprite % 4), px + 0x20, py, 0, SPRITE_FLAG_PRIO, renderQueue, 0, 255 - alpha)
 				}
 			}
 			else
 			{
 				for (; px < s16(getScreenWidth()); px += 0x20)
 				{
-					Renderer.drawVdpSpriteWithAlpha(px, py, size, index, renderQueue, alpha)
+					Renderer.drawCustomSprite(stringformat("waterwaves_0%d", objA0.animation.sprite % 4), px, py, 0, SPRITE_FLAG_PRIO, renderQueue, 0, alpha)
 				}
 			}
 		}
@@ -1220,7 +1219,7 @@ function bool Standalone.onDrawVdpSpriteCompound(s16 px, s16 py, u8 size, u16 in
 	// SSZ clouds effect
 	if (objA0.update_address == 0x057bf6)
 	{
-		u8 alpha = Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) == 2 ? 255 : 140
+		u8 alpha = Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) == 3 ? 255 : 140
 
 		Renderer.drawVdpSpriteWithAlpha(px,   py, size, index, 0xd000, alpha)
 		if (Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) < 2)

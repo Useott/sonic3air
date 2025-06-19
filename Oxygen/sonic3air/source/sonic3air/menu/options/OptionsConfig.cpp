@@ -711,8 +711,8 @@ void OptionsConfig::buildTourOptions()
 		configBuilder.addSetting("Classic Transparency", option::CLASSIC_TRANSPARENCY)
 			.addOption("Disabled", 0)
 			.addOption("Shields only", 1)
-			.addOption("Shields and Afterimages only", 0)
-			.addOption("Full", 1);
+			.addOption("Shields and Afterimages", 2)
+			.addOption("Full", 3);
 	}
 
 	CATEGORY("Experimental")

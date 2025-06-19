@@ -346,10 +346,32 @@ function bool updateDebugModeInput(bool playingAsTails)
 		if (touchdebug.gravity_toggle == false)
 			control.pad1.pressed &= ~CONTROL_A
 
-		#if STANDALONE
-			// Stop vertical movement to make things better controllable
-			s16[0xffffb000 + 0x1a] = 0
-		#endif
+	#if STANDALONE
+		// Flip vertical movement and rotate characters
+		if (u8[0xffffb000 + 0x2a] & char.flag.FACING_LEFT)
+			u8[0xffffb000 + 0x2a] &= ~char.flag.FACING_LEFT
+		else u8[0xffffb000 + 0x2a] |= char.flag.FACING_LEFT
+
+		u8[0xffffb000 + 0x2a] |= char.flag.IN_AIR
+		s16[0xffffb000 + 0x1a] = -s16[0xffffb000 + 0x1a]
+		if (u8[0xffffb000 + 0x26] % 0x80 == 0)
+			u8[0xffffb000 + 0x26] -= 0x80
+
+		if (u8[0xffffb000 + 0x20] == char.state.STANDING)
+			u8[0xffffb000 + 0x20] = char.state.RUNNING
+
+		if (u8[0xffffb04a + 0x2a] & char.flag.FACING_LEFT)
+			u8[0xffffb04a + 0x2a] &= ~char.flag.FACING_LEFT
+		else u8[0xffffb04a + 0x2a] |= char.flag.FACING_LEFT
+
+		u8[0xffffb04a + 0x2a] |= char.flag.IN_AIR
+		s16[0xffffb04a + 0x1a] = -s16[0xffffb04a + 0x1a]
+		if (u8[0xffffb04a + 0x26] % 0x80  == 0)
+			u8[0xffffb04a + 0x26] += 0x80
+
+		if (u8[0xffffb04a + 0x20] == char.state.STANDING)
+			u8[0xffffb04a + 0x20] = char.state.RUNNING
+	#endif
 
 		touchdebug.gravity_toggle = 0
 	}
