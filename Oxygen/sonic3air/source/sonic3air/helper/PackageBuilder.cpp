@@ -18,8 +18,8 @@ void PackageBuilder::performPacking()
 	// Update metadata.json
 	String metadata;
 	metadata << "{\r\n"
-		<< "\t\"Game\" : \"Sonic 3 - Angel Island Revisited\",\r\n"
-		<< "\t\"Author\" : \"Eukaryot (original game by SEGA)\",\r\n"
+		<< "\t\"Game\" : \"Sonic 3 - Angel Island Tour\",\r\n"
+		<< "\t\"Author\" : \"Useott (Angel Island Revisited by Eukaryot, original game by SEGA)\",\r\n"
 		<< "\t\"Version\" : \"" << BUILD_STRING << "\",\r\n"
 		<< "\t\"GameAppBuild\" : \"" << rmx::hexString(BUILD_NUMBER, 8) << "\"\r\n"
 		<< "}\r\n";

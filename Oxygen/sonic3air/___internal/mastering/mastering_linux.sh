@@ -3,7 +3,7 @@
 pushd ../..
 
 DestDir=../_MASTER
-OutputDir=$DestDir/sonic3air_game
+OutputDir=$DestDir/angel_island_tour
 
 
 
@@ -66,8 +66,8 @@ cp -r _master_image_template $OutputDir
 cp data/images/icon.png $OutputDir/data/icon.png
 
 cp sonic3air_linux $OutputDir
-mv $OutputDir/sonic3air_linux angelislandtour_linux
-chmod +x $OutputDir/angelislandtour_linux
+chmod +x $OutputDir/sonic3air_linux
+mv --no-copy $OutputDir/sonic3air_linux $OutputDir/angelislandtour_linux
 #patchelf --set-rpath '$ORIGIN' $OutputDir/sonic3air_linux		# Not needed any more, see CMAKE_EXE_LINKER_FLAGS in CMakeLists.txt
 
 cp source/external/discord_game_sdk/lib/x86_64/libdiscord_game_sdk.so $OutputDir
@@ -104,7 +104,7 @@ echo
 echo Packing as tar.gz
 
 pushd $DestDir
-	tar -czvf angelislandtour.tar.gz angelislandtour
+	tar -czvf angel_island_tour.tar.gz angelislandtour
 popd
 
 
