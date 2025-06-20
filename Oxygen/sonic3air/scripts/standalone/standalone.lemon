@@ -92,7 +92,13 @@ function void waitForNextFrame()
 
 	// TODO: Unfinished feature
 	//// In certain parts of the game (title screen, rolling demo, continue screen, special stage results): Hide touch controls, but still react to touches
-	if (global.game_mode <= 0x08 || global.game_mode == 0x14 || global.game_mode == 0x48)
+	//if (global.game_mode <= 0x08 || global.game_mode == 0x14 || global.game_mode == 0x48)
+	//{
+	//	Input.setTouchInputMode(TOUCH_INPUT_MODE_FULLSCREEN_START)
+	//}
+
+	// Actually, just have this apply at the title screen and rolling demo -Use
+	if (global.game_mode <= 0x08 && global.demo_countdown)
 	{
 		Input.setTouchInputMode(TOUCH_INPUT_MODE_FULLSCREEN_START)
 	}
