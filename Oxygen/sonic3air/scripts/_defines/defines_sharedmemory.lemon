@@ -38,6 +38,8 @@ define touchdebug.gravity_toggle	= u8[0x801005]
 define touchdebug.selection_change	= s8[0x801006]
 define touchdebug.use_touch_controls= u8[0x801007]
 
+// Used in Act Select
+define global.started_from_act_select = u8[0x801008]
 
 // 0x801100 .. 0x8011ff
 // Additional save slots data, a block of 0x20 bytes for each of the 8 slots

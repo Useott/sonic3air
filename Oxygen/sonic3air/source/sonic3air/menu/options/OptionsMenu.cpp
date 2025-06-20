@@ -91,7 +91,9 @@ namespace
 		ConditionalOption(option::REGION,					 true),
 		ConditionalOption(option::GAME_SPEED,				 false, SharedDatabase::Secret::SECRET_GAME_SPEED),
 
-		ConditionalOption(option::SCREEN_SIZE,				 true)
+		ConditionalOption(option::SCREEN_SIZE,				 true),
+		ConditionalOption(option::CLASSIC_SHIELD_SPRITE,	 true),
+		ConditionalOption(option::ACT_SELECT_BIG_RINGS,		 true)
 	};
 }
 
@@ -206,6 +208,8 @@ OptionsMenu::OptionsMenu(MenuBackground& menuBackground) :
 		setupOptionEntry(option::SCREEN_SIZE,				SharedDatabase::Setting::SETTING_SCREEN_SIZE);
 		setupOptionEntry(option::CLASSIC_SHIELD_SPRITE,		SharedDatabase::Setting::SETTING_CLASSIC_SHIELD_SPRITE);
 		setupOptionEntry(option::CLASSIC_TRANSPARENCY,		SharedDatabase::Setting::SETTING_CLASSIC_TRANSPARENCY);
+		setupOptionEntry(option::WATERFALL_SFX,		SharedDatabase::Setting::SETTING_WATERFALL_SFX);
+		setupOptionEntry(option::ACT_SELECT_BIG_RINGS,		SharedDatabase::Setting::SETTING_ACT_SELECT_BIG_RINGS);
 
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ1,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ2,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);

@@ -54,6 +54,7 @@ function void EntryFunctions.actSelect()
 	EntryFunctions.sharedInit()
 	System.setupCallFrame("GameModeControlLoop", "@EntryPoint")
 	System.setupCallFrame("LevelSelect.startGame")
+	global.started_from_act_select = 1
 }
 
 function void EntryFunctions.extrasMenu()
@@ -102,6 +103,7 @@ function void EntryFunctions.sharedInit()
 #if GAMEAPP
 	// Disabled the muffled underwater sound effect in any case
 	Game.setUnderwaterAudioEffect(0)
+	global.started_from_act_select = 0
 	Renderer.setScreenSize(Game.getSetting(SETTING_SCREEN_SIZE) == 2 ? 448 : Game.getSetting(SETTING_SCREEN_SIZE) == 0 ? 320 : 400, 224)
 #endif
 }

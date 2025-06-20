@@ -713,6 +713,10 @@ void OptionsConfig::buildTourOptions()
 			.addOption("Shields only", 1)
 			.addOption("Shields and Afterimages", 2)
 			.addOption("Full", 3);
+
+		configBuilder.addSetting("Act Select Giant Rings", option::ACT_SELECT_BIG_RINGS)
+			.addOption("Disabled", 0)
+			.addOption("Warp to Special Stage", 1);
 	}
 
 	CATEGORY("Experimental")
@@ -721,6 +725,10 @@ void OptionsConfig::buildTourOptions()
 			.addOption("4:3", 0)
 			.addOption("16:9", 1)
 			.addOption("2:1", 2);
+
+		configBuilder.addSetting("Waterfall SFX", option::WATERFALL_SFX)
+			.addOption("Disabled", 0)
+			.addOption("Enabled", 1);
 	}
 }
 

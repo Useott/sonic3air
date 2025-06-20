@@ -6980,6 +6980,9 @@ function void Character.UpdateRestartDelay()
 #if STANDALONE
 function void Character.checkForWaterfall()
 {
+	if (Game.getSetting(SETTING_WATERFALL_SFX) == 0)
+		return
+
 	if (A0 != 0xffffb000)
 		return
 
@@ -6996,24 +6999,8 @@ function void Character.checkForWaterfall()
 		u32 chunkAddress = 0xffff0000 + u16[0xffff8008 + chunkRow * 4] + chunkColumn
 		u8 chunkType = u8[chunkAddress]
 
-		if (global.zone_act == 0x0000) // AIZ1
-		{
-			if (chunkType == 0x0d || chunkType == 0x0e || chunkType == 0x0f || chunkType == 0x56 || chunkType == 0x57 || chunkType == 0x7c || chunkType == 0x4f)
-				playWaterfallSound = true
-
-			//if (chunkType == 0x2d || chunkType == 0x55 || chunkType == 0x63 || chunkType == 0x64 || chunkType == 0x6b || chunkType == 0x6c || chunkType == 0x8b)
-			//	playWaterfallSound = 2
-		}
-		else if (global.zone_act == 0x0001) // AIZ2
-		{
-			if (chunkType == 0x0d || chunkType == 0x0e || chunkType == 0x0f || chunkType == 0x17 || chunkType == 0x80 || chunkType == 0x85 || chunkType == 0x86 || chunkType == 0x87 || chunkType == 0x89 || chunkType == 0xa2 || chunkType == 0xa5 || chunkType == 0xa8 || chunkType == 0xa9 || chunkType == 0xaa || chunkType == 0xab || chunkType == 0xbe || chunkType == 0xd3 || chunkType == 0xd9)
-				playWaterfallSound = true
-		}
-		else if (global.zone_act == 0x0100) // HCZ1
-		{
-			if (chunkType == 0x38 || chunkType == 0x39 || chunkType == 0x3e || chunkType == 0x83 || chunkType == 0x8a || chunkType == 0x92 || chunkType == 0x93 || chunkType == 0x94 || chunkType == 0x95 || chunkType == 0x99 || chunkType == 0x9a || chunkType == 0x9d || chunkType == 0x9e || chunkType == 0xa1 || chunkType == 0xa2 || chunkType == 0xa3 || chunkType == 0xa5 || chunkType == 0xa6 || chunkType == 0xa7 || chunkType == 0xba || chunkType == 0xbb || chunkType == 0xbf || chunkType == 0xc0 || chunkType == 0xc1 || chunkType == 0xd6)
-				playWaterfallSound = true
-		}
+		if (playWaterfallSound != 1)
+			playWaterfallSound = getWaterfallChunksPerZone(chunkType)
 
 		//debugDrawRect(chunkColumn * 128, chunkRow * 128, 128, 128, 0x600000ff)
 	}
@@ -7024,4 +7011,28 @@ function void Character.checkForWaterfall()
 		playSound(0xbc)
 	}
 }
+
+function bool getWaterfallChunksPerZone(u8 chunkType)
+{
+	if (global.zone_act == 0x0000) // AIZ1
+	{
+		if (chunkType == 0x0d || chunkType == 0x0e || chunkType == 0x0f || chunkType == 0x56 || chunkType == 0x57 || chunkType == 0x7c || chunkType == 0x4f)
+			return true
+
+		//if (chunkType == 0x2d || chunkType == 0x55 || chunkType == 0x63 || chunkType == 0x64 || chunkType == 0x6b || chunkType == 0x6c || chunkType == 0x8b)
+		//	return 2
+	}
+	else if (global.zone_act == 0x0001) // AIZ2
+	{
+		if (chunkType == 0x0d || chunkType == 0x0e || chunkType == 0x0f || chunkType == 0x17 || chunkType == 0x80 || chunkType == 0x85 || chunkType == 0x86 || chunkType == 0x87 || chunkType == 0x89 || chunkType == 0xa2 || chunkType == 0xa5 || chunkType == 0xa8 || chunkType == 0xa9 || chunkType == 0xaa || chunkType == 0xab || chunkType == 0xbe || chunkType == 0xd3 || chunkType == 0xd9)
+			return true
+	}
+	else if (global.zone_act == 0x0100) // HCZ1
+	{
+		if (chunkType == 0x38 || chunkType == 0x39 || chunkType == 0x3e || chunkType == 0x83 || chunkType == 0x8a || chunkType == 0x92 || chunkType == 0x93 || chunkType == 0x94 || chunkType == 0x95 || chunkType == 0x99 || chunkType == 0x9a || chunkType == 0x9d || chunkType == 0x9e || chunkType == 0xa1 || chunkType == 0xa2 || chunkType == 0xa3 || chunkType == 0xa5 || chunkType == 0xa6 || chunkType == 0xa7 || chunkType == 0xba || chunkType == 0xbb || chunkType == 0xbf || chunkType == 0xc0 || chunkType == 0xc1 || chunkType == 0xd6)
+			return true
+	}
+	return false
+}
+
 #endif
