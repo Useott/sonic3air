@@ -269,7 +269,9 @@ function void Character.UpdateNormalState.Sonic()
 #if STANDALONE
 	if (Game.getSetting(SETTING_DROPDASH) && !competition_mode.active)
 	{
-		if (sonic.dropdash_counter > 0)
+		if (Game.getSetting(SETTING_DROPDASH) == 2 && (char.bonus_effect & char.bonus.ANY_SHIELD) == 0)
+			sonic.dropdash_counter = 0
+		else if (sonic.dropdash_counter > 0)
 		{
 			// Check if hit the ground with drop dash charged
 			if ((sonic.dropdash_counter == DROPDASH_FULLCHARGE) && (char.flags & char.flag.IN_AIR) == 0)
@@ -2816,6 +2818,9 @@ function void Character.updateJumpMoves()
 				//  -> Can only be charged if there is no shield active (only exception: drop dash charge started already, when shield gets active -- this reflects Sonic Mania's behavior)
 				//  -> But can be charged if invincible (incl. Super / Hyper Sonic)
 				bool chargeDropDash = (control.player1.state & CONTROL_ABC) && ((char.bonus_effect & char.bonus.ELEMENTAL_SHIELDS) == 0 || (char.bonus_effect & char.bonus.INVINCIBLE) || sonic.dropdash_counter > 0) && char.double_jump_state
+				if (Game.getSetting(SETTING_DROPDASH) == 2 && (char.bonus_effect & char.bonus.ANY_SHIELD) == 0)
+					chargeDropDash = false
+
 				if (chargeDropDash)
 				{
 					if (sonic.dropdash_counter < DROPDASH_FULLCHARGE)

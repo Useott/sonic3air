@@ -479,7 +479,9 @@ void OptionsConfig::buildControls()
 	{
 		configBuilder.addSetting("Sonic Drop Dash:", option::DROP_DASH)
 			.addOption("Off", 0)
-			.addOption("On", 1);
+			.addOption("On", 1)
+			.addOption("Classic Shield Only", 2
+			);
 
 		configBuilder.addSetting("Sonic Super Peel-Out:", option::SUPER_PEELOUT)
 			.addOption("Off", 0)
