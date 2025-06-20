@@ -775,7 +775,8 @@ function void fn0048dc()
 		}
 
 	#if GAMEAPP
-		Renderer.drawCustomSprite("title_screen_start", getScreenWidth() / 2, 208 + max((50 - time) * 2, 0), 0x00, 0, 0x9f7e)
+		u64 key = System.hasPlatformFlag(PlatformFlags.MOBILE) ? "title_screen_start_touch" : "title_screen_start"
+		Renderer.drawCustomSprite(key, getScreenWidth() / 2, 208 + max((50 - time) * 2, 0), 0x00, 0, 0x9f7e)
 	#endif
 	}
 
