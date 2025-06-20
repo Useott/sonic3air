@@ -68,6 +68,7 @@ bool ConfigurationImpl::loadConfigurationInternal(JsonSerializer& serializer)
 	// Add special preprocessor define
 	//  -> Used to query whether it's the game build (i.e. not the Oxygen App), and to get its build number
 	mPreprocessorDefinitions.setDefinition("GAMEAPP", BUILD_NUMBER);
+	mPreprocessorDefinitions.setDefinition("ANGELISLANDTOUR", 1);
 
 	// Setup the default game profile data accordingly
 	fillDefaultGameProfile(GameProfile::instance());
