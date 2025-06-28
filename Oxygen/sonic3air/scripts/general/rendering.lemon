@@ -341,6 +341,13 @@ function void renderNextObject()
 			Renderer.setSpriteTagWithPosition(A0, D0.u16 - 0x80, D1.u16 - 0x80)
 		else
 			Renderer.clearSpriteTag()
+		// A few UI elements
+		if (objA0.update_address == 0x02d95c || objA0.update_address == addressof(TitleCard.RedBarElement.Update) || objA0.update_address == 0x02dd98)
+		{
+			renderQueue += 0x4000
+			if (objA0.update_address == 0x02dd98)
+				renderQueue += 0x20
+		}
 		if (Standalone.onWriteToSpriteTable(D0.u16 - 0x80, D1.u16 - 0x80, renderQueue))
 			return
 	#else

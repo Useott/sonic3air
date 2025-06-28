@@ -209,7 +209,6 @@ function bool Standalone.onWriteToSpriteTable(s16 px, s16 py, u16 renderQueue)
 	// Level results texts
 	if (objA0.update_address == 0x02dd98)
 	{
-		renderQueue += 0x4020
 		if (objA0.animation.sprite == 0x0b)
 		{
 			HUD.drawSprite(getCharacterBonusTextIcon(getMainCharacter()), px+36, py-5, renderQueue-1)
@@ -1072,6 +1071,41 @@ function bool Standalone.onDrawVdpSprite(s16 px, s16 py, u8 size, u16 index, u16
 		return true
 	}
 
+	// AIZ 1 boss flamethrower flame
+	if (objA0.mapping_offset == 0x36165c && Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) < 3)
+	{
+		if (objA0.animation.frame == 0)		// Actually the last frame before removal
+		{
+			Renderer.drawVdpSpriteWithAlpha(px, py, size, index, renderQueue, 64)
+			Renderer.drawVdpSpriteWithAlpha(px+1, py, size, index, renderQueue, 64)
+		}
+		else if (objA0.animation.frame == 0x0a)
+		{
+			Renderer.drawVdpSpriteWithAlpha(px, py, size, index, renderQueue, 112)
+			Renderer.drawVdpSpriteWithAlpha(px+1, py, size, index, renderQueue, 112)
+		}
+		else
+		{
+			Renderer.drawVdpSpriteWithAlpha(px, py, size, index, renderQueue, 255)
+		}
+		return true
+	}
+
+	// AIZ 2 Bomber explosions
+	if (objA0.mapping_offset == 0x23c1b2 && Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) < 3)
+	{
+		if (objA0.animation.frame == 0x05 || objA0.animation.frame == 0x06)
+		{
+			Renderer.drawVdpSpriteWithAlpha(px, py, size, index, renderQueue, 112)
+			Renderer.drawVdpSpriteWithAlpha(px+1, py, size, index, renderQueue, 112)
+		}
+		else
+		{
+			Renderer.drawVdpSpriteWithAlpha(px, py, size, index, renderQueue, 255)
+		}
+		return true
+	}
+
 	// Bugernaut wings
 	if (objA0.update_address == 0x087a2a && size != 0x09 && Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) < 3)
 	{
@@ -1345,14 +1379,6 @@ function bool Standalone.onDrawVdpSpriteCompound(s16 px, s16 py, u8 size, u16 in
 	if (objA0.update_address == 0x059208)
 	{
 		Renderer.drawVdpSprite(px, py, size, index, 0x1700)
-	}
-
-	// Level results texts
-	if (objA0.update_address == 0x02dd98)
-	{
-		renderQueue += 0x4020
-		Renderer.drawVdpSprite(px, py, size, index, renderQueue)
-		return true
 	}
 
 	return false
