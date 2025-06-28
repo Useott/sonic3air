@@ -947,52 +947,109 @@ function bool Standalone.onWriteToSpriteTable(s16 px, s16 py, u16 renderQueue)
 		return true
 	}
 
+	// The Tornado's shadow
+	if (objA0.update_address == makeCallable(TornadoShadow.Update))
+	{
+		s8 dist = (u16[0xffff0000 + u16[A0 + 0x46] + 0x14] - 0x0114) / 2
+
+		if (objA0.subtype2c == 1)
+		{
+			dist = (u16[0xffff0000 + u16[A0 + 0x46] + 0x14] - 0x106) / 2
+			if (u8[0xffff0000 + u16[A0 + 0x46] + 0x22] >= 0x05)
+				dist = 1
+		}
+
+		if (dist > 4)
+			dist = 0x103 - dist
+		else dist = 0x04 - dist
+
+		if (dist < 0)
+			dist = 0
+
+		if (dist > 16)
+			return true
+
+		px -= 16
+		if (objA0.subtype2c == 1)
+		{
+			if (u8[0xffff0000 + u16[A0 + 0x46] + 0x22] >= 0x05)
+				px -= 16
+			else if (u8[0xffff0000 + u16[A0 + 0x46] + 0x2c] == 0x41)
+				return true
+		}
+
+		u8 alpha = 0x7f
+		if (Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) == 3)
+			alpha = level.framecounter % 2 ? 0xff : 0
+
+		if (objA0.subtype2c != 1)
+		{
+			if (dist == 0)
+			{
+				Renderer.drawVdpSpriteWithAlpha(px - 32, py, 45, 1428, renderQueue, alpha)
+				Renderer.drawVdpSpriteWithAlpha(px, py, 45, 1432, renderQueue, alpha)
+				Renderer.drawVdpSpriteWithAlpha(px + 32, py, 45, 1428 | sprite_attribute.FLIP_X, renderQueue, alpha)
+			}
+			else if (dist == 1)
+			{
+				Renderer.drawVdpSpriteWithAlpha(px - 16, py, 45, 1442, renderQueue, alpha)
+				Renderer.drawVdpSpriteWithAlpha(px + 16, py, 45, 1442 | sprite_attribute.FLIP_X, renderQueue, alpha)
+			}
+			else if (dist == 2)
+			{
+				px += 4
+				py += 4
+				Renderer.drawVdpSpriteWithAlpha(px - 12, py, 8, 1450, renderQueue, alpha)
+				Renderer.drawVdpSpriteWithAlpha(px + 12, py, 8, 1450 | sprite_attribute.FLIP_X, renderQueue, alpha)
+			}
+			else
+			{
+				px += 8
+				py += 4
+				Renderer.drawVdpSpriteWithAlpha(px - 8, py, 4, 1454, renderQueue, alpha)
+				Renderer.drawVdpSpriteWithAlpha(px + 8, py, 4, 1454 | sprite_attribute.FLIP_X, renderQueue, alpha)
+			}
+		}
+		else
+		{
+			u16 prio = u8[0xffff0000 + u16[A0 + 0x46] + 0x2c] != 0 ? sprite_attribute.PRIORITY : 0
+			if (dist == 0)
+			{
+				Renderer.drawVdpSpriteWithAlpha(px - 32, py, 45, 599 | prio, renderQueue, alpha)
+				Renderer.drawVdpSpriteWithAlpha(px, py, 5, 603 | prio, renderQueue, alpha)
+				Renderer.drawVdpSpriteWithAlpha(px + 16, py, 5, 603 | prio, renderQueue, alpha)
+				Renderer.drawVdpSpriteWithAlpha(px + 32, py, 45, 599 | sprite_attribute.FLIP_X | prio, renderQueue, alpha)
+			}
+			else if (dist == 1)
+			{
+				Renderer.drawVdpSpriteWithAlpha(px - 16, py, 45, 607 | prio, renderQueue, alpha)
+				Renderer.drawVdpSpriteWithAlpha(px + 16, py, 45, 607 | sprite_attribute.FLIP_X | prio, renderQueue, alpha)
+			}
+			else if (dist == 2)
+			{
+				px += 4
+				py += 4
+				Renderer.drawVdpSpriteWithAlpha(px - 12, py, 8, 615 | prio, renderQueue, alpha)
+				Renderer.drawVdpSpriteWithAlpha(px + 12, py, 8, 615 | sprite_attribute.FLIP_X | prio, renderQueue, alpha)
+			}
+			else
+			{
+				px += 8
+				py += 4
+				Renderer.drawVdpSpriteWithAlpha(px - 8, py, 4, 619 | prio, renderQueue, alpha)
+				Renderer.drawVdpSpriteWithAlpha(px + 8, py, 4, 619 | sprite_attribute.FLIP_X | prio, renderQueue, alpha)
+			}
+		}
+
+		return true
+	}
+
 	return false
 }
 
 
 function bool Standalone.onDrawVdpSprite(s16 px, s16 py, u8 size, u16 index, u16 renderQueue)
 {
-	// The Tornado's shadow in the AIZ 1 intro
-	if (objA0.update_address == 0x06784a)
-	{
-		A1 = 0xffff0000 + u16[A0 + 0x46]
-
-		u8 dist = (objA1.position.y.u16 - 0x0114) / 2
-		if (dist > 4)
-			dist = 0x103 - dist
-		else dist = 0x04 - dist
-
-		if (dist > 16)
-			return false
-
-		u8 alpha = 0x7f
-		if (Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) == 3)
-			alpha = level.framecounter % 2 ? 0xff : 0
-
-		if (dist == 0)
-		{
-			Renderer.drawVdpSpriteWithAlpha(px - 100, 0xc0, 45, 1428, renderQueue, alpha)
-			Renderer.drawVdpSpriteWithAlpha(px - 68, 0xc0, 45, 1432, renderQueue, alpha)
-			Renderer.drawVdpSpriteWithAlpha(px - 36, 0xc0, 45, 1428 | sprite_attribute.FLIP_X, renderQueue, alpha)
-		}
-		else if (dist == 1)
-		{
-			Renderer.drawVdpSpriteWithAlpha(px - 84, 0xc0, 45, 1442, renderQueue, alpha)
-			Renderer.drawVdpSpriteWithAlpha(px - 52, 0xc0, 45, 1442 | sprite_attribute.FLIP_X, renderQueue, alpha)
-		}
-		else if (dist == 2)
-		{
-			Renderer.drawVdpSpriteWithAlpha(px - 78, 0xc4, 8, 1450, renderQueue, alpha)
-			Renderer.drawVdpSpriteWithAlpha(px - 54, 0xc4, 8, 1450 | sprite_attribute.FLIP_X, renderQueue, alpha)
-		}
-		else
-		{
-			Renderer.drawVdpSpriteWithAlpha(px - 70, 0xc4, 4, 1454, renderQueue, alpha)
-			Renderer.drawVdpSpriteWithAlpha(px - 54, 0xc4, 4, 1454 | sprite_attribute.FLIP_X, renderQueue, alpha)
-		}
-	}
-
 	// Explosion of bosses
 	if (objA0.mapping_offset == 0x083ffc && Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) < 3)
 	{
@@ -1178,58 +1235,6 @@ function bool Standalone.onDrawVdpSpriteCompound(s16 px, s16 py, u8 size, u16 in
 		else if (index == (sprite_attribute.PRIORITY | sprite_attribute.PALETTE.LINE1 | 0x034e))	// Ignore right part of broken "Del" sign
 		{
 			return true
-		}
-	}
-
-	// The Tornado's shadow in Sonic's ending
-	if (objA0.update_address == 0x05ea52)
-	{
-		if (index != 0x8245 && index != 0x0a45)
-			return false
-
-		u8 dist = (camera.background.y.u16 + objA0.position.y.u16 - 0x03e4) / 2
-		if (index == 0x0a45)
-		{
-			dist = (camera.background.y.u16 + objA0.position.y.u16 - 0x03e6) / 2
-			A1 = 0xffffb000
-			if ((objA1.render_flags & render_flag.FLIP_X) == 0)
-				dist = (camera.background.y.u16 + objA0.position.y.u16 - 0x03ea) / 2
-		}
-
-		if (dist > 5)
-			dist = 0x103 - dist
-		else dist = 0x04 - dist
-
-		if (dist > 16)
-			return false
-
-		u8 alpha = 0x7f
-		if (Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) == 3)
-			alpha = level.framecounter % 2 ? 0xff : 0
-
-		u8 offset = index == 0x0a45 ? 86 : 0
-
-		if (dist == 0)
-		{
-			Renderer.drawVdpSpriteWithAlpha(px - 80 + offset, s16(-camera.background.y.u16) + 0x3a0, 45, 599, renderQueue, alpha)
-			Renderer.drawVdpSpriteWithAlpha(px - 48 + offset, s16(-camera.background.y.u16) + 0x3a0, 5, 603, renderQueue, alpha)
-			Renderer.drawVdpSpriteWithAlpha(px - 32 + offset, s16(-camera.background.y.u16) + 0x3a0, 5, 603, renderQueue, alpha)
-			Renderer.drawVdpSpriteWithAlpha(px - 16 + offset, s16(-camera.background.y.u16) + 0x3a0, 45, 599 | sprite_attribute.FLIP_X, renderQueue, alpha)
-		}
-		else if (dist == 1)
-		{
-			Renderer.drawVdpSpriteWithAlpha(px - 60 + offset, s16(-camera.background.y.u16) + 0x3a0, 45, 607, renderQueue, alpha)
-			Renderer.drawVdpSpriteWithAlpha(px - 28 + offset, s16(-camera.background.y.u16) + 0x3a0, 45, 607 | sprite_attribute.FLIP_X, renderQueue, alpha)
-		}
-		else if (dist == 2)
-		{
-			Renderer.drawVdpSpriteWithAlpha(px - 52 + offset, s16(-camera.background.y.u16) + 0x3a4, 8, 615, renderQueue, alpha)
-			Renderer.drawVdpSpriteWithAlpha(px - 28 + offset, s16(-camera.background.y.u16) + 0x3a4, 8, 615 | sprite_attribute.FLIP_X, renderQueue, alpha)
-		}
-		else
-		{
-			Renderer.drawVdpSpriteWithAlpha(px - 46 + offset, s16(-camera.background.y.u16) + 0x3a4, 4, 619, renderQueue, alpha)
-			Renderer.drawVdpSpriteWithAlpha(px - 30 + offset, s16(-camera.background.y.u16) + 0x3a4, 4, 619 | sprite_attribute.FLIP_X, renderQueue, alpha)
 		}
 	}
 

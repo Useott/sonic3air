@@ -373,6 +373,15 @@ function void fn05ea74()
 		}
 	}
 
+#if STANDALONE
+	if (allocDynamicObjectStd())
+	{
+		objA1.update_address = makeCallable(TornadoShadow.Init)		// Plane shadow
+		objA1.subtype2c = 1
+		u16[A1 + 0x46] = A0.u16
+	}
+#endif
+
 	if (isMainCharacter(CHARACTER_TAILS))
 	{
 		u8[A0 + 0x43] -= 4

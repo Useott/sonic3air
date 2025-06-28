@@ -352,6 +352,9 @@ function void fn06777a()
 	// "spawnChildObjects(0x067a62)" replaced by:
 	spawnChildObject(0x067824, 0x00, 56, 4)			// Plane propeller blades
 	spawnChildObject(0x067862, 0x02, 24, 24)		// Plane belly rocket
+#if STANDALONE
+	spawnChildObject(makeCallable(TornadoShadow.Init), 4, 0, 0)		// Plane shadow
+#endif
 }
 
 
@@ -847,3 +850,34 @@ function void fn061eec()
 		objA1.update_address = 0x085b0a
 	}
 }
+
+#if STANDALONE
+
+function void TornadoShadow.Init()
+{
+	objA0.sprite_priority = 0x0280
+	objA0.box_size.x = 32
+	objA0.box_size.y = 4
+	objA0.update_address = makeCallable(TornadoShadow.Update)
+	TornadoShadow.Update()
+}
+
+function void TornadoShadow.Update()
+{
+	if (objA0.subtype2c == 1)
+	{
+		objA0.position.x.u16 = u16[0xffff0000 + u16[A0 + 0x46] + 0x10]
+		objA0.position.y.u16 = 0x420 - camera.background.y.u16
+		objA0.render_flags = render_flag.VISIBLE
+
+		DrawObject()
+	}
+	else
+	{
+		MoveWithParent()
+		objA0.position.y.u16 = 0x138
+		Child.DrawSprite()
+	}
+}
+
+#endif
