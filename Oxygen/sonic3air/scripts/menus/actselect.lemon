@@ -154,6 +154,11 @@ function string ActSelect.GetEmeraldStatusName(u8 emeraldstatus)
 	return emeraldstatus == 2 ? "All Super Emeralds" : emeraldstatus == 1 ? "All Chaos Emeralds" : "No emeralds"
 }
 
+function u8 ActSelect.GetNumEmeraldTypes()
+{
+	return 2
+}
+
 
 function void ActSelect.HandleFadeIn(u8 fadeInMethod, u32 frameCounter)
 {
@@ -247,7 +252,7 @@ function void ActSelect.DrawMenu(u8 selectedEntry, u8 selectedZone, u8 selectedA
 		{
 			text = ActSelect.GetEmeraldStatusName(global.traded_emeralds)
 			canGoLeft = (global.traded_emeralds > 0)
-			canGoRight = (global.traded_emeralds < 2)
+			canGoRight = (global.traded_emeralds < ActSelect.GetNumEmeraldTypes())
 		}
 		else
 		{
@@ -476,7 +481,7 @@ function void ActSelect.Menu(u8 fadeInMethod)
 			}
 			else if (selectedEntry == 3 && Game.isSecretUnlocked(SECRET_EMERALD_SELECT))
 			{
-				global.traded_emeralds = clamp(global.traded_emeralds + optionChange, 0, 2)
+				global.traded_emeralds = clamp(global.traded_emeralds + optionChange, 0, ActSelect.GetNumEmeraldTypes())
 			}
 
 			if (selectedZone != oldZone || selectedAct != oldAct)
