@@ -6529,6 +6529,9 @@ function void Character.UpdateGotHurtState.Sonic()
 	if (debugModeRescue())
 		return
 
+	if (updateDebugModeInput(false))
+		return
+
 	UpdateMovementStraight()
 	char.velocity.y += (char.flags & char.flag.UNDERWATER) ? 0x10 : 0x30
 
@@ -6577,6 +6580,9 @@ function void Character.UpdateGotHurtState.Tails()
 	if (isMainCharacter(CHARACTER_TAILS))
 	{
 		if (debugModeRescue())
+			return
+
+		if (updateDebugModeInput(false))
 			return
 	}
 
@@ -6627,6 +6633,9 @@ function void TailsUpdateAnimationHurt()
 function void Character.UpdateGotHurtState.Knuckles()
 {
 	if (debugModeRescue())
+		return
+
+	if (updateDebugModeInput(false))
 		return
 
 	UpdateMovementStraight()
