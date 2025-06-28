@@ -124,11 +124,11 @@ function void FadeInPalette()
 	}
 
 	if (globalComponentTintColorB < 0xff)
-		globalComponentTintColorB = min(globalComponentTintColorB + 0x25, 0xff)
-	else if (globalComponentTintColorG < 0xff)
-		globalComponentTintColorG = min(globalComponentTintColorG + 0x25, 0xff)
-	else if (globalComponentTintColorR < 0xff)
-		globalComponentTintColorR = min(globalComponentTintColorR + 0x25, 0xff)
+		globalComponentTintColorB = min(globalComponentTintColorB + 0x12, 0xff)
+	if (globalComponentTintColorG < 0xff)
+		globalComponentTintColorG = min(globalComponentTintColorG + 0x12, 0xff)
+	if (globalComponentTintColorR < 0xff)
+		globalComponentTintColorR = min(globalComponentTintColorR + 0x12, 0xff)
 #endif
 }
 
@@ -145,17 +145,20 @@ function void FadeInColor()
 		if (target & 0x8000)
 		{
 			color = makeExtendedPackedColor(color)
-			if ((color & 0x7c00) < (target & 0x7c00))
+			if (globalComponentTintColorB % 0x24 == 0 && globalComponentTintColorB != 0)
 			{
-				color += min((target & 0x7c00) - (color & 0x7c00), 0x1000)
-			}
-			else if ((color & 0x03e0) < (target & 0x03e0))
-			{
-				color += min((target & 0x03e0) - (color & 0x03e0), 0x0080)
-			}
-			else if ((color & 0x001f) < (target & 0x001f))
-			{
-				color += min((target & 0x001f) - (color & 0x001f), 0x0004)
+				if ((color & 0x7c00) < (target & 0x7c00))
+				{
+					color += min((target & 0x7c00) - (color & 0x7c00), 0x1000)
+				}
+				if ((color & 0x03e0) < (target & 0x03e0))
+				{
+					color += min((target & 0x03e0) - (color & 0x03e0), 0x0080)
+				}
+				if ((color & 0x001f) < (target & 0x001f))
+				{
+					color += min((target & 0x001f) - (color & 0x001f), 0x0004)
+				}
 			}
 		}
 		else
@@ -163,7 +166,11 @@ function void FadeInColor()
 		{
 		#if STANDALONE
 			color = makeNormalPackedColor(color)
-		#endif
+			u16 b = Math.lerp(0, target / 0x100, float(globalComponentTintColorB) / 255.0f)
+			u16 g = Math.lerp(0, u16(u8(target)) / 0x10, float(globalComponentTintColorG) / 255.0f)
+			u16 r = Math.lerp(0, target & 0x0f, float(globalComponentTintColorR) / 255.0f)
+			color = (b * 0x100) + (g * 0x10) + r
+		#else
 			if (color + 0x0200 <= target)
 			{
 				color += 0x0200
@@ -173,12 +180,10 @@ function void FadeInColor()
 				color += 0x0020
 			}
 			else
-		#if STANDALONE	// The original game does not perform this check, though there are situations where color is larger than target from the start (SSZ start)
-			if (color + 0x0002 <= target)
-		#endif
 			{
 				color += 0x0002
 			}
+		#endif
 		}
 		u16[A0] = color
 	}
@@ -320,18 +325,18 @@ function void FadeOutPalette()
 	}
 
 	if (globalComponentTintColorR > 0)
-		globalComponentTintColorR = max(globalComponentTintColorR - 0x25, 0)
-	else if (globalComponentTintColorG > 0)
-		globalComponentTintColorG = max(globalComponentTintColorG - 0x25, 0)
-	else if (globalComponentTintColorB > 0)
-		globalComponentTintColorB = max(globalComponentTintColorB - 0x25, 0)
+		globalComponentTintColorR = max(globalComponentTintColorR - 0x12, 0)
+	if (globalComponentTintColorG > 0)
+		globalComponentTintColorG = max(globalComponentTintColorG - 0x12, 0)
+	if (globalComponentTintColorB > 0)
+		globalComponentTintColorB = max(globalComponentTintColorB - 0x12, 0)
 
 	if (globalComponentAddedColorR > 0)
-		globalComponentAddedColorR = max(globalComponentAddedColorR - 0x25, 0)
-	else if (globalComponentAddedColorG > 0)
-		globalComponentAddedColorG = max(globalComponentAddedColorG - 0x25, 0)
-	else if (globalComponentAddedColorB > 0)
-		globalComponentAddedColorB = max(globalComponentAddedColorB - 0x25, 0)
+		globalComponentAddedColorR = max(globalComponentAddedColorR - 0x12, 0)
+	if (globalComponentAddedColorG > 0)
+		globalComponentAddedColorG = max(globalComponentAddedColorG - 0x12, 0)
+	if (globalComponentAddedColorB > 0)
+		globalComponentAddedColorB = max(globalComponentAddedColorB - 0x12, 0)
 #endif
 }
 
@@ -345,6 +350,14 @@ function void FadeOutColor()
 #endif
 	if (color != 0)
 	{
+	#if STANDALONE
+		if (color & 0x000e)
+			color -= 0x0001
+		if (color & 0x00e0)
+			color -= 0x0010
+		if (color & 0x0e00)
+			color -= 0x0100
+	#else
 		if (color & 0x000e)
 		{
 			color -= 0x0002
@@ -357,6 +370,7 @@ function void FadeOutColor()
 		{
 			color -= 0x0200
 		}
+	#endif
 		u16[A0] = color
 	}
 	A0 += 2
@@ -507,18 +521,18 @@ function void FadePaletteToWhite()
 	}
 
 	if (globalComponentTintColorR > 0)
-		globalComponentTintColorR = max(globalComponentTintColorR - 0x25, 0)
-	else if (globalComponentTintColorG > 0)
-		globalComponentTintColorG = max(globalComponentTintColorG - 0x25, 0)
-	else if (globalComponentTintColorB > 0)
-		globalComponentTintColorB = max(globalComponentTintColorB - 0x25, 0)
+		globalComponentTintColorR = max(globalComponentTintColorR - 0x12, 0)
+	if (globalComponentTintColorG > 0)
+		globalComponentTintColorG = max(globalComponentTintColorG - 0x12, 0)
+	if (globalComponentTintColorB > 0)
+		globalComponentTintColorB = max(globalComponentTintColorB - 0x12, 0)
 
 	if (globalComponentAddedColorR < 0xff)
-		globalComponentAddedColorR = min(globalComponentAddedColorR + 0x25, 0xff)
-	else if (globalComponentAddedColorG < 0xff)
-		globalComponentAddedColorG = min(globalComponentAddedColorG + 0x25, 0xff)
-	else if (globalComponentAddedColorB < 0xff)
-		globalComponentAddedColorB = min(globalComponentAddedColorB + 0x25, 0xff)
+		globalComponentAddedColorR = min(globalComponentAddedColorR + 0x12, 0xff)
+	if (globalComponentAddedColorG < 0xff)
+		globalComponentAddedColorG = min(globalComponentAddedColorG + 0x12, 0xff)
+	if (globalComponentAddedColorB < 0xff)
+		globalComponentAddedColorB = min(globalComponentAddedColorB + 0x12, 0xff)
 #endif
 }
 
@@ -532,6 +546,14 @@ function void FadeColorToWhite()
 #endif
 	if (color != 0x0eee)
 	{
+	#if STANDALONE
+		if ((color & 0x000e) != 0x000e)
+			color += 0x0001
+		if ((color & 0x00e0) != 0x00e0)
+			color += 0x0010
+		if ((color & 0x0e00) != 0x0e00)
+			color += 0x0100
+	#else
 		if ((color & 0x000e) != 0x000e)
 		{
 			color += 0x0002
@@ -544,6 +566,7 @@ function void FadeColorToWhite()
 		{
 			color += 0x0200
 		}
+	#endif
 		u16[A0] = color
 	}
 	A0 += 2

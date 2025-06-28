@@ -162,12 +162,12 @@ function u8 ActSelect.GetNumEmeraldTypes()
 
 function void ActSelect.HandleFadeIn(u8 fadeInMethod, u32 frameCounter)
 {
-	if (fadeInMethod == 1 && frameCounter <= 0x18)
+	if (fadeInMethod == 1 && frameCounter <= 0x20)
 	{
 		// Fade from black
-		u16 blendFactorR = clamp(s32(frameCounter - 0x08) * 0x14, 0, 0x100)
-		u16 blendFactorG = clamp(s32(frameCounter - 0x04) * 0x14, 0, 0x100)
-		u16 blendFactorB = clamp(    frameCounter         * 0x14, 0, 0x100)
+		u16 blendFactorR = clamp(frameCounter * 12, 0, 0x100)
+		u16 blendFactorG = clamp(frameCounter * 12, 0, 0x100)
+		u16 blendFactorB = clamp(frameCounter * 12, 0, 0x100)
 
 		for (u32 i = 0; i < 0x20; ++i)
 		{
