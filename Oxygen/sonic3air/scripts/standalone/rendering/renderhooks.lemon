@@ -98,6 +98,8 @@ function bool Standalone.onWriteToSpriteTable(s16 px, s16 py, u16 renderQueue)
 	// MGZ chained spike ball
 	if (objA0.mapping_offset == 0x233572 && objA0.animation.sprite == 0x03)
 	{
+		if (u8[A0 + 0x34] <= 0x7f)
+			prioFlag = true
 		Renderer.drawSpriteTinted("mgz_chainspikeball", px, py, 0x10, prioFlag ? SPRITE_FLAG_PRIO : 0, renderQueue, 0, 0xffffffff, 1.0f - 0.25f * Math.sin(2.0f * 3.1415f * 128.0f * float(u8[A0 + 0x34])))
 		return true
 	}
