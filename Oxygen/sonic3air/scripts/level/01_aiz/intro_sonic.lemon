@@ -40,7 +40,15 @@ function void fn067472()
 	call tableLookupAddress(0x067490, objA0.base_state)
 
 	UpdateSonicSpritePatterns()
+#if STANDALONE
+	if (objA0.base_state <= 0x10)
+		u16[A0 + 0x40] = 0x08
 	fn067a08()
+	if (objA0.base_state <= 0x10)
+		u16[A0 + 0x40] = 0x10
+#else
+	fn067a08()
+#endif
 	DrawObject()
 }
 
@@ -74,6 +82,7 @@ function void fn0674ac()
 #if STANDALONE
 	objA1.position.x.u16 = getScreenWidth() / 2
 	Game.startSkippableCutscene()
+	u16[0xffffeeb6] += 0x700 // The Tornado is a little slower now, so we gotta increase this to compensate
 #endif
 }
 

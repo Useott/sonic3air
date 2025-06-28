@@ -385,7 +385,8 @@ function void DataSelect.setup()
 	//u8[0xffffffff] = 12		// No worries, this RAM address is safe to use
 	//camera.foreground.x.u16 -= 360
 
-	// Check save slots to unlock DDZ in Act Select when DDZ was reached once
+	// Check save slots to unlock DDZ in Act Select when DDZ was reached once, and emerald selection if at least 3 slots are complete with all Super Emeralds
+	u8 numberOfSuperEmeraldSlots
 	for (u32 slotIndex = 0; slotIndex < 8; ++slotIndex)
 	{
 		u32 slotAddress = 0xffffe6ac + slotIndex * 0x0a
@@ -397,6 +398,12 @@ function void DataSelect.setup()
 				Game.setSecretUnlocked(SECRET_DOOMSDAY_ZONE)
 			}
 		}
+		if (u8[slotAddress + 0x00] == 3)
+			numberOfSuperEmeraldSlots += 1
+
+		if (numberOfSuperEmeraldSlots >= 3)
+			Game.setSecretUnlocked(SECRET_EMERALD_SELECT)
+
 	}
 
 	// Load characters extended palettes

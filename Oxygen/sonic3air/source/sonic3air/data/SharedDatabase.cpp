@@ -107,6 +107,7 @@ void SharedDatabase::initialize()
 		addSecret(Secret::SECRET_TITLE_SK,			true,  true,  true,   0, "Sonic & Knuckles Title", "You can now select the Sonic & Knuckles title screen in the Options menu.", "title_sk");
 		addSecret(Secret::SECRET_GAME_SPEED,		true,  true,  true,   0, "Game Speed Setting", "Ready for a new challenge? Make the game faster (or slower) in the Options menu.", "gamespeed");
 		addSecret(Secret::SECRET_DOOMSDAY_ZONE,		true,  false, true,   0, "Doomsday Zone", "", "");
+		addSecret(Secret::SECRET_EMERALD_SELECT,	true,  false, true,   0, "Emerald Select", "", "");
 	}
 
 	mIsInitialized = true;

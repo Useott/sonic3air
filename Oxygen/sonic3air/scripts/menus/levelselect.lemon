@@ -371,6 +371,19 @@ function void LevelSelect.startGame()
 	unused.player2.next_life_score = 5000
 	u16[0xffffff8a] = 0		// Items on (competition_mode.item_flag = 0), set game mode to Grand Prix (competition_mode.game_mode = 0)
 	competition_mode.active = 0
+
+#if GAMEAPP
+	if (global.started_from_act_select > 1)
+	{
+		global.chaos_emeralds = 7
+		if (global.started_from_act_select == 3)
+		{
+			global.super_emeralds = 7
+			global.traded_emeralds = 0xff
+		}
+		global.started_from_act_select = 1
+	}
+#endif
 }
 
 

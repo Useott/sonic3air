@@ -52,9 +52,9 @@ function void EntryFunctions.actSelectMenu()
 function void EntryFunctions.actSelect()
 {
 	EntryFunctions.sharedInit()
+	global.started_from_act_select = 1 + global.traded_emeralds
 	System.setupCallFrame("GameModeControlLoop", "@EntryPoint")
 	System.setupCallFrame("LevelSelect.startGame")
-	global.started_from_act_select = 1
 }
 
 function void EntryFunctions.extrasMenu()

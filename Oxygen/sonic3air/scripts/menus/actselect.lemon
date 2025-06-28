@@ -149,6 +149,11 @@ function u8 ActSelect.GetNumZonePreviews(u8 zone, u8 act)
 	return 2
 }
 
+function string ActSelect.GetEmeraldStatusName(u8 emeraldstatus)
+{
+	return emeraldstatus == 2 ? "All Super Emeralds" : emeraldstatus == 1 ? "All Chaos Emeralds" : "No emeralds"
+}
+
 
 function void ActSelect.HandleFadeIn(u8 fadeInMethod, u32 frameCounter)
 {
@@ -206,7 +211,9 @@ function void ActSelect.DrawMenu(u8 selectedEntry, u8 selectedZone, u8 selectedA
 
 	// Render menu texts
 	constant array<s16> TEXT_LINE_Y = { 121, 143, 165, 203 }
-	for (u32 entryIndex = 0; entryIndex < 4; ++entryIndex)
+	constant array<s16> TEXT_LINE_Y_EMERALDS = { 116, 135, 154, 173, 203 }
+	u32 entryNum = Game.isSecretUnlocked(SECRET_EMERALD_SELECT) ? 5 : 4
+	for (u32 entryIndex = 0; entryIndex < entryNum; ++entryIndex)
 	{
 		bool isSelected = (entryIndex == selectedEntry)
 		u32 color = isSelected ? 0xffff00ff : 0xffffffe8
@@ -236,13 +243,19 @@ function void ActSelect.DrawMenu(u8 selectedEntry, u8 selectedZone, u8 selectedA
 			canGoLeft = (levelselect.characters > 0)
 			canGoRight = (levelselect.characters < ActSelect.GetNumCharacterCombinations() - 1)
 		}
+		else if (entryIndex == 3 && Game.isSecretUnlocked(SECRET_EMERALD_SELECT))
+		{
+			text = ActSelect.GetEmeraldStatusName(global.traded_emeralds)
+			canGoLeft = (global.traded_emeralds > 0)
+			canGoRight = (global.traded_emeralds < 2)
+		}
 		else
 		{
 			text = "Back"
 		}
 
 		s16 px = anchorX
-		s16 py = TEXT_LINE_Y[entryIndex]
+		s16 py = Game.isSecretUnlocked(SECRET_EMERALD_SELECT) ? TEXT_LINE_Y_EMERALDS[entryIndex] : TEXT_LINE_Y[entryIndex]
 
 		s16 arrowAnimOffset = 0
 		if (isSelected)
@@ -413,7 +426,9 @@ function void ActSelect.Menu(u8 fadeInMethod)
 		if (entryChange != 0)
 		{
 			Audio.playAudio(0x5b)
-			selectedEntry = (selectedEntry + 4 + entryChange) % 4
+			if (Game.isSecretUnlocked(SECRET_EMERALD_SELECT))
+				selectedEntry = (selectedEntry + 5 + entryChange) % 5
+			else selectedEntry = (selectedEntry + 4 + entryChange) % 4
 		}
 
 		s8 optionChange = (currentInput == BUTTON_LEFT) ? -1 : (currentInput == BUTTON_RIGHT) ? 1 : 0
@@ -459,6 +474,10 @@ function void ActSelect.Menu(u8 fadeInMethod)
 			{
 				levelselect.characters = clamp(s16(levelselect.characters) + optionChange, 0, ActSelect.GetNumCharacterCombinations() - 1)
 			}
+			else if (selectedEntry == 3 && Game.isSecretUnlocked(SECRET_EMERALD_SELECT))
+			{
+				global.traded_emeralds = clamp(global.traded_emeralds + optionChange, 0, 2)
+			}
 
 			if (selectedZone != oldZone || selectedAct != oldAct)
 			{
@@ -476,6 +495,8 @@ function void ActSelect.Menu(u8 fadeInMethod)
 		if (Input.buttonPressed(BUTTON_START))
 		{
 			result = (selectedEntry == 3) ? RESULT_GO_BACK : RESULT_START_GAME
+			if (Game.isSecretUnlocked(SECRET_EMERALD_SELECT))
+				result = (selectedEntry == 4) ? RESULT_GO_BACK : RESULT_START_GAME
 		}
 		else if (Input.buttonPressed(BUTTON_B) || Input.buttonPressed(BUTTON_BACK))
 		{
@@ -488,6 +509,7 @@ function void ActSelect.Menu(u8 fadeInMethod)
 		// Start game now
 		global.zone_act = ActSelect.TranslateZoneAct(selectedZone, selectedAct)
 		Audio.playAudio(0xaf)
+
 		System.setupCallFrame("EntryFunctions.actSelect")
 	}
 	else if (result == RESULT_GO_BACK)
