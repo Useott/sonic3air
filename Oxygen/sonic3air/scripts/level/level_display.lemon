@@ -241,6 +241,10 @@ function void UpdateLevelDisplay()
 		call A1
 	}
 
+#if STANDALONE
+	applyWaterRipple()
+#endif
+
 	if (checkForMultiReturn())
 		return
 
@@ -1305,6 +1309,32 @@ function void fillPlaneA_Default(u32 worldX, u32 worldY, u32 width, u32 height)
 function void fillPlaneB_Default(u32 startX, u32 startY, u32 width, u32 height)
 {
 	fillPlane_Default(0xe000, startX, startY, width, height, camera.background.x.u16, camera.background.y.u16)
+}
+
+function void applyWaterRipple()
+{
+	if (!level.water_present)
+		return
+
+	// AIZ already has its own water ripple effect
+	if (global.zone == 0x00)
+		return
+
+	for (u16 line = 0; line < 224; line++)
+	{
+		if (s16(line) < -s16(camera.position.y.u16) + water.height.current)
+			continue
+
+		u16 offset = Math.roundToInt(2.0f * Math.sin(2.0f * 3.1415f * 256 * float(255 - (line + camera.position.y.u16) % 256) + float(u16(u8[0x801010])) / 41.0f))
+		Renderer.setScrollOffsetH(1, line, (-u32[0xffffe000 + line * 4] >> 16) + offset + 3)
+
+		// LBZ 2's background already has its own water ripple effect
+		if (global.zone_act == 0x0601)
+			continue
+
+		offset = Math.roundToInt(3.0f * Math.sin(2.0f * 3.1415f * 256 * float(255 - (line + camera.background.y.u16) % 256) + float(u16(u8[0x801010])) / 41.0f))
+		Renderer.setScrollOffsetH(0, line, (-u32[0xffffe000 + line * 4]) + offset + 7)
+	}
 }
 
 #endif
