@@ -44,6 +44,9 @@ global bool enableCustomPlaneReset
 
 global s16 verticalScrollOffsetBias
 
+global s16 screenTouchX
+global s16 screenTouchY
+
 
 
 

@@ -151,6 +151,9 @@ function void PostFrameUpdate()
 	// Debug output
 	Debugging.debugDraw()
 	setWorldSpaceOffset(s32(s16(camera.position.x.u16)), s32(s16(camera.position.y.u16)))
+
+	/*A0 = 0xffffb000
+	Standalone.drawCharacterSprite(CHARACTER_SONIC, 0, screenTouchX, screenTouchY, false)*/
 }
 
 
@@ -204,4 +207,10 @@ function void restartTimeAttack()
 	Game.triggerRestart()
 
 	yieldInWhiteScreen()
+}
+
+function void onScreenTouch(s16 px, s16 py, s16 fordev)
+{
+	screenTouchX = px
+	screenTouchY = py
 }

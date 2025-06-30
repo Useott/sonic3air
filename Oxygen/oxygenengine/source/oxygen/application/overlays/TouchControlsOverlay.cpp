@@ -7,15 +7,18 @@
 */
 
 #include "oxygen/pch.h"
+#include "oxygen/application/gameview/GameView.h"
 #include "oxygen/application/overlays/TouchControlsOverlay.h"
 #include "oxygen/application/Application.h"
 #include "oxygen/application/EngineMain.h"
+#include "oxygen/application/video/VideoOut.h"
 #include "oxygen/helper/FileHelper.h"
 #include "oxygen/rendering/utils/RenderUtils.h"
 #include "oxygen/resources/SpriteCollection.h"
 #include "oxygen/simulation/GameRecorder.h"
 #include "oxygen/simulation/Simulation.h"
 #include "oxygen/simulation/EmulatorInterface.h"
+#include "oxygen/simulation/CodeExec.h"
 
 
 namespace
@@ -354,6 +357,12 @@ void TouchControlsOverlay::updateControls()
 	EmulatorInterface::instance().writeMemory8(0x801005, 0);
 	EmulatorInterface::instance().writeMemory8(0x801006, 0);
 
+	LemonScriptRuntime& runtime = Application::instance().getSimulation().getCodeExec().getLemonScriptRuntime();
+	static const lemon::FlyweightString screenTouchX("screenTouchX");
+	static const lemon::FlyweightString screenTouchY("screenTouchY");
+	runtime.setGlobalVariableValue<int16>(screenTouchX, 0);
+	runtime.setGlobalVariableValue<int16>(screenTouchY, 0);
+
 	// Update touch areas
 	bool gameRecPressed = false;
 	bool debugModeButtonPressed = false;
@@ -415,6 +424,13 @@ void TouchControlsOverlay::updateControls()
 					}
 				}
 			}
+			const Vec2i gameScreenSize = VideoOut::instance().getScreenSize();
+			CodeExec::FunctionExecData execData;
+			const Vec2f gameTouchPosition = touch.mPosition * Vec2f(gameScreenSize);
+			execData.addParam(lemon::PredefinedDataTypes::INT_16, roundToInt(gameTouchPosition.x));
+			execData.addParam(lemon::PredefinedDataTypes::INT_16, roundToInt(gameTouchPosition.y));
+			execData.addParam(lemon::PredefinedDataTypes::INT_16, roundToInt(Vec2f(touch.mPosition).x));
+			Application::instance().getSimulation().getCodeExec().executeScriptFunction("onScreenTouch", false, &execData);
 		}
 	}
 
