@@ -377,50 +377,53 @@ void TouchControlsOverlay::updateControls()
 			TouchArea* touchArea = const_cast<TouchArea*>(getTouchAreaAtNormalizedPosition(touch.mPosition));
 			if (nullptr != touchArea)
 			{
-				switch (touchArea->mSpecialType)
+				if (InputManager::instance().currentTouchInputMode() != InputManager::TouchInputMode::HIDDEN_CONTROLS)
 				{
-					case TouchArea::SpecialType::GAMEREC:
+					switch (touchArea->mSpecialType)
 					{
-						gameRecPressed = true;
-						break;
-					}
-					case TouchArea::SpecialType::DEBUG_MODE:
-					{
-						debugModeButtonPressed = true;
-						debugButtonType = 1;
-						for (InputManager::Control* control : touchArea->mControls)
-							control->mState = true;
-						break;
-					}
-					case TouchArea::SpecialType::FLIP_GRAVITY:
-					{
-						debugModeButtonPressed = true;
-						debugButtonType = 2;
-						for (InputManager::Control* control : touchArea->mControls)
-							control->mState = true;
-						break;
-					}
-					case TouchArea::SpecialType::NEXT_OBJECT:
-					{
-						debugModeButtonPressed = true;
-						debugButtonType = 3;
-						for (InputManager::Control* control : touchArea->mControls)
-							control->mState = true;
-						break;
-					}
-					case TouchArea::SpecialType::PREV_OBJECT:
-					{
-						debugModeButtonPressed = true;
-						debugButtonType = 4;
-						for (InputManager::Control* control : touchArea->mControls)
-							control->mState = true;
-						break;
-					}
-					default:
-					{
-						for (InputManager::Control* control : touchArea->mControls)
-							control->mState = true;
-						break;
+						case TouchArea::SpecialType::GAMEREC:
+						{
+							gameRecPressed = true;
+							break;
+						}
+						case TouchArea::SpecialType::DEBUG_MODE:
+						{
+							debugModeButtonPressed = true;
+							debugButtonType = 1;
+							for (InputManager::Control* control : touchArea->mControls)
+								control->mState = true;
+							break;
+						}
+						case TouchArea::SpecialType::FLIP_GRAVITY:
+						{
+							debugModeButtonPressed = true;
+							debugButtonType = 2;
+							for (InputManager::Control* control : touchArea->mControls)
+								control->mState = true;
+							break;
+						}
+						case TouchArea::SpecialType::NEXT_OBJECT:
+						{
+							debugModeButtonPressed = true;
+							debugButtonType = 3;
+							for (InputManager::Control* control : touchArea->mControls)
+								control->mState = true;
+							break;
+						}
+						case TouchArea::SpecialType::PREV_OBJECT:
+						{
+							debugModeButtonPressed = true;
+							debugButtonType = 4;
+							for (InputManager::Control* control : touchArea->mControls)
+								control->mState = true;
+							break;
+						}
+						default:
+						{
+							for (InputManager::Control* control : touchArea->mControls)
+								control->mState = true;
+							break;
+						}
 					}
 				}
 			}
