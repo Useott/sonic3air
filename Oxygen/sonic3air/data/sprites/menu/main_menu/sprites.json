@@ -1,0 +1,8 @@
+{
+	"main_menu.foreground": { "File": "foreground.png" },
+	"main_menu.background": { "File": "background.png" },
+	"main_menu.text_bg": { "File": "textbg.png", "Center": "400,12" },
+	"main_menu.text_bg_small": { "File": "textbg_small.png", "Center": "200,8" },
+	"main_menu.circle": { "File": "circle.png", "Center": "112,122" },
+	"main_menu.triangles": { "File": "triangles.png", "Center": "256,0" }
+}

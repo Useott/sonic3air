@@ -66,6 +66,7 @@ public:
 	void startIntoBlueSphere();
 	void startIntoLevelSelect();
 	void startIntoMainMenuBG();
+	void startIntoAITMainMenu();
 
 	void onPreUpdateFrame();
 	void onPostUpdateFrame();
@@ -117,6 +118,7 @@ private:
 	bool onCharacterDied(uint8 playerIndex);
 	void returnToMainMenu();
 	void openOptionsMenu();
+	void openOptionsMenuFromAITMenu();
 
 	inline bool isNormalGame()	{ return isInNormalGameMode(); }
 	inline bool isTimeAttack()	{ return isInTimeAttackMode(); }

@@ -240,6 +240,19 @@ void GameApp::openOptionsMenuInGame()
 	mMenuBackground->openOptions(true);
 }
 
+void GameApp::openOptionsMenu()
+{
+	mRestoreGameResolution = VideoOut::instance().getScreenRect().getSize();
+	Application::instance().getSimulation().setRunning(false);
+
+	mCurrentState = State::TOUR_MAINMENU_OPTIONS;
+
+	mPauseMenu->setEnabled(false);
+	mGameView->addChild(*mMenuBackground);
+	mGameView->startFadingIn();
+	mMenuBackground->openOptions(2);
+}
+
 void GameApp::onFadedOutOptions()
 {
 	if (mCurrentState == State::INGAME_OPTIONS)
@@ -260,9 +273,21 @@ void GameApp::onFadedOutOptions()
 		// TODO: Fade out the context instead
 		AudioOut::instance().stopSoundContext(AudioOut::CONTEXT_MENU + AudioOut::CONTEXT_MUSIC);
 
-		Application::instance().getSimulation().setSpeed(1.0f);
-
 		mCurrentState = State::INGAME;
+	}
+	if (mCurrentState == State::TOUR_MAINMENU_OPTIONS)
+	{
+		if (mMenuBackground->getParent() == mGameView)
+			mGameView->removeChild(*mMenuBackground);
+
+		ControlsIn::instance().setAllIgnores();
+		VideoOut::instance().setScreenSize(mRestoreGameResolution);
+		AudioOut::instance().stopSoundContext(AudioOut::CONTEXT_MENU + AudioOut::CONTEXT_MUSIC);
+		GameApp::instance().getGameView().startFadingIn(0.1f);
+
+		Simulation& simulation = Application::instance().getSimulation();
+		simulation.setRunning(true);
+		Game::instance().startIntoAITMainMenu();
 	}
 }
 

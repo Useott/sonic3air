@@ -392,7 +392,7 @@ void MenuBackground::openTimeAttackMenu()
 	openMenu(*mTimeAttackMenu);
 }
 
-void MenuBackground::openOptions(bool enteredInGame)
+void MenuBackground::openOptions(uint8 enteredInGame)
 {
 	openMenu(*mOptionsMenu);
 

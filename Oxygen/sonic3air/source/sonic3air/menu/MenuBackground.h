@@ -48,7 +48,7 @@ public:
 
 	void openMainMenu();
 	void openTimeAttackMenu();
-	void openOptions(bool enteredInGame = false);
+	void openOptions(uint8 enteredInGame = false);
 	void openExtras();
 	void openMods();
 

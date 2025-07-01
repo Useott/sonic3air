@@ -1033,9 +1033,15 @@ void OptionsMenu::render()
 	GameMenuBase::render();
 }
 
-void OptionsMenu::setupOptionsMenu(bool enteredFromIngame)
+void OptionsMenu::setupOptionsMenu(uint8 enteredFromIngame)
 {
 	mEnteredFromIngame = enteredFromIngame;
+	if (enteredFromIngame == 2)
+	{
+		mEnteredFromAITMenu = true;
+		enteredFromIngame = false;
+		mEnteredFromIngame = false;
+	}
 
 	for (const ConditionalOption& option : CONDITIONAL_OPTIONS)
 	{
@@ -1478,7 +1484,7 @@ void OptionsMenu::goBack()
 		Application::instance().getSimulation().triggerFullScriptsReload();
 	}
 
-	if (mEnteredFromIngame)
+	if (mEnteredFromIngame || mEnteredFromAITMenu)
 	{
 		// Only start fading to black - see "GameApp::onFadedOutOptions" for the actual change of state after complete fade-out
 		GameApp::instance().getGameView().startFadingOut(0.1666f);

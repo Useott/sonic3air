@@ -37,6 +37,7 @@ public:
 	void openTitleScreen();
 	void openMainMenu();
 	void openOptionsMenuInGame();
+	void openOptionsMenu();
 	void onFadedOutOptions();
 	void onGamePaused(bool canRestart);
 	void restartTimeAttack();
@@ -63,6 +64,7 @@ private:
 		TITLE_SCREEN,
 		MAIN_MENU,
 		INGAME_OPTIONS,
+		TOUR_MAINMENU_OPTIONS,
 		INGAME,
 		TIME_ATTACK_RESULTS
 	};

@@ -37,7 +37,7 @@ public:
 	virtual void update(float timeElapsed) override;
 	virtual void render() override;
 
-	void setupOptionsMenu(bool enteredFromIngame);
+	void setupOptionsMenu(uint8 enteredFromIngame);
 	void removeControllerSetupMenu();
 
 	const AudioCollection::AudioDefinition* getSoundTestAudioDefinitionMusic(uint32 index) const;
@@ -119,6 +119,7 @@ private:
 	GameMenuControlsDisplay mGameMenuControlsDisplay;
 
 	bool mEnteredFromIngame = false;
+	bool mEnteredFromAITMenu = false;
 	float mWarningMessageTimeout = 0.0f;
 	float mAudioWarningMessageTimeout = 0.0f;
 	bool mShowedAudioWarningMessage = false;

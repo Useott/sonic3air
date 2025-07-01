@@ -186,6 +186,8 @@ void Game::registerScriptBindings(lemon::Module& module)
 		module.addNativeFunction("Game.returnToMainMenu", lemon::wrap(*this, &Game::returnToMainMenu), defaultFlags);
 		module.addNativeFunction("Game.openOptionsMenu", lemon::wrap(*this, &Game::openOptionsMenu), defaultFlags);
 
+		module.addNativeFunction("Game.openOptionsMenuFromAITMenu", lemon::wrap(*this, &Game::openOptionsMenuFromAITMenu), defaultFlags);
+
 		module.addNativeFunction("Game.isNormalGame", lemon::wrap(*this, &Game::isNormalGame), defaultFlags);
 		module.addNativeFunction("Game.isTimeAttack", lemon::wrap(*this, &Game::isTimeAttack), defaultFlags);
 		module.addNativeFunction("Game.onTimeAttackFinish", lemon::wrap(*this, &Game::onTimeAttackFinish), defaultFlags);
@@ -465,6 +467,16 @@ void Game::startIntoMainMenuBG()
 
 	Simulation& simulation = Application::instance().getSimulation();
 	simulation.resetIntoGame("EntryFunctions.mainMenuBG");
+
+	startIntoGameInternal();
+}
+
+void Game::startIntoAITMainMenu()
+{
+	mMode = Mode::NORMAL_GAME;
+
+	Simulation& simulation = Application::instance().getSimulation();
+	simulation.resetIntoGame("EntryFunctions.AITourMenus");
 
 	startIntoGameInternal();
 }
@@ -1048,6 +1060,11 @@ void Game::returnToMainMenu()
 void Game::openOptionsMenu()
 {
 	GameApp::instance().openOptionsMenuInGame();
+}
+
+void Game::openOptionsMenuFromAITMenu()
+{
+	GameApp::instance().openOptionsMenu();
 }
 
 bool Game::onTimeAttackFinish()

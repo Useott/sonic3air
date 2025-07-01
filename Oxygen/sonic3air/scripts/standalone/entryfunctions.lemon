@@ -98,6 +98,14 @@ function void EntryFunctions.mainMenuBG()
 }
 
 
+function void EntryFunctions.AITourMenus()
+{
+	EntryFunctions.sharedInit()
+	Input.setTouchInputMode(TOUCH_INPUT_MODE_HIDDEN_CONTROLS)
+	System.setupCallFrame("AITourMenus.Menu")
+}
+
+
 function void EntryFunctions.sharedInit()
 {
 #if GAMEAPP
