@@ -719,6 +719,10 @@ void OptionsConfig::buildTourOptions()
 		configBuilder.addSetting("Act Select Giant Rings", option::ACT_SELECT_BIG_RINGS)
 			.addOption("Disabled", 0)
 			.addOption("Warp to Special Stage", 1);
+
+		configBuilder.addSetting("Language", option::LANGUAGE)
+			.addOption("English", 0)
+			.addOption("Portugues", 1);
 	}
 
 	CATEGORY("Experimental")

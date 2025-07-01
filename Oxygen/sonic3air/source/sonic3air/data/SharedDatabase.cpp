@@ -347,6 +347,7 @@ void SharedDatabase::setupSettings()
 	addSetting(IDPARAMS(Setting::SETTING_CLASSIC_TRANSPARENCY), Setting::SerializationType::ALWAYS);
 	addSetting(IDPARAMS(Setting::SETTING_WATERFALL_SFX), Setting::SerializationType::ALWAYS);
 	addSetting(IDPARAMS(Setting::SETTING_ACT_SELECT_BIG_RINGS), Setting::SerializationType::ALWAYS);
+	addSetting(IDPARAMS(Setting::SETTING_LANGUAGE), Setting::SerializationType::ALWAYS);
 
 	// Hidden settings
 	addSetting(IDPARAMS(Setting::SETTING_DROPDASH), Setting::SerializationType::HIDDEN);

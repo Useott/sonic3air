@@ -135,3 +135,29 @@ function void Standalone.onAnimalFreed()
 		}
 	}
 }
+
+function string Standalone.getTranslatedString(string key)
+{
+	// I have attemped to add a custom system for JSONs holding translation keys, but that didn't work out.
+	// I'll be using rawdata instead. Each byte is an ASCII character.
+
+	string lang = ""
+	if (Game.getSetting(SETTING_LANGUAGE) == 0)
+		lang = "en"
+	else if (Game.getSetting(SETTING_LANGUAGE) == 1)
+		lang = "pt"
+
+	string langkey = stringformat("lang_%s_%s", lang, key)
+	string textstring = ""
+	if (System.hasExternalRawData(langkey))
+	{
+		u64 characters = System.loadExternalRawData(langkey, 0x819080)
+		for (u64 i = 0; i < characters; ++i)
+		{
+			textstring += getStringFromCharacter(u8[0x819080 + i])
+		}
+		return textstring
+	}
+
+	return key
+}
