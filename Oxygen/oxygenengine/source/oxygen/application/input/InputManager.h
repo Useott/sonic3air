@@ -174,7 +174,7 @@ public:
 	void setControllerLEDsForPlayer(int playerIndex, const Color& color) const;
 
 	inline bool isUsingControlsLR() const  { return mUsingControlsLR; }
-	inline bool currentTouchInputMode() const  { return mTouchInputMode; }
+	inline bool isUsingHiddenTouchControls() const  { return mTouchInputMode == TouchInputMode::HIDDEN_CONTROLS; }
 	void handleActiveModsChanged();
 
 private:

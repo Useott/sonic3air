@@ -377,7 +377,7 @@ void TouchControlsOverlay::updateControls()
 			TouchArea* touchArea = const_cast<TouchArea*>(getTouchAreaAtNormalizedPosition(touch.mPosition));
 			if (nullptr != touchArea)
 			{
-				if (InputManager::instance().currentTouchInputMode() != InputManager::TouchInputMode::HIDDEN_CONTROLS)
+				if (!InputManager::instance().isUsingHiddenTouchControls())
 				{
 					switch (touchArea->mSpecialType)
 					{
