@@ -151,19 +151,21 @@ function void UpdateLevelDisplay()
 	camera.foreground.y.u16 = camera.position.y.u16
 
 #if STANDALONE
-	bool isOutside = u8[0xffffeed6]
-	if (global.act == 1 && camera.position.x.u16 + getScreenWidth() > 0x2c80)
-		isOutside = 0xff
-
 	u8[0x801010] += 1
 
-	if (isOutside == 0xff && u8[0x801011] < 50)
-		u8[0x801011] += 1
-	else if (isOutside == 0 && u8[0x801011] > 0)
-		u8[0x801011] -= 1
-
 	if (global.zone == 0x04)
+	{
+		bool isOutside = u8[0xffffeed6]
+		if (global.act == 1 && camera.position.x.u16 + getScreenWidth() > 0x2c80)
+			isOutside = 0xff
+
+		if (isOutside == 0xff && u8[0x801011] < 50)
+			u8[0x801011] += 1
+		else if (isOutside == 0 && u8[0x801011] > 0)
+			u8[0x801011] -= 1
+
 		camera.foreground.y.u16 -= Math.roundToInt(0.1f * float(u8[0x801011]) * Math.sin(2 * 3.1415 * 256 * float(u8[0x801010]) / 2.0f))
+	}
 #endif
 
 	Level.UpdateHyperKnucklesScreenShake()
@@ -1333,7 +1335,7 @@ function void applyWaterRipple()
 			continue
 
 		offset = Math.roundToInt(2.0f * Math.sin(2.0f * 3.1415f * 256 * float(255 - (line + camera.background.y.u16) % 256) + float(u16(u8[0x801010])) / 41.0f))
-		Renderer.setScrollOffsetH(0, line, (-u32[0xffffe000 + line * 4]) + offset + 3)
+		Renderer.setScrollOffsetH(0, line, (-u32[0xffffe000 + line * 4]) + offset + 1)
 	}
 }
 
