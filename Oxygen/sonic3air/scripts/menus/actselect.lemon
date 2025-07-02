@@ -151,7 +151,8 @@ function u8 ActSelect.GetNumZonePreviews(u8 zone, u8 act)
 
 function string ActSelect.GetEmeraldStatusName(u8 emeraldstatus)
 {
-	return emeraldstatus == 2 ? "All Super Emeralds" : emeraldstatus == 1 ? "All Chaos Emeralds" : "No emeralds"
+	return emeraldstatus == 2 ? AITourMenus.getMainMenuTexts(12) : emeraldstatus == 1 ? AITourMenus.getMainMenuTexts(11) : AITourMenus.getMainMenuTexts(10)
+	//return emeraldstatus == 2 ? "All Super Emeralds" : emeraldstatus == 1 ? "All Chaos Emeralds" : "No emeralds"
 }
 
 function u8 ActSelect.GetNumEmeraldTypes()

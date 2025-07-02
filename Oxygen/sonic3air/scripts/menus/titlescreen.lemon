@@ -775,8 +775,9 @@ function void fn0048dc()
 		}
 
 	#if GAMEAPP
-		u64 key = System.hasPlatformFlag(PlatformFlags.MOBILE) ? "title_screen_start_touch" : "title_screen_start"
-		Renderer.drawCustomSprite(key, getScreenWidth() / 2, 208 + max((50 - time) * 2, 0), 0x00, 0, 0x9f7e)
+		//u64 key = System.hasPlatformFlag(PlatformFlags.MOBILE) ? "title_screen_start_touch" : "title_screen_start"
+		//Renderer.drawCustomSprite(key, getScreenWidth() / 2, 208 + max((50 - time) * 2, 0), 0x00, 0, 0x9f7e)
+		Renderer.drawText("sonic3_fontA", getScreenWidth() / 2, 208 + max((50 - time) * 2, 0), System.hasPlatformFlag(PlatformFlags.MOBILE) ? Standalone.getTranslatedString("misc_strings", 1) : Standalone.getTranslatedString("misc_strings", 0), 0xffffffff, 5, 0, 0x9f7e, false, true)
 	#endif
 	}
 

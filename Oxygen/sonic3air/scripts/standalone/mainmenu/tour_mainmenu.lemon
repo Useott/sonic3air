@@ -12,6 +12,7 @@ function void Game.returnToMainMenu()
 	u8 use_touch_controls = touchdebug.use_touch_controls
 	zeroMemory(0x800000, 0x0fffff)
 	zeroMemory(0xff0000, 0xffff)
+	GamePause.visibility = 0.0f
 	touchdebug.use_touch_controls = use_touch_controls
 	EntryFunctions.AITourMenus()
 }
@@ -22,9 +23,22 @@ function void AITourMenus.Menu()
 	s16 screenTouchY.old = 0
 	u16 screenTouchCounter = 0
 	u16 framesSinceLastTouch = 0
+	bool ignoreFramesSinceLastTouch
 
 	u32 framecounter = 0
 	u8 selectedEntry = touchdebug.use_touch_controls ? 255 : 0
+
+	u8 actSelChar
+	u8 actSelZone
+	u8 actSelAct
+	u8 actSelEmeralds
+
+	u8 currentMenu
+	constant u8 menu.MAIN_MENU = 0
+	constant u8 menu.ACT_SELECT = 1
+	constant u8 menu.TIME_ATTACK = 2
+	constant u8 menu.SETTINGS = 3
+	constant u8 menu.MODS = 4
 
 	u8 result
 	constant u8 MENU = 0
@@ -37,6 +51,10 @@ function void AITourMenus.Menu()
 	constant u8 EXIT = 7
 	constant u8 TITLE_SCREEN = 255
 
+	u8 transitionTimer
+	u8 lastMenu
+	u8 lastEntry
+
 	for (u16 i; i < 0xffff; ++i)
 	{
 		VDP.setupVRAMWrite(u16(i) * 4)
@@ -47,6 +65,11 @@ function void AITourMenus.Menu()
 
 	playMusic(MUSIC_DATASELECT)
 
+	D0.u8 = 0
+	D1.u8 = 0
+	D2.u8 = 0
+	D3.u8 = 0
+
 	Renderer.resetSprites()
 	AITourMenus.drawMenuBackground(0, framecounter)
 	AITourMenus.drawMenu(0, selectedEntry, framecounter, 0x4000)
@@ -54,107 +77,457 @@ function void AITourMenus.Menu()
 
 	while (result == MENU)
 	{
+		@MenuWhileLoop:
 		++framecounter
 
 		Renderer.resetSprites()
+		if (currentMenu == menu.ACT_SELECT)
+		{
+			D0.u8 = actSelChar
+			D1.u8 = actSelZone
+			D2.u8 = actSelAct
+			D3.u8 = actSelEmeralds
+		}
+
 		AITourMenus.drawMenuBackground(0, framecounter)
-		AITourMenus.drawMenu(0, selectedEntry, framecounter, 0x4000)
+
+		if (transitionTimer)
+		{
+			s16 px = Math.lerp(-32, s16(getScreenWidth()), float(transitionTimer) / 20.0f)
+			Renderer.drawSprite("main_menu.transition_separator", px, 0, 0, SPRITE_FLAG_PRIO, 0xa000)
+			--transitionTimer
+
+			if (px <= 0)
+				px = 0
+
+			D4.u8 = 1
+
+			Renderer.setViewport(px, 0, getScreenWidth(), getScreenHeight(), 0x4000)
+			AITourMenus.drawMenu(currentMenu, selectedEntry, framecounter, 0x4001)
+			Renderer.resetViewport(0x4010)
+
+			Renderer.setViewport(0, 0, px, getScreenHeight(), 0x5000)
+			AITourMenus.drawMenu(lastMenu, lastEntry, framecounter, 0x5001)
+			Renderer.resetViewport(0x5010)
+		}
+		else
+		{
+			D4.u8 = 0
+			AITourMenus.drawMenu(currentMenu, selectedEntry, framecounter, 0x4000)
+			lastEntry = selectedEntry
+			lastMenu = currentMenu
+		}
 
 		framesSinceLastTouch += 1
 		if (screenTouchX || screenTouchY)
 		{
-			if (selectedEntry != AITourMenus.getMainMenuButtonResultFromTouch() - 1)
+			ignoreFramesSinceLastTouch = false
+			if (transitionTimer == 0)
 			{
-				selectedEntry = AITourMenus.getMainMenuButtonResultFromTouch() - 1
-				if (selectedEntry < 255)
-					playSound(0x5b)
+				if (currentMenu == menu.MAIN_MENU)
+				{
+					if (selectedEntry != AITourMenus.getMainMenuButtonResultFromTouch() - 1)
+					{
+						selectedEntry = AITourMenus.getMainMenuButtonResultFromTouch() - 1
+						if (selectedEntry < 255)
+							playSound(0x5b)
+					}
+				}
+				else if (currentMenu == menu.ACT_SELECT)
+				{
+					if (selectedEntry != AITourMenus.getActSelectButtonResultFromTouch() - 1)
+					{
+						selectedEntry = AITourMenus.getActSelectButtonResultFromTouch() - 1
+						if (selectedEntry < 255)
+							playSound(0x5b)
+					}
+				}
 			}
 			framesSinceLastTouch = 0
 		}
 
-		if (Input.buttonPressed(BUTTON_DOWN))
+		if (transitionTimer == 0)
 		{
-			selectedEntry += 1
-			if (selectedEntry >= 6)
-				selectedEntry = 0
+			if (currentMenu == menu.MAIN_MENU)
+			{
+				if (Input.buttonPressed(BUTTON_DOWN))
+				{
+					selectedEntry += 1
+					if (selectedEntry >= 6)
+						selectedEntry = 0
 
-			playSound(0x5b)
-		}
-		else if (Input.buttonPressed(BUTTON_UP))
-		{
-			selectedEntry -= 1
-			if (selectedEntry >= 6)
-				selectedEntry = 6 - 1
+					playSound(0x5b)
+				}
+				else if (Input.buttonPressed(BUTTON_UP))
+				{
+					selectedEntry -= 1
+					if (selectedEntry >= 6)
+						selectedEntry = 6 - 1
 
-			playSound(0x5b)
-		}
-		else if (Input.buttonPressed(BUTTON_A) || Input.buttonPressed(BUTTON_START) || (touchdebug.use_touch_controls && !(screenTouchX || screenTouchY) && framesSinceLastTouch > 0 && framesSinceLastTouch < 5) && screenTouchCounter < 20)
-		{
-			if (selectedEntry == 0)
-				result = NORMAL_GAME
-			if (selectedEntry == 1)
-				result = ACT_SELECT
-			//if (selectedEntry == 2)
-			//	result = TIME_ATTACK
-			if (selectedEntry == 3)
-				result = OPTIONS
-			if (selectedEntry == 4)
-				result = EXTRAS
-			if (selectedEntry == 5)
-				result = MODS
-			if (selectedEntry == 6)
-				result = EXIT
-			if (selectedEntry == 254)
-				result = TITLE_SCREEN
-		}
+					playSound(0x5b)
+				}
+				else if (Input.buttonPressed(BUTTON_A) || Input.buttonPressed(BUTTON_START) || ((touchdebug.use_touch_controls && !(screenTouchX || screenTouchY) && framesSinceLastTouch > 0 && framesSinceLastTouch < 5) && screenTouchCounter < 20))
+				{
+					if (selectedEntry == 0)
+						result = NORMAL_GAME
+					if (selectedEntry == 1)
+						result = ACT_SELECT
+					//if (selectedEntry == 2)
+					//	result = TIME_ATTACK
+					if (selectedEntry == 3)
+						result = OPTIONS
+					if (selectedEntry == 4)
+						result = EXTRAS
+					if (selectedEntry == 5)
+						result = MODS
+					if (selectedEntry == 6)
+						result = EXIT
+					if (selectedEntry == 254)
+						result = TITLE_SCREEN
+				}
 
-		if (Input.buttonPressed(BUTTON_B) || Input.buttonPressed(BUTTON_BACK))
-			result = TITLE_SCREEN
+				if (Input.buttonPressed(BUTTON_B) || Input.buttonPressed(BUTTON_BACK))
+					result = TITLE_SCREEN
+			}
+			else
+			{
+				if (currentMenu == menu.ACT_SELECT)
+				{
+					u8 maxButtons = Game.isSecretUnlocked(SECRET_EMERALD_SELECT) ? 4 : 3
+
+					if (Input.buttonPressed(BUTTON_DOWN))
+					{
+						selectedEntry += 1
+						if (selectedEntry >= maxButtons)
+							selectedEntry = 0
+
+						playSound(0x5b)
+					}
+					else if (Input.buttonPressed(BUTTON_UP))
+					{
+						selectedEntry -= 1
+						if (selectedEntry >= maxButtons)
+							selectedEntry = maxButtons - 1
+
+						playSound(0x5b)
+					}
+
+					u8 entryValue = selectedEntry == 0 ? actSelChar : selectedEntry == 1 ? actSelZone : selectedEntry == 2 ? actSelAct : actSelEmeralds
+					u8 entryValueLimit = selectedEntry == 0 ? ActSelect.GetNumCharacterCombinations() : selectedEntry == 1 ? ActSelect.GetNumZones() : selectedEntry == 2 ? ActSelect.GetNumActs(actSelZone) : ActSelect.GetNumEmeraldTypes() + 1
+
+					ignoreFramesSinceLastTouch = true
+					if (Input.buttonPressed(BUTTON_LEFT) || (AITourMenus.getActSelectButtonResultFromTouch2(selectedEntry) == 1 && framesSinceLastTouch == 0 && screenTouchCounter == 1))
+					{
+						entryValue -= 1
+						if (entryValue >= entryValueLimit)
+						{
+							entryValue = entryValueLimit - 1
+							if (selectedEntry == 2)
+							{
+								actSelZone -= 1
+								if (actSelZone >= ActSelect.GetNumZones())
+									actSelZone = ActSelect.GetNumZones() - 1
+							}
+						}
+					}
+					else if (Input.buttonPressed(BUTTON_RIGHT) || (AITourMenus.getActSelectButtonResultFromTouch2(selectedEntry) == 2 && framesSinceLastTouch == 0 && screenTouchCounter == 1))
+					{
+						entryValue += 1
+						if (entryValue >= entryValueLimit)
+						{
+							entryValue = 0
+							if (selectedEntry == 2)
+							{
+								actSelZone += 1
+								if (actSelZone >= ActSelect.GetNumZones())
+									actSelZone = 0
+							}
+						}
+					}
+
+					if (Input.buttonPressed(BUTTON_LEFT) || Input.buttonPressed(BUTTON_RIGHT) || (AITourMenus.getActSelectButtonResultFromTouch2(selectedEntry) && framesSinceLastTouch == 0 && screenTouchCounter == 1))
+					{
+						if (selectedEntry == 0)
+							actSelChar = entryValue
+						else if (selectedEntry == 1)
+						{
+							actSelZone = entryValue
+							if (actSelAct >= ActSelect.GetNumActs(actSelZone))
+								actSelAct = ActSelect.GetNumActs(actSelZone) - 1
+						}
+						else if (selectedEntry == 2)
+						{
+							actSelAct = entryValue
+							if (actSelAct >= ActSelect.GetNumActs(actSelZone))
+								actSelAct = ActSelect.GetNumActs(actSelZone) - 1
+						}
+						else actSelEmeralds = entryValue
+						playSound(0x5b)
+						screenTouchCounter += 1
+						screenTouchX = 0
+						screenTouchY = 0
+					}
+
+					if (Input.buttonPressed(BUTTON_START) || ((touchdebug.use_touch_controls && !(screenTouchX || screenTouchY) && framesSinceLastTouch > 0 && framesSinceLastTouch < 5) && screenTouchCounter < 20 && selectedEntry == 253))
+					{
+						// Start game now
+						levelselect.characters = actSelChar
+						global.zone_act = ActSelect.TranslateZoneAct(actSelZone, actSelAct)
+						Audio.playAudio(0xaf)
+						AITourMenus.handleFading(1)
+						Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
+						EntryFunctions.actSelect()
+					}
+
+					if (Input.buttonPressed(BUTTON_B) || Input.buttonPressed(BUTTON_BACK) || ((touchdebug.use_touch_controls && !(screenTouchX || screenTouchY) && framesSinceLastTouch > 0 && framesSinceLastTouch < 5) && screenTouchCounter < 20 && selectedEntry == 254))
+					{
+						transitionTimer = 20
+						currentMenu = menu.MAIN_MENU
+						if (touchdebug.use_touch_controls)
+							selectedEntry = 255
+						else selectedEntry = 1
+					}
+				}
+			}
+		}
 
 		yieldExecution()
 
 		if ((screenTouchX || screenTouchY))
 			screenTouchCounter += 1
-		else if (!(screenTouchX || screenTouchY) && framesSinceLastTouch > 20)
+		else if (!(screenTouchX || screenTouchY) && (framesSinceLastTouch > 20 || ignoreFramesSinceLastTouch))
 			screenTouchCounter = 0
 	}
 
-	Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
-
-	if (result == NORMAL_GAME)
+	if (currentMenu == menu.MAIN_MENU)
 	{
-		AITourMenus.handleFading(1)
-		EntryFunctions.dataSelect()
-	}
-	if (result == ACT_SELECT)
-	{
-		AITourMenus.handleFading(1)
-		EntryFunctions.actSelectMenu()
-	}
-	if (result == OPTIONS)
-	{
-		AITourMenus.handleFading(1)
-		Game.openOptionsMenuFromAITMenu()
-		Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), 255, 0xff80, false)
-		AITourMenus.handleFading(0)
-		Game.returnToMainMenu()
-	}
-	if (result == EXTRAS)
-	{
-		AITourMenus.handleFading(1)
-		EntryFunctions.extrasMenu()
-	}
-	if (result == TITLE_SCREEN)
-	{
-		AITourMenus.handleFading(1)
-		GameModeControlLoop()
-	}
-	if (result == TIME_ATTACK || result == MODS)
-	{
-		returnToCXXMenu = true
-		Game.returnToMainMenu()
+		if (result == NORMAL_GAME)
+		{
+			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
+			AITourMenus.handleFading(1)
+			EntryFunctions.dataSelect()
+		}
+		if (result == ACT_SELECT)
+		{
+			/*AITourMenus.handleFading(1)
+			EntryFunctions.actSelectMenu()*/
+			result = MENU
+			currentMenu = menu.ACT_SELECT
+			selectedEntry = touchdebug.use_touch_controls ? 255 : 0
+			transitionTimer = 20
+			jump @MenuWhileLoop
+		}
+		if (result == OPTIONS)
+		{
+			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
+			AITourMenus.handleFading(1)
+			Game.openOptionsMenuFromAITMenu()
+			Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), 255, 0xff80, false)
+			AITourMenus.handleFading(0)
+			Game.returnToMainMenu()
+		}
+		if (result == EXTRAS)
+		{
+			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
+			AITourMenus.handleFading(1)
+			EntryFunctions.extrasMenu()
+		}
+		if (result == TITLE_SCREEN)
+		{
+			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
+			AITourMenus.handleFading(1)
+			GameModeControlLoop()
+		}
+		if (result == TIME_ATTACK || result == MODS)
+		{
+			AITourMenus.handleFading(1)
+			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
+			returnToCXXMenu = true
+			Game.returnToMainMenu()
+		}
 	}
 }
+
+function void AITourMenus.drawMenuBackground(u8 menu, u32 framecounter)
+{
+	if (menu == 0)
+	{
+		s16 px = -(framecounter / 8) % 512
+		s16 py = Math.roundToInt(2.0f * Math.sin(2 * 3.1415 * 128 * float(u8(framecounter)))) - 8
+		Renderer.drawSprite("main_menu.background", px, py, 0, 0, 0x1000)
+		Renderer.drawSprite("main_menu.background", px + 512, py, 0, 0, 0x1000)
+		Renderer.drawSprite("main_menu.foreground", 0, 0, 0, 0, 0x2000)
+	}
+}
+
+function void AITourMenus.drawMenu(u8 menu, u8 selectedEntry, u32 framecounter, u16 renderQueue)
+{
+	if (menu == 0)
+	{
+		Renderer.drawText("sonic3_fontC", getScreenCenterX(), 16, AITourMenus.getMainMenuTexts(-1), 0xffffffff, 5, 0, renderQueue + 4, false)
+
+		s16 px = 0
+		s16 py = 37
+		string key = "main_menu.text_bg"
+		string font = "oxyfont_regular"
+		for (u8 i; i < 6; ++i)
+		{
+			s16 sprOffset = Math.roundToInt(48.0f * Math.sin(2.0f * 3.1415f * 3380.0f * float(i)))
+			px = (selectedEntry == i ? -16 : 0) + sprOffset + getScreenWidth() - 132
+
+			Renderer.drawText(font, px + 16, py, AITourMenus.getMainMenuTexts(i), selectedEntry == i ? 0xffff00ff : 0xffffffff, 4, 0, renderQueue + 3, false)
+			Renderer.drawSpriteTinted(key, px, py, 0, SPRITE_FLAG_FLIP_X|SPRITE_FLAG_PRIO, renderQueue + 2, 0, selectedEntry == i ? 0xffffffff : 0x000000ff, 1.0f)
+			if (i >= 2)
+			{
+				key = "main_menu.text_bg_small"
+				font = "oxyfont_small"
+				if (i > 2)
+					py -= 12
+			}
+			py += 38
+		}
+
+		if (System.hasPlatformFlag(PlatformFlags.MOBILE))
+		{
+			px = 64 + (selectedEntry == 254 ? 16 : 0)
+			py = 24
+			Renderer.drawText(font, px - 16, py, AITourMenus.getMainMenuTexts(6), selectedEntry == 254 ? 0xffff00ff : 0xffffffff, 6, 0, renderQueue + 3, false)
+			Renderer.drawSpriteTinted(key, px, py, 0, SPRITE_FLAG_PRIO, renderQueue + 2, 0, selectedEntry == 254 ? 0xffffffff : 0x000000ff, 1.0f)
+		}
+
+		Renderer.drawSprite("main_menu.circle", getScreenWidth() + 56, getScreenCenterY() + 5, 0, SPRITE_FLAG_PRIO, renderQueue + 1)
+
+		Renderer.drawSprite("main_menu.sonic_art", 32, 64, 0, SPRITE_FLAG_PRIO, renderQueue)
+
+		u8 build.yr = Game.getBuildNumber() >> 24
+		u8 build.dy = Game.getBuildNumber() >> 16
+		u8 build.mt = Game.getBuildNumber() >> 8
+		u8 build.nm = Game.getBuildNumber()
+
+		string additional_text = ""
+		if (System.isDevModeActive())
+			additional_text += " - " + AITourMenus.getMainMenuTexts(15)
+		if (Game.getSetting(SETTING_FIX_GLITCHES) == 0)
+			additional_text += " - " + AITourMenus.getMainMenuTexts(16)
+		else if (Game.getSetting(SETTING_FIX_GLITCHES) == 1)
+			additional_text += " - " + AITourMenus.getMainMenuTexts(17)
+		Renderer.drawText("oxyfont_tiny_narrow", 2, getScreenHeight() - 2, stringformat("Angel Island Tour v%02x.%02x.%02x.%02x%s", build.yr, build.dy, build.mt, build.nm, additional_text), 0xffffff88, 7, 0, renderQueue + 4, false)
+	}
+	else if (menu == 1)
+	{
+		u8 character = D0.u8
+		u8 zone = D1.u8
+		u8 act = D2.u8
+		u8 emeralds = D3.u8
+
+		Renderer.drawText("sonic3_fontC", getScreenCenterX(), 16, AITourMenus.getMainMenuTexts(7), 0xffffffff, 5, 0, renderQueue + 4, false)
+		string key
+
+		s16 viewportx = (framecounter % 600) * 16
+
+		if (D4.u8 == 0 && (checkBoxOverlap(0, 0, getScreenWidth(), getScreenHeight(), viewportx - 4800, 26, 4800, 80)))
+			Renderer.setViewport(viewportx - 4800, 26, 4800, 80, renderQueue + 6)
+
+		key = ActSelect.GetZonePreviewKey(zone, act, 1)
+
+		SpriteHandle spr1 = Renderer.addSpriteHandle(key, s16(getScreenWidth() - 480) / 2, 26, renderQueue + 5)
+		spr1.setPalette(key, 0)
+		spr1.setFlags(SPRITE_FLAG_FULLY_OPAQUE)
+		spr1.setUseGlobalComponentTint(true)
+
+		key = ActSelect.GetZonePreviewKey(zone, act, 0)
+
+		if (checkBoxOverlap(0, 0, getScreenWidth(), getScreenHeight(), viewportx - 4800, 26, 4800, 80))
+		{
+			SpriteHandle spr2 = Renderer.addSpriteHandle(key, s16(getScreenWidth() - 480) / 2, 26, renderQueue + 7)
+			spr2.setPalette(key, 0)
+			spr2.setFlags(SPRITE_FLAG_FULLY_OPAQUE)
+			spr2.setUseGlobalComponentTint(true)
+		}
+
+		if (D4.u8 == 0 && (checkBoxOverlap(0, 0, getScreenWidth(), getScreenHeight(), viewportx - 4800, 26, 4800, 80)))
+			Renderer.resetViewport(renderQueue + 8)
+
+
+		// Render the border
+		Renderer.drawSprite("level_preview_border_left", 0, 16, 0, 0x00, renderQueue + 1)
+		Renderer.drawSpriteTransformed("level_preview_border_center", getScreenWidth() / 2, 16, 0, 0x00, renderQueue + 1, 0xffffffff, float(getScreenWidth() - 20) / 10.0f, 0.0f, 0.0f, 1.0f)
+		Renderer.drawSprite("level_preview_border_right", getScreenWidth(), 16, 0, 0x00, renderQueue + 1)
+
+		s16 px = 192
+		s16 py = 128
+		key = "main_menu.text_bg_small"
+		string font = "oxyfont_small"
+		for (u8 i; i < 4; ++i)
+		{
+			if (i == 3 && !Game.isSecretUnlocked(SECRET_EMERALD_SELECT))
+				continue
+			s16 sprOffset = Math.roundToInt(48.0f * Math.sin(2.0f * 3.1415f * 3380.0f * float(i)))
+			string text = i == 0 ? ActSelect.GetCharacterCombinationName(character) : i == 1 ? ActSelect.GetZoneName(zone) : i == 2 ? (ActSelect.GetNumActs(zone) == 1 ? AITourMenus.getMainMenuTexts(13) : stringformat("%s %d", AITourMenus.getMainMenuTexts(14), act + 1)) : ActSelect.GetEmeraldStatusName(emeralds)
+
+			if (selectedEntry == i)
+			{
+				Renderer.drawText("monofont", px + 16 - (framecounter / 15 % 2), py - 1, ">", 0xffff00ff, 6, 0, renderQueue + 5, false)
+				Renderer.drawText("monofont", px - 140 + (framecounter / 15 % 2), py - 1, "<", 0xffff00ff, 6, 0, renderQueue + 5, false)
+			}
+			Renderer.drawText(font, px - 16, py, text, selectedEntry == i ? 0xffff00ff : 0xffffffff, 6, 0, renderQueue + 3, false)
+			Renderer.drawSpriteTinted(key, px, py, 0, SPRITE_FLAG_PRIO, renderQueue + 2, 0, selectedEntry == i ? 0xffffffff : 0x000000ff, 1.0f)
+			py += 26
+		}
+		Renderer.drawSprite(ActSelect.GetCharacterCombinationSprite(character), 32, 128, 0, SPRITE_FLAG_PRIO, renderQueue + 4)
+
+		px = getScreenWidth() - 72 - (getScreenExtend()) - (selectedEntry == 253 ? 16 : 0)
+		if (!touchdebug.use_touch_controls)
+			Renderer.drawSprite("@input_icon_button_start", getScreenWidth() - 90, 160, 0, SPRITE_FLAG_PRIO, renderQueue + 2)
+		Renderer.drawText("oxyfont_regular", px + (touchdebug.use_touch_controls ? 16 : 32), 160, AITourMenus.getMainMenuTexts(9), selectedEntry == 253 ? 0xffff00ff : 0xffffffff, 4, 0, renderQueue + 3, false)
+		Renderer.drawSpriteTinted("main_menu.text_bg", px, 160, 0, SPRITE_FLAG_FLIP_X|SPRITE_FLAG_PRIO, renderQueue + 2, 0, selectedEntry == 253 ? 0xffffffff : 0x000000ff, 1.0f)
+
+		if (System.hasPlatformFlag(PlatformFlags.MOBILE))
+		{
+			px = 64 + (selectedEntry == 254 ? 16 : 0)
+			py = 24
+			Renderer.drawText(font, px - 16, py, AITourMenus.getMainMenuTexts(6), selectedEntry == 254 ? 0xffff00ff : 0xffffffff, 6, 0, renderQueue + 10, false)
+			Renderer.drawSpriteTinted(key, px, py, 0, SPRITE_FLAG_PRIO, renderQueue + 9, 0, selectedEntry == 254 ? 0xffffffff : 0x000000ff, 1.0f)
+		}
+	}
+
+	Renderer.drawSprite("main_menu.triangles", framecounter % 256, 0, 0, SPRITE_FLAG_PRIO, renderQueue)
+	Renderer.drawSprite("main_menu.triangles", (framecounter % 256) + 512, 0, 0, SPRITE_FLAG_PRIO, renderQueue)
+	Renderer.drawSprite("main_menu.triangles", -(framecounter % 256), getScreenHeight(), 0, SPRITE_FLAG_PRIO|SPRITE_FLAG_FLIP_Y, renderQueue)
+	Renderer.drawSprite("main_menu.triangles", -(framecounter % 256) + 512, getScreenHeight(), 0, SPRITE_FLAG_PRIO|SPRITE_FLAG_FLIP_Y, renderQueue)
+}
+
+function void AITourMenus.handleFading(u8 type)
+{
+	if (type == 0)
+	{
+		u16 fadeProgress = 240
+		while (fadeProgress > 0)
+		{
+			Renderer.resetLifetimeContext(2)
+			Renderer.setLifetimeContext(2)
+			Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), clamp(fadeProgress, 0, 255), 0xff80, false)
+			fadeProgress -= 20
+			Renderer.setLifetimeContext(0)
+			yieldExecution()
+		}
+	}
+	else if (type == 1)
+	{
+		u16 fadeProgress = 0
+		while (fadeProgress <= 260)
+		{
+			Renderer.resetLifetimeContext(2)
+			Renderer.setLifetimeContext(2)
+			Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), clamp(fadeProgress, 0, 255), 0xff80, false)
+			fadeProgress += 20
+			Renderer.setLifetimeContext(0)
+			yieldExecution()
+		}
+	}
+}
+
+// Main Menu only
 
 function u8 AITourMenus.getMainMenuButtonResultFromTouch()
 {
@@ -188,95 +561,63 @@ function u8 AITourMenus.getMainMenuButtonResultFromTouch()
 	return 0
 }
 
-function void AITourMenus.handleFading(u8 type)
-{
-	if (type == 0)
-	{
-		u16 fadeProgress = 240
-		while (fadeProgress > 0)
-		{
-			Renderer.resetLifetimeContext(2)
-			Renderer.setLifetimeContext(2)
-			Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), clamp(fadeProgress, 0, 255), 0xff80, false)
-			fadeProgress -= 20
-			Renderer.setLifetimeContext(0)
-			yieldExecution()
-		}
-	}
-	else if (type == 1)
-	{
-		u16 fadeProgress = 0
-		while (fadeProgress <= 260)
-		{
-			Renderer.resetLifetimeContext(2)
-			Renderer.setLifetimeContext(2)
-			Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), clamp(fadeProgress, 0, 255), 0xff80, false)
-			fadeProgress += 20
-			Renderer.setLifetimeContext(0)
-			yieldExecution()
-		}
-	}
-}
-
-function void AITourMenus.drawMenu(u8 type, u8 selectedEntry, u32 framecounter, u16 renderQueue)
-{
-	if (type == 0)
-	{
-		Renderer.drawText("sonic3_fontC", getScreenCenterX(), 16, AITourMenus.getMainMenuTexts(-1), 0xffffffff, 5, 0, renderQueue + 4, false)
-
-		s16 px = 0
-		s16 py = 37
-		string key = "main_menu.text_bg"
-		string font = "oxyfont_regular"
-		for (u8 i; i < 6; ++i)
-		{
-			s16 sprOffset = Math.roundToInt(48.0f * Math.sin(2.0f * 3.1415f * 3380.0f * float(i)))
-			px = (selectedEntry == i ? -16 : 0) + sprOffset + getScreenWidth() - 132
-
-			Renderer.drawText(font, px + 16, py, AITourMenus.getMainMenuTexts(i), selectedEntry == i ? 0xffff00ff : 0xffffffff, 4, 0, renderQueue + 3, false)
-			Renderer.drawSpriteTinted(key, px, py, 0, SPRITE_FLAG_FLIP_X|SPRITE_FLAG_PRIO, renderQueue + 2, 0, selectedEntry == i ? 0xffffffff : 0x000000ff, 1.0f)
-			if (i >= 2)
-			{
-				key = "main_menu.text_bg_small"
-				font = "oxyfont_small"
-				if (i > 2)
-					py -= 12
-			}
-			py += 38
-		}
-
-		if (touchdebug.use_touch_controls)
-		{
-			px = 64 + (selectedEntry == 254 ? 16 : 0)
-			py = 24
-			Renderer.drawText(font, px - 16, py, AITourMenus.getMainMenuTexts(6), selectedEntry == 254 ? 0xffff00ff : 0xffffffff, 6, 0, renderQueue + 3, false)
-			Renderer.drawSpriteTinted(key, px, py, 0, SPRITE_FLAG_PRIO, renderQueue + 2, 0, selectedEntry == 254 ? 0xffffffff : 0x000000ff, 1.0f)
-		}
-	}
-
-	Renderer.drawSprite("main_menu.circle", getScreenWidth() + 56, getScreenCenterY() + 5, 0, SPRITE_FLAG_PRIO, renderQueue +1)
-
-	Renderer.drawSprite("main_menu.triangles", framecounter % 256, 0, 0, SPRITE_FLAG_PRIO, renderQueue)
-	Renderer.drawSprite("main_menu.triangles", (framecounter % 256) + 512, 0, 0, SPRITE_FLAG_PRIO, renderQueue)
-	Renderer.drawSprite("main_menu.triangles", -(framecounter % 256), getScreenHeight(), 0, SPRITE_FLAG_PRIO|SPRITE_FLAG_FLIP_Y, renderQueue)
-	Renderer.drawSprite("main_menu.triangles", -(framecounter % 256) + 512, getScreenHeight(), 0, SPRITE_FLAG_PRIO|SPRITE_FLAG_FLIP_Y, renderQueue)
-}
-
 function string AITourMenus.getMainMenuTexts(s8 num)
 {
-	if (num == 5)
-		num = 7
-	return Standalone.getTranslatedString("main_menu", num + 2)
+	return Standalone.getTranslatedString("main_menu", num + 1)
 }
 
-function void AITourMenus.drawMenuBackground(u8 type, u32 framecounter)
+// Act Select only
+
+function u8 AITourMenus.getActSelectButtonResultFromTouch()
 {
-	if (type == 0)
+	//Renderer.drawRect(screenTouchX - 2, screenTouchY - 2, 4, 4, 0xffffffff, 0xffff, false)
+	s16 px = 176
+	s16 py = 128
+	for (u8 i; i < 6; ++i)
 	{
-		s16 px = -(framecounter / 8) % 512
-		s16 py = Math.roundToInt(2.0f * Math.sin(2 * 3.1415 * 128 * float(u8(framecounter)))) - 8
-		Renderer.drawSprite("main_menu.background", px, py, 0, 0, 0x1000)
-		Renderer.drawSprite("main_menu.background", px + 512, py, 0, 0, 0x1000)
-		Renderer.drawSprite("main_menu.foreground", 0, 0, 0, 0, 0x2000)
+		if (i == 3 && !Game.isSecretUnlocked(SECRET_EMERALD_SELECT))
+			continue
+
+		if (i == 4)
+		{
+			px = getScreenWidth() - 72 - (getScreenExtend())
+			py = 160
+			//Renderer.drawRect(px, py - 12, getScreenWidth() - px, 24, 0xeeffffff, 0xffff, false)
+			if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px - 16, py - 12, getScreenWidth() - px, 24))
+				return 254
+			continue
+		}
+
+		if (i == 5)
+		{
+			px = 0
+			py = 24
+
+			//Renderer.drawRect(px, py - 8, 64, 16, 0xeeffffff, 0xffff, false)
+			if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px, py - 8, 64, 16))
+				return 255
+			return 0
+		}
+
+		//Renderer.drawRect(px - 128, py - 8, 160, 16, 0xeeffffff, 0xffff, false)
+		if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px - 128, py - 8, 160, 16))
+			return i + 1
+
+		py += 26
 	}
+
+	return 0
+}
+
+function u8 AITourMenus.getActSelectButtonResultFromTouch2(u8 selectedEntry)
+{
+	s16 px = 204
+	s16 py = 128 + (selectedEntry * 26)
+	//Renderer.drawRect(px - 8, py - 8, 16, 16, 0xeeffffff, 0xffff, false)
+	if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px - 8, py - 8, 16, 16))
+		return 2
+	//Renderer.drawRect(px - 160, py - 8, 16, 16, 0xeeffffff, 0xffff, false)
+	if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px - 160, py - 8, 16, 16))
+		return 1
+	return 0
 }

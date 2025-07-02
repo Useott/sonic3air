@@ -267,6 +267,7 @@ void GameApp::onFadedOutOptions()
 		ControlsIn::instance().setAllIgnores();
 
 		VideoOut::instance().setScreenSize(mRestoreGameResolution);
+		Application::instance().getSimulation().setSpeed(1.0f);
 
 		GameApp::instance().getGameView().startFadingIn(0.1f);
 

@@ -132,6 +132,7 @@ private:
 	void startSkippableCutscene();
 	void endSkippableCutscene();
 	bool isInSkippableCutscene();
+	uint32 getBuildNumber();
 
 private:
 	EmulatorInterface* mEmulatorInterface = nullptr;

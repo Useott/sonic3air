@@ -17,6 +17,7 @@
 #include "sonic3air/menu/GameApp.h"
 #include "sonic3air/menu/SharedResources.h"
 #include "sonic3air/scriptimpl/ScriptImplementations.h"
+#include "sonic3air/version.inc"
 
 #include "oxygen/application/Application.h"
 #include "oxygen/application/Configuration.h"
@@ -225,6 +226,8 @@ void Game::registerScriptBindings(lemon::Module& module)
 		module.addNativeFunction("Game.startSkippableCutscene", lemon::wrap(*this, &Game::startSkippableCutscene), defaultFlags);
 		module.addNativeFunction("Game.endSkippableCutscene", lemon::wrap(*this, &Game::endSkippableCutscene), defaultFlags);
 		module.addNativeFunction("Game.isInSkippableCutscene", lemon::wrap(*this, &Game::isInSkippableCutscene), defaultFlags);
+
+		module.addNativeFunction("Game.getBuildNumber", lemon::wrap(*this, &Game::getBuildNumber), defaultFlags);
 	}
 
 	// Discord
@@ -1112,4 +1115,9 @@ void Game::endSkippableCutscene()
 bool Game::isInSkippableCutscene()
 {
 	return mSkippableCutsceneFrames > 0;
+}
+
+uint32 Game::getBuildNumber()
+{
+	return BUILD_NUMBER;
 }

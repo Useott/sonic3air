@@ -138,12 +138,12 @@ function void Standalone.onAnimalFreed()
 
 function string Standalone.getTranslatedString(string key)
 {
-	return Standalone.getTranslatedString(key, 0)
+	return Standalone.getTranslatedString(key, 0xff)
 }
 
 function string Standalone.getTranslatedString(string key, u8 id)
 {
-	// I have attemped to add a custom system for JSONs holding translation keys, but that didn't work out.
+	// I have attemped to add a custom system for JSONs that hold translation keys, but that didn't work out.
 	// I'll be using rawdata instead. Each byte is an ASCII character.
 
 	string lang = ""
@@ -154,7 +154,7 @@ function string Standalone.getTranslatedString(string key, u8 id)
 
 	string langkey = stringformat("lang_%s_%s", lang, key)
 	string textstring = ""
-	u8 string_count = id != 0
+	u8 string_count = id != 0xff
 	if (System.hasExternalRawData(langkey))
 	{
 		u64 characters = System.loadExternalRawData(langkey, 0x819080)
@@ -162,11 +162,11 @@ function string Standalone.getTranslatedString(string key, u8 id)
 		{
 			if (u8[0x819080 + i] == 0x0a)
 			{
-				if (id != 0)
+				if (id != 0xff)
 					string_count += 1
 				continue
 			}
-			if (string_count == id)
+			if (string_count == id + 1)
 				textstring += getStringFromCharacter(u8[0x819080 + i])
 		}
 		return textstring

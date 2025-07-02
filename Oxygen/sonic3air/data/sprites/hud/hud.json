@@ -5,9 +5,9 @@
 	// HUD texts
 	"hud_text_score":	  { "File": "hud_text_sprites.png", "Rect": "0,0,40,12" },
 	"hud_text_time":	  { "File": "hud_text_sprites.png", "Rect": "0,12,40,12" },
-	"hud_text_time_red":  { "File": "hud_text_sprites.png", "Rect": "40,12,1,1" },		// Empty pixel
+	"hud_text_time_red":  { "File": "hud_text_sprites.png", "Rect": "130,61,40,12" },
 	"hud_text_rings":	  { "File": "hud_text_sprites.png", "Rect": "0,24,40,12" },
-	"hud_text_rings_red": { "File": "hud_text_sprites.png", "Rect": "40,24,1,1" },		// Empty pixel
+	"hud_text_rings_red": { "File": "hud_text_sprites.png", "Rect": "130,73,40,12" },
 
 	// Additional texts for level results
 	"hud_text_ring":  { "File": "hud_text_sprites.png", "Rect": "0,24,32,12" },
