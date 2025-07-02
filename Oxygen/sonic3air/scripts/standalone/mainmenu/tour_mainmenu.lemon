@@ -281,6 +281,7 @@ function void AITourMenus.Menu()
 
 					if (Input.buttonPressed(BUTTON_B) || Input.buttonPressed(BUTTON_BACK) || ((touchdebug.use_touch_controls && !(screenTouchX || screenTouchY) && framesSinceLastTouch > 0 && framesSinceLastTouch < 5) && screenTouchCounter < 20 && selectedEntry == 254))
 					{
+						Audio.playAudio(0xad)
 						transitionTimer = 20
 						currentMenu = menu.MAIN_MENU
 						if (touchdebug.use_touch_controls)
@@ -303,6 +304,7 @@ function void AITourMenus.Menu()
 	{
 		if (result == NORMAL_GAME)
 		{
+			Audio.playAudio(0x63)
 			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
 			AITourMenus.handleFading(1)
 			EntryFunctions.dataSelect()
@@ -311,6 +313,7 @@ function void AITourMenus.Menu()
 		{
 			/*AITourMenus.handleFading(1)
 			EntryFunctions.actSelectMenu()*/
+			Audio.playAudio(0x63)
 			result = MENU
 			currentMenu = menu.ACT_SELECT
 			selectedEntry = touchdebug.use_touch_controls ? 255 : 0
@@ -319,6 +322,7 @@ function void AITourMenus.Menu()
 		}
 		if (result == OPTIONS)
 		{
+			Audio.playAudio(0x63)
 			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
 			AITourMenus.handleFading(1)
 			Game.openOptionsMenuFromAITMenu()
@@ -328,18 +332,21 @@ function void AITourMenus.Menu()
 		}
 		if (result == EXTRAS)
 		{
+			Audio.playAudio(0x63)
 			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
 			AITourMenus.handleFading(1)
 			EntryFunctions.extrasMenu()
 		}
 		if (result == TITLE_SCREEN)
 		{
+			Audio.playAudio(0xad)
 			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
 			AITourMenus.handleFading(1)
 			GameModeControlLoop()
 		}
 		if (result == TIME_ATTACK || result == MODS)
 		{
+			Audio.playAudio(0x63)
 			AITourMenus.handleFading(1)
 			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
 			returnToCXXMenu = true
