@@ -72,9 +72,9 @@ function void AITourMenus.Menu()
 	playMusic(MUSIC_DATASELECT)
 
 	levelselect.characters = 0
-	D1.u8 = 0
-	D2.u8 = 0
-	D3.u8 = 0
+	global.zone = 0
+	global.act = 0
+	global.traded_emeralds = 0
 
 	Renderer.resetSprites()
 	AITourMenus.drawMenuBackground(0, framecounter)
@@ -90,9 +90,9 @@ function void AITourMenus.Menu()
 		if (currentMenu == menu.ACT_SELECT)
 		{
 			levelselect.characters = actSelChar
-			D1.u8 = actSelZone
-			D2.u8 = actSelAct
-			D3.u8 = actSelEmeralds
+			global.zone = actSelZone
+			global.act = actSelAct
+			global.traded_emeralds = actSelEmeralds
 		}
 
 		AITourMenus.drawMenuBackground(0, framecounter)
@@ -429,9 +429,9 @@ function void AITourMenus.drawMenu(u8 menu, u8 selectedEntry, u32 framecounter, 
 	else if (menu == 1)
 	{
 		u8 character = levelselect.characters
-		u8 zone = D1.u8
-		u8 act = D2.u8
-		u8 emeralds = D3.u8
+		u8 zone = global.zone
+		u8 act = global.act
+		u8 emeralds = global.traded_emeralds
 
 		Renderer.drawText("sonic3_fontC", getScreenCenterX(), 16, AITourMenus.getMainMenuTexts(7), 0xffffffff, 5, 0, renderQueue + 4, false)
 		string key
@@ -491,7 +491,7 @@ function void AITourMenus.drawMenu(u8 menu, u8 selectedEntry, u32 framecounter, 
 
 		px = getScreenWidth() - 72 - (getScreenExtend()) - (selectedEntry == 253 ? 16 : 0)
 		if (!touchdebug.use_touch_controls)
-			Renderer.drawSprite("@input_icon_button_start", getScreenWidth() - 90, 160, 0, SPRITE_FLAG_PRIO, renderQueue + 2)
+			Renderer.drawSprite("@input_icon_button_start", px + 20, 160, 0, SPRITE_FLAG_PRIO, renderQueue + 2)
 		Renderer.drawText("oxyfont_regular", px + (touchdebug.use_touch_controls ? 16 : 32), 160, AITourMenus.getMainMenuTexts(9), selectedEntry == 253 ? 0xffff00ff : 0xffffffff, 4, 0, renderQueue + 3, false)
 		Renderer.drawSpriteTinted("main_menu.text_bg", px, 160, 0, SPRITE_FLAG_FLIP_X|SPRITE_FLAG_PRIO, renderQueue + 2, 0, selectedEntry == 253 ? 0xffffffff : 0x000000ff, 1.0f)
 
