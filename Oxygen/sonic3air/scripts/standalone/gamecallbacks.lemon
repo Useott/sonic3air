@@ -146,24 +146,39 @@ function string Standalone.getTranslatedString(string key, u8 id)
 	// I have attemped to add a custom system for JSONs that hold translation keys, but that didn't work out.
 	// I'll be using rawdata instead. Each byte is an ASCII character.
 
-	string lang = ""
-	if (Game.getSetting(SETTING_LANGUAGE) == 0)
-		lang = "en"
-	else if (Game.getSetting(SETTING_LANGUAGE) == 1)
+	string lang = "en"
+	if (Game.getSetting(SETTING_LANGUAGE) == 1)
 		lang = "pt"
 
 	string langkey = stringformat("lang_%s_%s", lang, key)
 	string textstring = ""
 	u8 string_count = id != 0xff
+	bool ignoreNextChar = false
 	if (System.hasExternalRawData(langkey))
 	{
 		u64 characters = System.loadExternalRawData(langkey, 0x819080)
 		for (u64 i = 0; i < characters; ++i)
 		{
+			if (ignoreNextChar == true)
+			{
+				ignoreNextChar = false
+				if (string_count == id + 1)
+				{
+					if (u8[0x819080 + i] == 0x6e) // makes \n
+						textstring += "\n"
+				}
+				continue
+			}
 			if (u8[0x819080 + i] == 0x0a)
 			{
 				if (id != 0xff)
 					string_count += 1
+				continue
+			}
+			if (u8[0x819080 + i] == 0x5c)
+			{
+				if (u8[0x819080 + i + 1] == 0x6e)
+					ignoreNextChar = true
 				continue
 			}
 			if (string_count == id + 1)

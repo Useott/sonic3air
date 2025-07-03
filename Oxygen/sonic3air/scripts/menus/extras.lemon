@@ -20,52 +20,58 @@ function void Extras.initExtrasEntries()
 {
 	//Name, image, function to call
 	
-	Extras.addExtrasEntry("Competition Mode", "secret_competitionmode", "EntryFunctions.competitionMode")
+	Extras.addExtrasEntry(Extras.getTranslatedTexts(0), "secret_competitionmode", "EntryFunctions.competitionMode")
 	if (Game.isSecretUnlocked(0x04))
-		Extras.addExtrasEntry("Blue Sphere", "secret_bluesphere", "EntryFunctions.blueSphereGame")
+		Extras.addExtrasEntry(Extras.getTranslatedTexts(1), "secret_bluesphere", "EntryFunctions.blueSphereGame")
 	if (Game.isSecretUnlocked(0x10))
-		Extras.addExtrasEntry("Level Select", "secret_levelselect", "EntryFunctions.levelSelect")
+		Extras.addExtrasEntry(Extras.getTranslatedTexts(2), "secret_levelselect", "EntryFunctions.levelSelect")
 }
 
 function void Extras.initSecretsEntries()
 {
 	//Name (ALL UPPERCASE), description, image, id, hide until unlocked, achievements needed to unlock
 	
-	Extras.addSecretsEntry("SONIC DROP DASH", "In the Options menu (in Controls), you can now activate\nSonic's Drop Dash move for Normal Game and Act Select.", "secret_dropdash", 0x01, false, 3)
-	Extras.addSecretsEntry("KNUCKLES & TAILS MODE", "Play as Knuckles & Tails character combination in Normal\nGame and Act Select.", "secret_knuckles_tails", 0x00, false, 5)
-	Extras.addSecretsEntry("SONIC SUPER PEEL-OUT", "The Super Peel-Out move is available in the Options menu.\nThis also unlocks \"Max Control\" Time Attack.", "secret_superpeelout", 0x03, false, 7)
-	Extras.addSecretsEntry("DEBUG MODE", "Debug Mode can be activated in the Options menu (in\nTweaks), and is available in Normal Game and Act Select.", "secret_debugmode", 0x02, false, 10)
-	Extras.addSecretsEntry("BLUE SPHERE", "Adds the Blue Sphere game to Extras that is known from\nSonic 1 locked on to Sonic & Knuckles.", "secret_bluesphere", 0x04, false, 12)
+	Extras.addSecretsEntry(Extras.getTranslatedTexts(3), Extras.getTranslatedTexts(11), "secret_dropdash", 0x01, false, 3)
+	Extras.addSecretsEntry(Extras.getTranslatedTexts(4), Extras.getTranslatedTexts(12), "secret_knuckles_tails", 0x00, false, 5)
+	Extras.addSecretsEntry(Extras.getTranslatedTexts(5), Extras.getTranslatedTexts(13), "secret_superpeelout", 0x03, false, 7)
+	Extras.addSecretsEntry(Extras.getTranslatedTexts(6), Extras.getTranslatedTexts(14), "secret_debugmode", 0x02, false, 10)
+	Extras.addSecretsEntry(Extras.getTranslatedTexts(7), Extras.getTranslatedTexts(15), "secret_bluesphere", 0x04, false, 12)
 	//if (Game.isSecretUnlocked(0x10))
-		Extras.addSecretsEntry("LEVEL SELECT", "Adds the original Sonic 3 & Knuckles Level Select menu to\nExtras.", "secret_levelselect", 0x10, true, 0)
+		Extras.addSecretsEntry(Extras.getTranslatedTexts(8), Extras.getTranslatedTexts(16), "secret_levelselect", 0x10, true, 0)
 	//if (Game.isSecretUnlocked(0x11))
-		Extras.addSecretsEntry("SONIC & KNUCKLES TITLE", "You can now select the Sonic & Knuckles title screen in\nthe Options menu.", "secret_title_sk", 0x11, true, 0)
+		Extras.addSecretsEntry(Extras.getTranslatedTexts(9), Extras.getTranslatedTexts(17), "secret_title_sk", 0x11, true, 0)
 	//if (Game.isSecretUnlocked(0x12))
-		Extras.addSecretsEntry("GAME SPEED SETTING", "Ready for a new challenge? Make the game faster (or\nslower) in the Options menu.", "secret_gamespeed", 0x12, true, 0)
+		Extras.addSecretsEntry(Extras.getTranslatedTexts(10), Extras.getTranslatedTexts(18), "secret_gamespeed", 0x12, true, 0)
 }
 
 function void Extras.initAchievementsEntries()
 {
 	//Name, description, sprite, id
 	
-	Extras.addAchievementsEntry("ATTRACTED TO SHINY THINGS", "Collect 300 rings without losing them.", "achievement_rings", 0x0001)
-	Extras.addAchievementsEntry("DOUBLE DOSE OF STARS", "Open another invincibility monitor while still being invincible\nfrom the last one.", "achievement_invincibility", 0x0002)
-	Extras.addAchievementsEntry("OLD-FASHIONED LIFE INSURANCE", "Have 5 continues in one game.", "achievement_continues", 0x0010)
-	Extras.addAchievementsEntry("GOING HYPER", "Collect all 14 emeralds and transform to a Hyper form.", "achievement_hyperform", 0x0011)
-	Extras.addAchievementsEntry("SCORE MILLIONAIRE", "Reach a score of 1,000,000 points.", "achievement_score", 0x0012)
-	Extras.addAchievementsEntry("ELECTROFISHING", "Defeat an underwater enemy by electrocution.", "achievement_electrocution", 0x0013)
-	Extras.addAchievementsEntry("LONGPLAY", "Beat the game with any character.", "achievement_gamebeaten", 0x0020)
-	Extras.addAchievementsEntry("TIDIED UP THE PLACE", "Complete a Blue Spheres stage with Perfect.", "achievement_perfect", 0x1601)
-	Extras.addAchievementsEntry("IS THERE AN EXIT UP THERE", "Reach the top of the Glowing Spheres bonus stage.", "achievement_glowingspheres", 0x1401)
-	Extras.addAchievementsEntry("JACKPOT", "Win the Jackpot in the Slot Machines bonus stage.", "achievement_jackpot", 0x1501)
-	Extras.addAchievementsEntry("BURSTING THROUGH THE JUNGLE", "Finish Angel Island Zone Act 1 in Time Attack in under 45\nseconds.", "achievement_timeattack_aiz1", 0x0101)
-	Extras.addAchievementsEntry("ATTRACTED TO GIANT SHINY THINGS", "Enter or collect 6 giant rings in Marble Garden Zone Act 1\nin a single run without dying in between.", "achievement_giantrings_mgz1", 0x0301)
-	Extras.addAchievementsEntry("GREEDY SNOWBOARDER", "Collect all 50 rings in the snow boarding section of IceCap\nZone Act 1.", "achievement_snowboarding", 0x0501)
-	Extras.addAchievementsEntry("ONCE SEE THE SUNRISE", "Defeat the upper boss in IceCap Zone Act 1 with Knuckles\n(you may need a buddy for this).", "achievement_icecap1boss", 0x0502)
-	Extras.addAchievementsEntry("FLUFFY FUR MUST NOT GET WET", "Get through Launch Base Zone Act 2 without touching any\nwater (requires A.I.R. level layouts).", "achievement_staydry", 0x0601)
-	Extras.addAchievementsEntry("DISPLAY SMASHER", "Open 18 monitors in Mushroom Hill Zone Act 1 with Knuckles.", "achievement_monitors", 0x0701)
-	Extras.addAchievementsEntry("SQUIRRELS ON A PLANE", "Free 35 animals in Flying Battery Zone Act 1 before the\nboss.", "achievement_animals", 0x0801)
-	Extras.addAchievementsEntry("NO TOUCHY", "Fight the second boss in Sonic's Sky Sanctuary but pop at\nmost one of the inflatable Mechas.", "achievement_decoys", 0x0c01)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(19), Extras.getTranslatedTexts(37), "achievement_rings", 0x0001)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(20), Extras.getTranslatedTexts(38), "achievement_invincibility", 0x0002)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(21), Extras.getTranslatedTexts(39), "achievement_continues", 0x0010)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(22), Extras.getTranslatedTexts(40), "achievement_hyperform", 0x0011)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(23), Extras.getTranslatedTexts(41), "achievement_score", 0x0012)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(24), Extras.getTranslatedTexts(42), "achievement_electrocution", 0x0013)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(25), Extras.getTranslatedTexts(43), "achievement_gamebeaten", 0x0020)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(26), Extras.getTranslatedTexts(44), "achievement_perfect", 0x1601)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(27), Extras.getTranslatedTexts(45), "achievement_glowingspheres", 0x1401)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(28), Extras.getTranslatedTexts(46), "achievement_jackpot", 0x1501)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(29), Extras.getTranslatedTexts(47), "achievement_timeattack_aiz1", 0x0101)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(30), Extras.getTranslatedTexts(48), "achievement_giantrings_mgz1", 0x0301)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(31), Extras.getTranslatedTexts(49), "achievement_snowboarding", 0x0501)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(32), Extras.getTranslatedTexts(50), "achievement_icecap1boss", 0x0502)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(33), Extras.getTranslatedTexts(51), "achievement_staydry", 0x0601)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(34), Extras.getTranslatedTexts(52), "achievement_monitors", 0x0701)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(35), Extras.getTranslatedTexts(53), "achievement_animals", 0x0801)
+	Extras.addAchievementsEntry(Extras.getTranslatedTexts(36), Extras.getTranslatedTexts(54), "achievement_decoys", 0x0c01)
+}
+
+
+function string Extras.getTranslatedTexts(s8 num)
+{
+	return Standalone.getTranslatedString("extras", num)
 }
 
 function void Extras.DrawBackground()
@@ -100,9 +106,9 @@ function void Extras.DrawMenu(u8 selectedTab, u8 selectedEntry)
 	
 	Renderer.drawSprite("options_topbar_bg", s16(getScreenWidth() - 512) / 2, -6, 0, 0x00, 0x7001)
 	
-	Renderer.drawText(TAB_TEXT, s16(getScreenWidth() / 2 - camera.foreground.x.u16), 13, "EXTRAS", (selectedTab == 0 && !selectedEntry) ? SELECTED_HIGHLIGHTED : (selectedTab == 0) ? SELECTED : NOT_SELECTED, 5, 0, 0xf000, false, true)
-	Renderer.drawText(TAB_TEXT, s16(getScreenWidth() / 2 - camera.foreground.x.u16 + 219), 13, "SECRETS", (selectedTab == 1 && !selectedEntry) ? SELECTED_HIGHLIGHTED : (selectedTab == 1) ? SELECTED : NOT_SELECTED, 5, 0, 0xf000, false, true)
-	Renderer.drawText(TAB_TEXT, s16(getScreenWidth() / 2 - camera.foreground.x.u16 + 440), 13, "ACHIEVEMENTS", (selectedTab == 2 && !selectedEntry) ? SELECTED_HIGHLIGHTED : (selectedTab == 2) ? SELECTED : NOT_SELECTED, 5, 0, 0xf000, false, true)
+	Renderer.drawText(TAB_TEXT, s16(getScreenWidth() / 2 - camera.foreground.x.u16), 13, Extras.getTranslatedTexts(55), (selectedTab == 0 && !selectedEntry) ? SELECTED_HIGHLIGHTED : (selectedTab == 0) ? SELECTED : NOT_SELECTED, 5, 0, 0xf000, false, true)
+	Renderer.drawText(TAB_TEXT, s16(getScreenWidth() / 2 - camera.foreground.x.u16 + 219), 13, Extras.getTranslatedTexts(56), (selectedTab == 1 && !selectedEntry) ? SELECTED_HIGHLIGHTED : (selectedTab == 1) ? SELECTED : NOT_SELECTED, 5, 0, 0xf000, false, true)
+	Renderer.drawText(TAB_TEXT, s16(getScreenWidth() / 2 - camera.foreground.x.u16 + 440), 13, Extras.getTranslatedTexts(57), (selectedTab == 2 && !selectedEntry) ? SELECTED_HIGHLIGHTED : (selectedTab == 2) ? SELECTED : NOT_SELECTED, 5, 0, 0xf000, false, true)
 	
 	u8 arrowOffset
 	if ((global.framecounter / 10) % 6) >= 3
@@ -156,10 +162,10 @@ function void Extras.DrawMenu(u8 selectedTab, u8 selectedEntry)
 		Renderer.drawSpriteTinted("extras_frame", 27 - Math.roundToInt(camera.foreground.x.u16 * 1.5) - ((selectedEntry == i + 1) * 12) + widescreenOffset, (50 + i * 56) - camera.foreground.y.u16, 0, 0x00, 0x6000, 0, u32(0xffffffff - Extras.opacityExtras), 0x10000)
 		Renderer.drawText(TAB_TEXT, s16(109 - Math.roundToInt(camera.foreground.x.u16 * 1.5)) - ((selectedEntry == i + 1) * 12) + widescreenOffset, (76 + i * 56) - camera.foreground.y.u16, name, ((selectedEntry == i + 1) ? SELECTED_HIGHLIGHTED : SELECTED) - Extras.opacityExtras, 4, 0, 0x6010, false, true)
 		if (selectedEntry == i + 1)
-			Renderer.drawText(SLIGHTLY_SMALL_TEXT, s16(109 - Math.roundToInt(camera.foreground.x.u16 * 1.5)) + 47 - ((selectedEntry == i + 1) * 12) + widescreenOffset, (76 + i * 56) - camera.foreground.y.u16 + 23, "Press Enter to start", ((selectedEntry == i + 1) ? SELECTED_HIGHLIGHTED : SELECTED) - Extras.opacityExtras - Extras.tintG, 4, 0, 0x6010, false, true)
+			Renderer.drawText(SLIGHTLY_SMALL_TEXT, s16(109 - Math.roundToInt(camera.foreground.x.u16 * 1.5)) + 47 - ((selectedEntry == i + 1) * 12) + widescreenOffset, (76 + i * 56) - camera.foreground.y.u16 + 23, Extras.getTranslatedTexts(58), ((selectedEntry == i + 1) ? SELECTED_HIGHLIGHTED : SELECTED) - Extras.opacityExtras - Extras.tintG, 4, 0, 0x6010, false, true)
 		if (i == Extras.extrasEntryList - 1)
 		{
-			Renderer.drawText(REGULAR_TEXT , 200 - Math.roundToInt(camera.foreground.x.u16 * 1.5) + widescreenOffset, (76 + i * 56) + 45 - camera.foreground.y.u16, "Back", ((selectedEntry == i + 2) ? SELECTED_HIGHLIGHTED : SELECTED) - Extras.opacityExtras, 5, 0, 0x6010, false, true)
+			Renderer.drawText(REGULAR_TEXT , 200 - Math.roundToInt(camera.foreground.x.u16 * 1.5) + widescreenOffset, (76 + i * 56) + 45 - camera.foreground.y.u16, Extras.getTranslatedTexts(59), ((selectedEntry == i + 2) ? SELECTED_HIGHLIGHTED : SELECTED) - Extras.opacityExtras, 5, 0, 0x6010, false, true)
 			if (selectedEntry == i + 2)
 			{
 				if ((global.framecounter / 10) % 6) >= 3
@@ -203,7 +209,7 @@ function void Extras.DrawMenu(u8 selectedTab, u8 selectedEntry)
 		Renderer.drawText(SMALL_TEXT, s16(107 - Math.roundToInt(camera.foreground.x.u16 * 1.5)) + 330 - ((selectedEntry == j + 1) * 12) + widescreenOffset, (80 + j * 64) - camera.foreground.y.u16 + 31, description, ((selectedEntry == j + 1) ? SELECTED_HIGHLIGHTED : NOT_SELECTED) - Extras.opacitySecrets, 4, 0, 0x6010, false, true)
 		if (j == Extras.secretsEntryList - 1)
 		{
-			Renderer.drawText(REGULAR_TEXT , 200 - Math.roundToInt(camera.foreground.x.u16 * 1.5) + 330 + widescreenOffset, (76 + j * 64) + 45 - camera.foreground.y.u16 + 31, "Back", ((selectedEntry == j + 2) ? SELECTED_HIGHLIGHTED : SELECTED) - Extras.opacitySecrets, 5, 0, 0x6010, false, true)
+			Renderer.drawText(REGULAR_TEXT , 200 - Math.roundToInt(camera.foreground.x.u16 * 1.5) + 330 + widescreenOffset, (76 + j * 64) + 45 - camera.foreground.y.u16 + 31, Extras.getTranslatedTexts(59), ((selectedEntry == j + 2) ? SELECTED_HIGHLIGHTED : SELECTED) - Extras.opacitySecrets, 5, 0, 0x6010, false, true)
 			if (selectedEntry == j + 2)
 			{
 				if ((global.framecounter / 10) % 6) >= 3
@@ -267,7 +273,7 @@ function void Extras.DrawMenu(u8 selectedTab, u8 selectedEntry)
 			Renderer.drawText(SMALL_TEXT, s16(107 - Math.roundToInt(camera.foreground.x.u16 * 1.5)) + 660 - ((selectedEntry == l + 1) * 12) + widescreenOffset, (80 + l * 56) - camera.foreground.y.u16 + 31 + additional_offset, description, ((selectedEntry == l + 1) ? SELECTED_HIGHLIGHTED : NOT_SELECTED) - Extras.opacityAchievements, 4, 0, 0x6010, false, true)
 			if (l == Extras.achievementsEntryList - 1)
 			{
-				Renderer.drawText(REGULAR_TEXT , 200 - Math.roundToInt(camera.foreground.x.u16 * 1.5) + 660 + widescreenOffset, (76 + l * 56) + 72 - camera.foreground.y.u16 + additional_offset, "Back", ((selectedEntry == l + 2) ? SELECTED_HIGHLIGHTED : SELECTED) - Extras.opacityAchievements, 5, 0, 0x6010, false, true)
+				Renderer.drawText(REGULAR_TEXT , 200 - Math.roundToInt(camera.foreground.x.u16 * 1.5) + 660 + widescreenOffset, (76 + l * 56) + 72 - camera.foreground.y.u16 + additional_offset, Extras.getTranslatedTexts(59), ((selectedEntry == l + 2) ? SELECTED_HIGHLIGHTED : SELECTED) - Extras.opacityAchievements, 5, 0, 0x6010, false, true)
 				if (selectedEntry == l + 2)
 				{
 					if ((global.framecounter / 10) % 6) >= 3
