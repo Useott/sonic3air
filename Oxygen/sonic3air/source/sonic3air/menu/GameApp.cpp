@@ -397,7 +397,13 @@ void GameApp::gotoPhase(int phaseNumber)
 		case 2:
 		{
 			// Start with the main menu
-			openMainMenu();
+			//openMainMenu();
+			InputManager::instance().setTouchInputMode(InputManager::TouchInputMode::HIDDEN_CONTROLS);
+			mCurrentState = State::INGAME;
+			Game::instance().resetCurrentMode();
+			Simulation& simulation = Application::instance().getSimulation();
+			simulation.setRunning(true);
+			Game::instance().startIntoAITMainMenu();
 			break;
 		}
 
