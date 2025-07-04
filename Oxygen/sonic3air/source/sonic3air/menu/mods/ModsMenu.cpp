@@ -741,6 +741,43 @@ void ModsMenu::render()
 	// Draw separator line
 	drawer.drawRect(Recti(rightTabStart + globalOffsetX, 8, 1, 208), Color(0.0f, 0.0f, 0.0f, 0.2f));
 
+	int triangleScroll = mMenuBackground->mAnimationTimerAIT % 512;
+	drawer.drawRect(Recti(triangleScroll, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
+	drawer.drawRect(Recti(triangleScroll - 512, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
+	drawer.drawRect(Recti(512 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
+	drawer.drawRect(Recti(0 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
+
+	// So the active/inactive mods text appears on top
+	for (size_t tabIndex = minTabIndex; tabIndex <= maxTabIndex; ++tabIndex)
+	{
+		Tab& tab = mTabs[tabIndex];
+		GameMenuEntries& menuEntries = tab.mMenuEntries;
+		const int startY = 10 - tab.mScrolling.getScrollOffsetYInt();
+
+		Recti rect((tabIndex == 0) ? 0 : rightTabStart, startY, 300, 18);
+		float alpha;
+		if (mState != State::FADE_TO_GAME)
+		{
+			rect.x += globalOffsetX + 20;
+			alpha = mVisibility;
+		}
+		if (tabIndex != mActiveTab)
+			alpha *= 0.75f;
+
+		{
+			Recti visualRect = rect;
+			visualRect.x += 24;
+			std::string text = (tabIndex == 0) ? "Active Mods" : "Inactive Mods";
+			if (tabIndex == mActiveTab)
+			{
+				text = "* " + text + " *";
+				visualRect.x -= 12;
+			}
+			drawer.printText(global::mSonicFontB, visualRect, text, 1, Color(0.6f, 0.8f, 1.0f, alpha));
+			rect.y += rect.height + 7;
+		}
+	}
+
 	if (mInfoOverlay.mVisibility > 0.0f)
 	{
 		drawer.popScissor();

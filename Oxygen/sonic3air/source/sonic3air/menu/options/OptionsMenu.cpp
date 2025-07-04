@@ -940,10 +940,10 @@ void OptionsMenu::render()
 		{
 			// Background
 			int triangleScroll = mMenuBackground->mAnimationTimerAIT % 512;
-			drawer.drawRect(Recti(triangleScroll, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, alpha));
-			drawer.drawRect(Recti(triangleScroll - 512, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, alpha));
-			drawer.drawRect(Recti(512 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, alpha));
-			drawer.drawRect(Recti(0 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, alpha));
+			drawer.drawRect(Recti(triangleScroll, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
+			drawer.drawRect(Recti(triangleScroll - 512, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
+			drawer.drawRect(Recti(512 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
+			drawer.drawRect(Recti(0 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
 
 			const int py = anchorY + 4;
 			const auto& entry = mTabMenuEntries[0];
