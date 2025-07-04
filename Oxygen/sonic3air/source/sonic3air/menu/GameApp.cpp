@@ -238,16 +238,17 @@ void GameApp::openOptionsMenuInGame()
 	mGameView->addChild(*mMenuBackground);
 	mGameView->startFadingIn();
 	mMenuBackground->openOptions(true);
+	AudioOut::instance().setMenuMusic(0x2f);
 }
 
 void GameApp::openOptionsMenu()
 {
 	mRestoreGameResolution = VideoOut::instance().getScreenRect().getSize();
+	Application::instance().getSimulation().setSpeed(0.0f);
 	Application::instance().getSimulation().setRunning(false);
 
 	mCurrentState = State::TOUR_MAINMENU_OPTIONS;
 
-	mPauseMenu->setEnabled(false);
 	mGameView->addChild(*mMenuBackground);
 	mGameView->startFadingIn();
 	mMenuBackground->openOptions(2);
@@ -283,7 +284,7 @@ void GameApp::onFadedOutOptions()
 
 		ControlsIn::instance().setAllIgnores();
 		VideoOut::instance().setScreenSize(mRestoreGameResolution);
-		AudioOut::instance().stopSoundContext(AudioOut::CONTEXT_MENU + AudioOut::CONTEXT_MUSIC);
+		Application::instance().getSimulation().setSpeed(1.0f);
 		GameApp::instance().getGameView().startFadingIn(0.1f);
 
 		Simulation& simulation = Application::instance().getSimulation();

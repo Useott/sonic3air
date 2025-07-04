@@ -326,7 +326,6 @@ void OptionsMenu::onFadeIn()
 		optionEntry.loadValue();
 	}
 
-	AudioOut::instance().setMenuMusic(0x2f);
 	mPlayingSoundTest = nullptr;
 }
 
