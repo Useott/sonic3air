@@ -188,6 +188,7 @@ void Game::registerScriptBindings(lemon::Module& module)
 		module.addNativeFunction("Game.openOptionsMenu", lemon::wrap(*this, &Game::openOptionsMenu), defaultFlags);
 
 		module.addNativeFunction("Game.openOptionsMenuFromAITMenu", lemon::wrap(*this, &Game::openOptionsMenuFromAITMenu), defaultFlags);
+		module.addNativeFunction("Game.openModsMenu", lemon::wrap(*this, &Game::openModsMenu), defaultFlags);
 
 		module.addNativeFunction("Game.isNormalGame", lemon::wrap(*this, &Game::isNormalGame), defaultFlags);
 		module.addNativeFunction("Game.isTimeAttack", lemon::wrap(*this, &Game::isTimeAttack), defaultFlags);
@@ -1068,6 +1069,11 @@ void Game::openOptionsMenu()
 void Game::openOptionsMenuFromAITMenu()
 {
 	GameApp::instance().openOptionsMenu();
+}
+
+void Game::openModsMenu()
+{
+	GameApp::instance().openModsMenu();
 }
 
 bool Game::onTimeAttackFinish()

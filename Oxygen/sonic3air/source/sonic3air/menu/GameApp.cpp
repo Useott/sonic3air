@@ -293,6 +293,34 @@ void GameApp::onFadedOutOptions()
 	}
 }
 
+void GameApp::openModsMenu()
+{
+	mRestoreGameResolution = VideoOut::instance().getScreenRect().getSize();
+	Application::instance().getSimulation().setSpeed(0.0f);
+	Application::instance().getSimulation().setRunning(false);
+
+	mCurrentState = State::TOUR_MODS_MENU;
+
+	mGameView->addChild(*mMenuBackground);
+	mGameView->startFadingIn();
+	mMenuBackground->openMods();
+}
+
+void GameApp::onFadedOutMods()
+{
+	if (mMenuBackground->getParent() == mGameView)
+		mGameView->removeChild(*mMenuBackground);
+
+	ControlsIn::instance().setAllIgnores();
+	VideoOut::instance().setScreenSize(mRestoreGameResolution);
+	Application::instance().getSimulation().setSpeed(1.0f);
+	GameApp::instance().getGameView().startFadingIn(0.1f);
+
+	Simulation& simulation = Application::instance().getSimulation();
+	simulation.setRunning(true);
+	Game::instance().startIntoAITMainMenu();
+}
+
 void GameApp::onGamePaused(bool canRestart)
 {
 	showSkippableCutsceneWindow(false);

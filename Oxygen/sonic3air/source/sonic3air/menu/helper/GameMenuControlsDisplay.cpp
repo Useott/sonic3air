@@ -47,7 +47,7 @@ void GameMenuControlsDisplay::render(Drawer& drawer, float visibility)
 	Vec2i pos(0, 216 + roundToInt((1.0f - visibility) * 16));
 
 	// Background
-	drawer.drawRect(Recti(pos.x, pos.y - 1, 400, 225 - pos.y), Color(0.0f, 0.0f, 0.0f));
+	//drawer.drawRect(Recti(pos.x, pos.y - 1, 400, 225 - pos.y), Color(0.0f, 0.0f, 0.0f));
 	//	for (int k = 0; k < 6; ++k)
 	//		drawer.drawRect(Recti(pos.x, pos.y - 7 + k, 400, 1), Color(0.0f, 0.0f, 0.0f, 0.1f * k - 0.05f));
 

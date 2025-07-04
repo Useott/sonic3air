@@ -326,6 +326,14 @@ function void AITourMenus.Menu()
 			transitionTimer = 20
 			jump @MenuWhileLoop
 		}
+		if (result == TIME_ATTACK)
+		{
+			Audio.playAudio(0x63)
+			AITourMenus.handleFading(1)
+			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
+			returnToCXXMenu = true
+			Game.returnToMainMenu()
+		}
 		if (result == OPTIONS)
 		{
 			Audio.playAudio(0x63)
@@ -343,20 +351,22 @@ function void AITourMenus.Menu()
 			AITourMenus.handleFading(1)
 			EntryFunctions.extrasMenu()
 		}
+		if (result == MODS)
+		{
+			Audio.playAudio(0x63)
+			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
+			AITourMenus.handleFading(1)
+			Game.openModsMenu()
+			Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), 255, 0xff80, false)
+			AITourMenus.handleFading(0)
+			Game.returnToMainMenu()
+		}
 		if (result == TITLE_SCREEN)
 		{
 			Audio.playAudio(0xad)
 			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
 			AITourMenus.handleFading(1)
 			GameModeControlLoop()
-		}
-		if (result == TIME_ATTACK || result == MODS)
-		{
-			Audio.playAudio(0x63)
-			AITourMenus.handleFading(1)
-			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
-			returnToCXXMenu = true
-			Game.returnToMainMenu()
 		}
 	}
 }

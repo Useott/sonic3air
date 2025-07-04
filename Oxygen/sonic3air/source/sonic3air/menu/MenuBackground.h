@@ -55,6 +55,8 @@ public:
 	void openGameStartedMenu();
 	void setGameStartedMenu();
 
+	int mAnimationTimerAIT = 0;
+
 private:
 	struct PreviewKey
 	{

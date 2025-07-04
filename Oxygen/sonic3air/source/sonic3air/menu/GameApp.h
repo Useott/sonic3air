@@ -39,6 +39,8 @@ public:
 	void openOptionsMenuInGame();
 	void openOptionsMenu();
 	void onFadedOutOptions();
+	void openModsMenu();
+	void onFadedOutMods();
 	void onGamePaused(bool canRestart);
 	void restartTimeAttack();
 	void returnToMenu();
@@ -65,6 +67,7 @@ private:
 		MAIN_MENU,
 		INGAME_OPTIONS,
 		TOUR_MAINMENU_OPTIONS,
+		TOUR_MODS_MENU,
 		INGAME,
 		TIME_ATTACK_RESULTS
 	};

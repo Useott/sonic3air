@@ -42,7 +42,8 @@ private:
 		APPEAR,
 		SHOW,
 		APPLYING_CHANGES,
-		FADE_TO_MENU
+		FADE_TO_MENU,
+		FADE_TO_GAME
 	};
 
 private:

@@ -19,6 +19,7 @@
 
 #include "oxygen/application/Configuration.h"
 #include "oxygen/application/EngineMain.h"
+#include "oxygen/application/gameview/GameView.h"
 #include "oxygen/application/input/InputManager.h"
 #include "oxygen/application/modding/ModManager.h"
 #include "oxygen/helper/DrawerHelper.h"
@@ -59,6 +60,7 @@ GameMenuBase::BaseState ModsMenu::getBaseState() const
 		case State::SHOW:			  return BaseState::SHOW;
 		case State::APPLYING_CHANGES: return BaseState::SHOW;
 		case State::FADE_TO_MENU:	  return BaseState::FADE_OUT;
+		case State::FADE_TO_GAME:     return BaseState::FADE_OUT;
 		default:					  return BaseState::INACTIVE;
 	}
 }
@@ -573,15 +575,15 @@ void ModsMenu::update(float timeElapsed)
 		}
 		else if (mApplyingChangesFrameCounter == 0)
 		{
-			playMenuSound(0xad);
-			mMenuBackground->openMainMenu();
-			mState = State::FADE_TO_MENU;
+			GameApp::instance().onFadedOutMods();
+			mState = State::INACTIVE;
 		}
 	}
 	else if (mState > State::APPLYING_CHANGES)
 	{
 		if (updateFadeOut(timeElapsed * 3.0f))
 		{
+			GameApp::instance().onFadedOutMods();
 			mState = State::INACTIVE;
 		}
 	}
@@ -602,7 +604,7 @@ void ModsMenu::render()
 	ModsMenuRenderContext renderContext;
 	renderContext.mDrawer = &drawer;
 
-	const int globalOffsetX = -roundToInt(saturate(1.0f - mVisibility) * 300.0f);
+	const int globalOffsetX = 0;
 
 	int infoOverlayPosition = 224;
 	if (mInfoOverlay.mVisibility > 0.0f)
@@ -622,8 +624,12 @@ void ModsMenu::render()
 		const int startY = 10 - tab.mScrolling.getScrollOffsetYInt();
 
 		Recti rect((tabIndex == 0) ? 0 : rightTabStart, startY, 300, 18);
-		rect.x += globalOffsetX + 20;
-		float alpha = mVisibility;
+		float alpha;
+		if (mState != State::FADE_TO_GAME)
+		{
+			rect.x += globalOffsetX + 20;
+			alpha = mVisibility;
+		}
 		if (tabIndex != mActiveTab)
 			alpha *= 0.75f;
 
@@ -990,8 +996,8 @@ void ModsMenu::goBack()
 	else
 	{
 		playMenuSound(0xad);
-		mMenuBackground->openMainMenu();
-		mState = State::FADE_TO_MENU;
+		GameApp::instance().getGameView().startFadingOut(0.1666f);
+		mState = State::FADE_TO_GAME;
 	}
 }
 

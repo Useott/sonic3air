@@ -120,6 +120,7 @@ private:
 
 	bool mEnteredFromIngame = false;
 	bool mEnteredFromAITMenu = false;
+	int mAnimationTimer = 0;
 	float mWarningMessageTimeout = 0.0f;
 	float mAudioWarningMessageTimeout = 0.0f;
 	bool mShowedAudioWarningMessage = false;

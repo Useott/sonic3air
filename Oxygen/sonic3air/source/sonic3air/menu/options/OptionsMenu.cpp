@@ -856,13 +856,15 @@ void OptionsMenu::render()
 		alpha *= (1.0f - mControllerSetupMenu->getVisibility());
 	}
 
+	mAnimationTimer += 1;
+
 	if (alpha > 0.0f)
 	{
 		const int startY = anchorY + 30 - mScrolling.getScrollOffsetYInt();
 
 		// Tab contents
 		{
-			drawer.pushScissor(Recti(0, anchorY + 30, (int)mRect.width, (int)mRect.height - anchorY - 30));
+			//drawer.pushScissor(Recti(0, anchorY + 30, (int)mRect.width, (int)mRect.height - anchorY - 30));
 
 			const int minTabIndex = (int)std::floor(mActiveTabAnimated);
 			const int maxTabIndex = (int)std::ceil(mActiveTabAnimated);
@@ -931,13 +933,17 @@ void OptionsMenu::render()
 				}
 			}
 
-			drawer.popScissor();
+			//drawer.popScissor();
 		}
 
 		// Tab titles (must be rendered afterwards because it's meant to be on top)
 		{
 			// Background
-			drawer.drawRect(Recti(anchorX - 200, anchorY - 6, 400, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, alpha));
+			int triangleScroll = mMenuBackground->mAnimationTimerAIT % 512;
+			drawer.drawRect(Recti(triangleScroll, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, alpha));
+			drawer.drawRect(Recti(triangleScroll - 512, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, alpha));
+			drawer.drawRect(Recti(512 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, alpha));
+			drawer.drawRect(Recti(0 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, alpha));
 
 			const int py = anchorY + 4;
 			const auto& entry = mTabMenuEntries[0];
@@ -963,7 +969,7 @@ void OptionsMenu::render()
 					const Color color2 = (k == entry.mSelectedIndex) ? color : Color(0.9f, 0.9f, 0.9f, alpha * 0.8f);
 					const std::string& text = entry.mOptions[k].mText;
 					const int px = roundToInt(((float)k - mActiveTabAnimated) * 180.0f) + center - 80;
-					drawer.printText(global::mSonicFontC, Recti(px, py, 160, 20), text, 5, color2);
+					drawer.printText(global::mSonicFontC, Recti(px, py, 160, 23), text, 5, color2);
 				}
 			}
 
@@ -1011,12 +1017,12 @@ void OptionsMenu::render()
 				bottomY -= 16;
 				const Recti rect(0, bottomY + roundToInt((1.0f - visibility) * 20.0f), 400, 20);
 
-				drawer.drawRect(rect, Color(1.0f, 0.75f, 0.5f, alpha * 0.95f));
-				drawer.printText(global::mOxyfontSmall, rect - Vec2i(0, 2), message, 5, Color(1.0f, 0.9f, 0.8f, alpha));
-				drawer.drawRect(Recti(rect.x, rect.y-1, rect.width, 1), Color(0.4f, 0.2f, 0.0f, alpha * 0.95f));
+				drawer.drawRect(rect, Color(0.0f, 0.0f, 0.5f, alpha * 0.95f));
+				drawer.printText(global::mOxyfontSmall, rect - Vec2i(0, 2), message, 5, Color(1.0f, 1.0f, 1.0f, alpha));
+				/*drawer.drawRect(Recti(rect.x, rect.y-1, rect.width, 1), Color(0.4f, 0.2f, 0.0f, alpha * 0.95f));
 				drawer.drawRect(Recti(rect.x, rect.y-2, rect.width, 1), Color(0.9f, 0.9f, 0.9f, alpha * 0.9f));
 				drawer.drawRect(Recti(rect.x, rect.y-3, rect.width, 1), Color(0.9f, 0.9f, 0.9f, alpha * 0.6f));
-				drawer.drawRect(Recti(rect.x, rect.y-4, rect.width, 1), Color(0.9f, 0.9f, 0.9f, alpha * 0.3f));
+				drawer.drawRect(Recti(rect.x, rect.y-4, rect.width, 1), Color(0.9f, 0.9f, 0.9f, alpha * 0.3f));*/
 			}
 		}
 

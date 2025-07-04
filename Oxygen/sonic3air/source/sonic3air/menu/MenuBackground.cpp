@@ -173,6 +173,8 @@ void MenuBackground::render()
 		child->setRect(mRect);
 	}
 
+	mAnimationTimerAIT += 1;
+
 	// Calculate split positions between visible parts of layers
 	const float normalizedSplitLight = std::max(mLightLayer.mCurrentPosition, mAlterLayer.mCurrentPosition);
 	const float normalizedSplitBlue  = std::max(mBlueLayer.mCurrentPosition, mAlterLayer.mCurrentPosition);
@@ -220,45 +222,20 @@ void MenuBackground::render()
 			}
 		}
 
-		if (splitLight < splitBlue)
-		{
-			detail::drawQuad(drawer, splitLight, splitBlue, global::mDataSelectBackground);
-		}
+		//detail::drawQuad(drawer, splitLight, splitBlue, global::mDataSelectBackground);
+		//detail::drawQuad(drawer, splitLight, splitBlue, global::mDataSelectAltBackground);
+		int px = -(mAnimationTimerAIT / 8) % 512;
+		int py = int(3.0f * sin(2 * 3.1415 * 128 * float(uint8(mAnimationTimerAIT)))) - 8;
+		drawer.drawRect(Recti(px, py, 512, 256), global::mDataSelectBackground, Color(1.0f, 1.0f, 1.0f, 1.0f));
+		drawer.drawRect(Recti(px + 512, py, 512, 256), global::mDataSelectBackground, Color(1.0f, 1.0f, 1.0f, 1.0f));
+		drawer.drawRect(Recti(0, 0, 512, 256), global::mDataSelectAltBackground, Color(1.0f, 1.0f, 1.0f, 1.0f));
 
-		if (splitBlue < splitMax)
-		{
-			detail::drawQuad(drawer, splitBlue, splitMax, global::mLevelSelectBackground);
-		}
-
-		if (splitAlter > splitMin)
-		{
-			detail::drawQuad(drawer, splitMin, splitAlter, global::mDataSelectAltBackground);
-		}
+		int triangleScroll = mAnimationTimerAIT % 512;
+		drawer.drawRect(Recti(triangleScroll, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
+		drawer.drawRect(Recti(triangleScroll - 512, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
+		drawer.drawRect(Recti(512 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
+		drawer.drawRect(Recti(0 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
 	}
-
-	// Separators
-	drawer.setSamplingMode(SamplingMode::BILINEAR);
-	drawer.setWrapMode(TextureWrapMode::REPEAT);
-	{
-		const float separatorAnimationOffset = -mAnimationTimer * 3.0f;
-
-		if (splitLight > splitMin && splitLight < splitMax)
-		{
-			detail::drawSeparator(drawer, splitLight, separatorAnimationOffset, false);
-		}
-
-		if (splitBlue > splitMin && splitBlue < splitMax)
-		{
-			detail::drawSeparator(drawer, splitBlue, separatorAnimationOffset, true);
-		}
-
-		if (splitAlter > splitMin && splitAlter < splitMax)
-		{
-			detail::drawSeparator(drawer, splitAlter, separatorAnimationOffset, true);
-		}
-	}
-	drawer.setSamplingMode(SamplingMode::POINT);
-	drawer.setWrapMode(TextureWrapMode::CLAMP);
 
 	if (mPreviewVisibility > 0.0f)
 	{
@@ -416,6 +393,10 @@ void MenuBackground::openExtras()
 void MenuBackground::openMods()
 {
 	openMenu(*mModsMenu);
+	skipTransition();
+	if (nullptr == mGameStartedMenu)
+		mGameStartedMenu = mMainMenu;
+	mGameStartedMenu->setBaseState(GameMenuBase::BaseState::INACTIVE);
 }
 
 void MenuBackground::openGameStartedMenu()

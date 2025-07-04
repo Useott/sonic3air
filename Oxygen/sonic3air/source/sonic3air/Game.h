@@ -119,6 +119,7 @@ private:
 	void returnToMainMenu();
 	void openOptionsMenu();
 	void openOptionsMenuFromAITMenu();
+	void openModsMenu();
 
 	inline bool isNormalGame()	{ return isInNormalGameMode(); }
 	inline bool isTimeAttack()	{ return isInTimeAttackMode(); }
