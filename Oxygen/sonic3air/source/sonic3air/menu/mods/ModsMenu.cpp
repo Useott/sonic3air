@@ -819,7 +819,7 @@ void ModsMenu::render()
 	if (mApplyingChangesFrameCounter > 0)
 	{
 		Recti rect(100, 94, 200, 35);
-		DrawerHelper::drawBorderedRect(drawer, rect, 1, Color(1.0f, 1.0f, 1.0f, 0.95f), Color(0.2f, 0.2f, 0.2f, 0.9f));
+		DrawerHelper::drawBorderedRect(drawer, rect, 1, Color(0.055f, 0.0f, 0.333f, 0.95f), Color(1.0f, 0.859f, 0.0f, 1.0f));
 		drawer.printText(global::mOxyfontRegular, rect, "Applying changes...", 5);
 	}
 
