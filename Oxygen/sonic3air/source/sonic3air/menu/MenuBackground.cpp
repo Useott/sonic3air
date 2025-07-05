@@ -23,6 +23,7 @@
 #include "oxygen/application/gameview/GameView.h"
 #include "oxygen/application/video/VideoOut.h"
 #include "oxygen/simulation/CodeExec.h"
+#include "oxygen/simulation/EmulatorInterface.h"
 #include "oxygen/simulation/Simulation.h"
 
 
@@ -175,66 +176,20 @@ void MenuBackground::render()
 
 	mAnimationTimerAIT += 1;
 
-	// Calculate split positions between visible parts of layers
-	const float normalizedSplitLight = std::max(mLightLayer.mCurrentPosition, mAlterLayer.mCurrentPosition);
-	const float normalizedSplitBlue  = std::max(mBlueLayer.mCurrentPosition, mAlterLayer.mCurrentPosition);
-	const float normalizedSplitAlter = mAlterLayer.mCurrentPosition;
-	const float normalizedTitleLeft  = normalizedSplitAlter;
-	const float normalizedTitleRight = std::min(normalizedSplitLight, normalizedSplitBlue);
-
-	const float splitMin = -30.0f;
-	const float splitMax = 430.0f;
-	const float splitLight = interpolate(splitMin, splitMax, saturate(normalizedSplitLight));
-	const float splitBlue  = interpolate(splitMin, splitMax, saturate(normalizedSplitBlue));
-	const float splitAlter = interpolate(splitMin, splitMax, saturate(normalizedSplitAlter));
-	const float titleLeft  = interpolate(splitMin, splitMax, saturate(normalizedTitleLeft));
-	const float titleRight = interpolate(splitMin, splitMax, saturate(normalizedTitleRight));
-
 	// Layers
 	{
-		if (titleLeft < titleRight)
-		{
-			if (!Game::instance().isInMainMenuMode())
-			{
-				Game::instance().startIntoMainMenuBG();
-			}
-			else if (!mAnimatedBackgroundActive)
-			{
-				Application::instance().getSimulation().setRunning(true);
-			}
-
-			LemonScriptRuntime& runtime = Application::instance().getSimulation().getCodeExec().getLemonScriptRuntime();
-			static const lemon::FlyweightString SCROLL_OFFSET_NAME("MainMenuBG.scrollOffset");
-			static const lemon::FlyweightString LOGO_POSITION_NAME("MainMenuBG.logoPosition");
-			runtime.setGlobalVariableValue<int64>(SCROLL_OFFSET_NAME, roundToInt(-mBackgroundLayer.mCurrentPosition * 150.0f));
-			runtime.setGlobalVariableValue<int64>(LOGO_POSITION_NAME, roundToInt(interpolate(splitMin, splitMax, normalizedTitleRight) - 91.0f));
-			mAnimatedBackgroundActive = true;
-		}
-		else
-		{
-			if (mAnimatedBackgroundActive)
-			{
-				if (Game::instance().isInMainMenuMode())
-				{
-					Application::instance().getSimulation().setRunning(false);
-				}
-				mAnimatedBackgroundActive = false;
-			}
-		}
-
-		//detail::drawQuad(drawer, splitLight, splitBlue, global::mDataSelectBackground);
-		//detail::drawQuad(drawer, splitLight, splitBlue, global::mDataSelectAltBackground);
 		int px = -(mAnimationTimerAIT / 8) % 512;
 		int py = int(3.0f * sin(2 * 3.1415 * 128 * float(uint8(mAnimationTimerAIT)))) - 8;
-		drawer.drawRect(Recti(px, py, 512, 256), global::mDataSelectBackground, Color(1.0f, 1.0f, 1.0f, 1.0f));
-		drawer.drawRect(Recti(px + 512, py, 512, 256), global::mDataSelectBackground, Color(1.0f, 1.0f, 1.0f, 1.0f));
-		drawer.drawRect(Recti(0, 0, 512, 256), global::mDataSelectAltBackground, Color(1.0f, 1.0f, 1.0f, 1.0f));
+		drawer.drawSprite(Vec2i(px, py), rmx::getMurmur2_64("main_menu.background"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+		drawer.drawSprite(Vec2i(px + 512, py), rmx::getMurmur2_64("main_menu.background"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+		drawer.drawSprite(Vec2i(0, 0), rmx::getMurmur2_64("main_menu.foreground"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
 
-		int triangleScroll = mAnimationTimerAIT % 512;
-		drawer.drawRect(Recti(triangleScroll, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
-		drawer.drawRect(Recti(triangleScroll - 512, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
-		drawer.drawRect(Recti(512 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
-		drawer.drawRect(Recti(0 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
+		int triangleScroll = mAnimationTimerAIT;
+		const int scrHeight = VideoOut::instance().getScreenHeight();
+		drawer.drawSprite(Vec2i(triangleScroll % 256, 0), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+		drawer.drawSprite(Vec2i((triangleScroll % 256) + 512, 0), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+		drawer.drawSprite(Vec2i(-(triangleScroll % 256), scrHeight), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+		drawer.drawSprite(Vec2i(-(triangleScroll % 256) + 512, scrHeight), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
 	}
 
 	if (mPreviewVisibility > 0.0f)
@@ -246,17 +201,16 @@ void MenuBackground::render()
 				continue;
 
 			const int maxOffset = std::min(480 - (int)mRect.width, 80);
-			const int px = roundToInt(-img.mOffset * maxOffset);
 			const int visibleWidth = roundToInt(mRect.width * img.mVisibility);
 
 			drawer.pushScissor(Recti((int)mRect.width - visibleWidth, 0, visibleWidth, (int)mRect.height));
-			drawer.drawSprite(Vec2i(px, 18), img.mPreviewSprite->mSpriteKey, img.mPreviewSprite->mPaletteKey, Color(1.0f, 1.0f, 1.0f, mPreviewVisibility));
+			drawer.drawSprite(Vec2i(int16(VideoOut::instance().getScreenWidth() - 480) / 2, 26), img.mPreviewSprite->mSpriteKey, img.mPreviewSprite->mPaletteKey, Color(1.0f, 1.0f, 1.0f, mPreviewVisibility));
 			drawer.popScissor();
 		}
 
-		drawer.drawSprite(Vec2i(0, 8), rmx::constMurmur2_64("level_preview_border_left"), Color(1.0f, 1.0f, 1.0f, mPreviewVisibility));
-		drawer.drawSpriteRect(Recti(10, 8, (int)mRect.width - 20, 100), rmx::constMurmur2_64("level_preview_border_center"), Color(1.0f, 1.0f, 1.0f, mPreviewVisibility));
-		drawer.drawSprite(Vec2i((int)mRect.width, 8), rmx::constMurmur2_64("level_preview_border_right"), Color(1.0f, 1.0f, 1.0f, mPreviewVisibility));
+		drawer.drawSprite(Vec2i(0, 16), rmx::constMurmur2_64("level_preview_border_left"), Color(1.0f, 1.0f, 1.0f, mPreviewVisibility));
+		drawer.drawSpriteRect(Recti(10, 16, (int)mRect.width - 20, 100), rmx::constMurmur2_64("level_preview_border_center"), Color(1.0f, 1.0f, 1.0f, mPreviewVisibility));
+		drawer.drawSprite(Vec2i((int)mRect.width, 16), rmx::constMurmur2_64("level_preview_border_right"), Color(1.0f, 1.0f, 1.0f, mPreviewVisibility));
 	}
 
 	GuiBase::render();
@@ -367,6 +321,9 @@ void MenuBackground::openMainMenu()
 void MenuBackground::openTimeAttackMenu()
 {
 	openMenu(*mTimeAttackMenu);
+	skipTransition();
+	mGameStartedMenu = mMainMenu;
+	mGameStartedMenu->setBaseState(GameMenuBase::BaseState::INACTIVE);
 }
 
 void MenuBackground::openOptions(uint8 enteredInGame)
@@ -376,8 +333,7 @@ void MenuBackground::openOptions(uint8 enteredInGame)
 	if (enteredInGame)
 	{
 		skipTransition();
-		if (nullptr == mGameStartedMenu)
-			mGameStartedMenu = mMainMenu;
+		mGameStartedMenu = mMainMenu;
 		mGameStartedMenu->setBaseState(GameMenuBase::BaseState::INACTIVE);
 	}
 
@@ -394,8 +350,7 @@ void MenuBackground::openMods()
 {
 	openMenu(*mModsMenu);
 	skipTransition();
-	if (nullptr == mGameStartedMenu)
-		mGameStartedMenu = mMainMenu;
+	mGameStartedMenu = mMainMenu;
 	mGameStartedMenu->setBaseState(GameMenuBase::BaseState::INACTIVE);
 }
 
@@ -421,7 +376,7 @@ void MenuBackground::setGameStartedMenu()
 void MenuBackground::openMenu(GameMenuBase& menu)
 {
 	// The menus only really work in a fixed resolution, so make sure that one is set
-	VideoOut::instance().setScreenSize(400, 224);
+	//VideoOut::instance().setScreenSize(400, 224);
 
 	GameMenuManager::instance().addMenu(menu);
 
@@ -527,4 +482,16 @@ void MenuBackground::updatePreview(float timeElapsed)
 			mPreviewImage[1].mVisibility = animtime;
 		}
 	}
+}
+
+std::string MenuBackground::askLemonScriptNicelyForATranslatedString(std::string key, uint8 id)
+{
+	CodeExec::FunctionExecData execData;
+	execData.addParam(lemon::PredefinedDataTypes::UINT_64, rmx::getMurmur2_64(key));
+	execData.addParam(lemon::PredefinedDataTypes::UINT_8, id + 1);
+	Application::instance().getSimulation().getCodeExec().executeScriptFunction("Standalone.getTranslatedStringForCXX", false, &execData);
+
+	const lemon::AnyBaseValue value = Application::instance().getSimulation().getCodeExec().getLemonScriptRuntime().getGlobalVariableValue("lastTranslatedString", &lemon::PredefinedDataTypes::STRING);
+	lemon::StringRef text = lemon::StringRef(value.get<uint64>());
+	return std::string{text.getString()};
 }

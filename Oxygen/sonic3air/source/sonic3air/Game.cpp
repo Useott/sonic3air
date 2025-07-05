@@ -189,6 +189,7 @@ void Game::registerScriptBindings(lemon::Module& module)
 
 		module.addNativeFunction("Game.openOptionsMenuFromAITMenu", lemon::wrap(*this, &Game::openOptionsMenuFromAITMenu), defaultFlags);
 		module.addNativeFunction("Game.openModsMenu", lemon::wrap(*this, &Game::openModsMenu), defaultFlags);
+		module.addNativeFunction("Game.openTimeAttackMenu", lemon::wrap(*this, &Game::openTimeAttackMenu), defaultFlags);
 
 		module.addNativeFunction("Game.isNormalGame", lemon::wrap(*this, &Game::isNormalGame), defaultFlags);
 		module.addNativeFunction("Game.isTimeAttack", lemon::wrap(*this, &Game::isTimeAttack), defaultFlags);
@@ -229,6 +230,8 @@ void Game::registerScriptBindings(lemon::Module& module)
 		module.addNativeFunction("Game.isInSkippableCutscene", lemon::wrap(*this, &Game::isInSkippableCutscene), defaultFlags);
 
 		module.addNativeFunction("Game.getBuildNumber", lemon::wrap(*this, &Game::getBuildNumber), defaultFlags);
+
+		module.addNativeFunction("Game.exit", lemon::wrap(*this, &Game::exit), defaultFlags);
 	}
 
 	// Discord
@@ -1076,6 +1079,11 @@ void Game::openModsMenu()
 	GameApp::instance().openModsMenu();
 }
 
+void Game::openTimeAttackMenu()
+{
+	GameApp::instance().openTimeAttackMenu();
+}
+
 bool Game::onTimeAttackFinish()
 {
 	if (!isInTimeAttackMode() || mReceivedTimeAttackFinished)
@@ -1126,4 +1134,9 @@ bool Game::isInSkippableCutscene()
 uint32 Game::getBuildNumber()
 {
 	return BUILD_NUMBER;
+}
+
+void Game::exit()
+{
+	FTX::System->quit();
 }

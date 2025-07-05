@@ -20,6 +20,7 @@
 #include "oxygen/application/EngineMain.h"
 #include "oxygen/application/gameview/GameView.h"
 #include "oxygen/application/input/InputManager.h"
+#include "oxygen/application/video/VideoOut.h"
 #include "oxygen/simulation/Simulation.h"
 
 
@@ -71,8 +72,6 @@ TimeAttackMenu::TimeAttackMenu(MenuBackground& menuBackground) :
 		mCharacterEntry->addOption("Sonic - Max Control", (uint32)CharacterOption::SONIC_MAXCONTROL);
 		mCharacterEntry->addOption("Tails",    (uint32)CharacterOption::TAILS);
 		mCharacterEntry->addOption("Knuckles", (uint32)CharacterOption::KNUCKLES);
-
-		mMenuEntries.addEntry("Back", 0x10);
 	}
 
 	// Set defaults
@@ -119,10 +118,8 @@ void TimeAttackMenu::onFadeIn()
 	mBestTimesForCharacters = 0xff;
 	mBestTimesForZoneAct = 0xffff;
 
-	AudioOut::instance().stopSoundContext(AudioOut::CONTEXT_INGAME + AudioOut::CONTEXT_MUSIC);
-
-	// Play "Data Select" music inside this menu
-	AudioOut::instance().setMenuMusic(0x2f);
+	// Play "Competition Menu" music inside this menu
+	AudioOut::instance().setMenuMusic(0x2d);
 }
 
 bool TimeAttackMenu::canBeRemoved()
@@ -246,6 +243,7 @@ void TimeAttackMenu::update(float timeElapsed)
 			{
 				startGame();
 			}
+			GameApp::instance().onFadedOutTimeAttack(mState != State::FADE_TO_GAME);
 			mState = State::INACTIVE;
 		}
 	}
@@ -257,19 +255,17 @@ void TimeAttackMenu::render()
 
 	Drawer& drawer = EngineMain::instance().getDrawer();
 
-	int anchorX = 200;
+	const int width = VideoOut::instance().getScreenWidth();
+
+	int anchorX = width/2;
 	float alpha = 1.0f;
-	if (mState != State::SHOW && mState != State::FADE_TO_GAME)
-	{
-		anchorX += roundToInt((1.0f - mVisibility) * 200.0f);
-		alpha = mVisibility;
-	}
 
 	// Title text
-	drawer.printText(global::mSonicFontC, Recti(anchorX, 4, 0, 18), "TIME ATTACK", 5, Color(1.0f, 1.0f, 1.0f, alpha));
+	std::string textToRender = mMenuBackground->askLemonScriptNicelyForATranslatedString("main_menu", 8);
+	drawer.printText(global::mSonicFontC, Recti(anchorX, 7, 0, 18), textToRender, 5, Color(1.0f, 1.0f, 1.0f, alpha));
 
 	// Menu entries
-	const int positionY[] = { 116, 138, 160, 198 };
+	/*const int positionY[] = { 116, 138, 160, 198 };
 	for (size_t line = 0; line < mMenuEntries.size(); ++line)
 	{
 		const auto& entry = mMenuEntries[line];
@@ -301,6 +297,38 @@ void TimeAttackMenu::render()
 			drawer.printText(global::mOxyfontRegular, Recti(px + 15 + arrowAnimOffset, py, 10, 10), ">", 5, color);
 
 		drawer.printText(global::mOxyfontRegular, Recti(px - 160, py, 200, 10), text, 5, color);
+	}*/
+
+	int16 px = 192;
+	int16 py = 128;
+	for (uint8 i = 0; i < 3; ++i)
+	{
+		int framecounter = mMenuBackground->mAnimationTimerAIT;
+		const bool isSelected = ((int)i == mMenuEntries.mSelectedEntryIndex);
+		int16 sprOffset = int(48.0f * sin(2.0f * 3.1415f * 3380.0f * float(i)));
+		const auto& entry = mMenuEntries[i];
+		const std::string& optionText = entry.mOptions.empty() ? entry.mText : entry.mOptions[entry.mSelectedIndex].mText;
+		std::string renderedText = std::string{optionText};
+		const bool canGoLeft  = entry.mOptions.empty() ? false : (entry.mSelectedIndex > 0);
+		const bool canGoRight = entry.mOptions.empty() ? false : (entry.mSelectedIndex < entry.mOptions.size() - 1);
+
+		if (renderedText == "Single Act")
+			renderedText = mMenuBackground->askLemonScriptNicelyForATranslatedString("main_menu", 13);
+		if (renderedText == "Act 1")
+			renderedText = mMenuBackground->askLemonScriptNicelyForATranslatedString("main_menu", 14) + " 1";
+		if (renderedText == "Act 2")
+			renderedText = mMenuBackground->askLemonScriptNicelyForATranslatedString("main_menu", 14) + " 2";
+
+		drawer.drawSprite(Vec2i(px, py), rmx::getMurmur2_64("main_menu.text_bg_small"), isSelected ? Color(1.0f, 1.0f, 1.0f, 1.0f) : Color(0.0f, 0.0f, 0.0f, 1.0f), Vec2f(1.0f, 1.0f));
+		drawer.printText(global::mOxyfontSmall, Recti(px - 16, py, 0, 0), renderedText, 6, isSelected ? Color(1.0f, 1.0f, 0.0f, 1.0f) : Color(1.0f, 1.0f, 1.0f, 1.0f));
+		if (isSelected)
+		{
+			if (canGoRight)
+				drawer.printText(global::mMonofont, Recti(px + 16 - (framecounter / 15 % 2), py - 1, 0, 0), ">", 6, Color(1.0f, 1.0f, 0.0f, 1.0f));
+			if (canGoLeft)
+				drawer.printText(global::mMonofont, Recti(px - 140 + (framecounter / 15 % 2), py - 1, 0, 0), "<", 6, Color(1.0f, 1.0f, 0.0f, 1.0f));
+		}
+		py += 26;
 	}
 
 	for (int i = 0; i < 5; ++i)
@@ -337,6 +365,6 @@ void TimeAttackMenu::startGame()
 void TimeAttackMenu::backToMainMenu()
 {
 	playMenuSound(0xad);
-	mMenuBackground->openMainMenu();
+	GameApp::instance().getGameView().startFadingOut(0.1666f);
 	mState = State::FADE_TO_MENU;
 }

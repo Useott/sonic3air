@@ -68,7 +68,7 @@ bool ModsStartPage::update(float timeElapsed)
 
 					case Option::OPEN_MANUAL:
 						GameMenuBase::playMenuSound(0x63);
-						PlatformFunctions::openURLExternal("https://sonic3air.org/Manual.pdf");
+						PlatformFunctions::openURLExternal("https://raw.githubusercontent.com/Useott/sonic3air/refs/heads/angel-island-tour/Oxygen/sonic3air/_master_image_template/Manual.pdf");
 						break;
 
 					case Option::GO_BACK:

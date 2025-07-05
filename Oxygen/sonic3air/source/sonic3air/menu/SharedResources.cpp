@@ -29,6 +29,7 @@ namespace global
 	Font mOxyfontTinyRect;
 	Font mOxyfontSmallNoOutline;
 	Font mOxyfontSmall;
+	Font mMonofont;
 	Font mOxyfontRegular;
 	Font mSonicFontB;
 	Font mSonicFontC;
@@ -71,13 +72,14 @@ namespace global
 		fontCollection.registerManagedFont(mOxyfontTinyRect, "oxyfont_tiny");
 		fontCollection.registerManagedFont(mOxyfontSmallNoOutline, "oxyfont_small");
 		fontCollection.registerManagedFont(mOxyfontSmall, "oxyfont_small");
+		fontCollection.registerManagedFont(mMonofont, "monofont");
 		fontCollection.registerManagedFont(mOxyfontRegular, "oxyfont_regular");
 		fontCollection.registerManagedFont(mSonicFontB, "sonic3_fontA");
 		fontCollection.registerManagedFont(mSonicFontC, "sonic3_fontC");
 
 		FileHelper::loadTexture(mDataSelectBackground, L"data/sprites/menu/main_menu/background.png");
 		FileHelper::loadTexture(mDataSelectAltBackground, L"data/sprites/menu/main_menu/foreground.png");
-		FileHelper::loadTexture(mOptionsTopBar, L"data/sprites/menu/main_menu/triangles_cpp.png");
+		FileHelper::loadTexture(mOptionsTopBar, L"data/sprites/menu/main_menu/triangles.png");
 		FileHelper::loadTexture(mTimeAttackResultsBG, L"data/images/menu/timeattack_results_screen.png");
 
 		for (const SharedDatabase::Achievement& achievement : SharedDatabase::getAchievements())

@@ -99,8 +99,8 @@ void MainMenu::onFadeIn()
 
 	AudioOut::instance().stopSoundContext(AudioOut::CONTEXT_INGAME + AudioOut::CONTEXT_MUSIC);
 
-	// Play "Data Select" music inside this menu
-	AudioOut::instance().setMenuMusic(0x2f);
+	// Play "Competition" music inside this menu
+	AudioOut::instance().setMenuMusic(0x2c);
 
 	for (size_t i = 0; i < mMenuEntries.size(); ++i)
 	{

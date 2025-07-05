@@ -55,6 +55,8 @@ public:
 	void openGameStartedMenu();
 	void setGameStartedMenu();
 
+	std::string askLemonScriptNicelyForATranslatedString(std::string key, uint8 id);
+
 	int mAnimationTimerAIT = 0;
 
 private:

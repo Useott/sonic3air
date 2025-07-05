@@ -320,7 +320,8 @@ function void Extras.Menu(u8 fadeInMethod)
 	Extras.addedOpenAchievementsToEntryList = 1
 	Extras.initAchievementsEntries()
 
-	playMusic(MUSIC_DATASELECT)
+	if (!Audio.isPlayingAudio(0x2d))
+		Audio.playAudio("2D", AudioContext.CONTEXT_MUSIC) // I don't want this to be affected by the Competition Menu Theme option
 	u32 frameCounter = 0
 
 	constant u8 RESULT_NONE			= 0
@@ -342,8 +343,7 @@ function void Extras.Menu(u8 fadeInMethod)
 		++frameCounter
 		
 		ActSelect.HandleFadeIn(fadeInMethod, frameCounter)
-		AITourMenus.drawMenuBackground(0, frameCounter)
-		//Extras.DrawBackground()
+		AITourMenus.drawMenuBackground(1, frameCounter)
 		
 		Extras.DrawMenu(selectedTab, selectedEntry)
 		
@@ -426,7 +426,6 @@ function void Extras.Menu(u8 fadeInMethod)
 		FadeOutScreenBlocking()
 		A0 = backupA0
 
-		// Do not fade out music in this case, Data Select music is meant to keep playing
 		Game.returnToMainMenu()
 		yieldExecution()
 	}

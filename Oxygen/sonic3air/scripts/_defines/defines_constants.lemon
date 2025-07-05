@@ -206,6 +206,7 @@ constant u8 AudioKeyType.MODDED		= 3		// Audio key is modded
 
 constant u32 PlatformFlags.DESKTOP	= 0x0001	// Set on desktop versions like Windows, MacOS, Linux
 constant u32 PlatformFlags.MOBILE	= 0x0002	// Set on mobile devices with Android or iOS
+constant u32 PlatformFlags.WEB		= 0x0004	// Set on the web port
 
 
 

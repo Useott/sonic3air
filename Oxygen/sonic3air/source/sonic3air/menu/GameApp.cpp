@@ -208,23 +208,18 @@ void GameApp::openTitleScreen()
 
 void GameApp::openMainMenu()
 {
-	Application::instance().getSimulation().setRunning(false);
 	AudioOut::instance().stopSoundContext(AudioOut::CONTEXT_INGAME + AudioOut::CONTEXT_MUSIC);
 	AudioOut::instance().stopSoundContext(AudioOut::CONTEXT_INGAME + AudioOut::CONTEXT_SOUND);
 
-	if (mPauseMenu->getParent() == mGameView)
-		mGameView->removeChild(*mPauseMenu);
-	if (mTimeAttackResultsMenu->getParent() == mGameView)
-		mGameView->removeChild(*mTimeAttackResultsMenu);
+	if (mMenuBackground->getParent() == mGameView)
+		mGameView->removeChild(*mMenuBackground);
 
-	mCurrentState = State::MAIN_MENU;
-	mGameView->addChild(*mMenuBackground);
-	mGameView->startFadingIn();
+	ControlsIn::instance().setAllIgnores();
+	VideoOut::instance().setScreenSize(mRestoreGameResolution);
+	Application::instance().getSimulation().setSpeed(1.0f);
+	GameApp::instance().getGameView().startFadingIn(0.1f);
 
-	mGameMenuManager->forceRemoveAll();
-	mMenuBackground->openGameStartedMenu();
-
-	Game::instance().resetCurrentMode();
+	gotoPhase(2);
 }
 
 void GameApp::openOptionsMenuInGame()
@@ -238,7 +233,6 @@ void GameApp::openOptionsMenuInGame()
 	mGameView->addChild(*mMenuBackground);
 	mGameView->startFadingIn();
 	mMenuBackground->openOptions(true);
-	AudioOut::instance().setMenuMusic(0x2f);
 }
 
 void GameApp::openOptionsMenu()
@@ -287,6 +281,9 @@ void GameApp::onFadedOutOptions()
 		Application::instance().getSimulation().setSpeed(1.0f);
 		GameApp::instance().getGameView().startFadingIn(0.1f);
 
+		InputManager::instance().setTouchInputMode(InputManager::TouchInputMode::HIDDEN_CONTROLS);
+		mCurrentState = State::INGAME;
+		Game::instance().resetCurrentMode();
 		Simulation& simulation = Application::instance().getSimulation();
 		simulation.setRunning(true);
 		Game::instance().startIntoAITMainMenu();
@@ -316,9 +313,41 @@ void GameApp::onFadedOutMods()
 	Application::instance().getSimulation().setSpeed(1.0f);
 	GameApp::instance().getGameView().startFadingIn(0.1f);
 
+	InputManager::instance().setTouchInputMode(InputManager::TouchInputMode::HIDDEN_CONTROLS);
+	mCurrentState = State::INGAME;
+	Game::instance().resetCurrentMode();
 	Simulation& simulation = Application::instance().getSimulation();
 	simulation.setRunning(true);
 	Game::instance().startIntoAITMainMenu();
+}
+
+void GameApp::openTimeAttackMenu()
+{
+	mCurrentState = State::TOUR_TIME_ATTACK;
+
+	mGameView->addChild(*mMenuBackground);
+	mGameView->startFadingIn();
+	mMenuBackground->openTimeAttackMenu();
+}
+
+void GameApp::onFadedOutTimeAttack(bool backToMenu)
+{
+	ControlsIn::instance().setAllIgnores();
+	VideoOut::instance().setScreenSize(mRestoreGameResolution);
+	GameApp::instance().getGameView().startFadingIn(0.1f);
+
+	if (backToMenu)
+	{
+		if (mMenuBackground->getParent() == mGameView)
+			mGameView->removeChild(*mMenuBackground);
+
+		InputManager::instance().setTouchInputMode(InputManager::TouchInputMode::HIDDEN_CONTROLS);
+		mCurrentState = State::INGAME;
+		Game::instance().resetCurrentMode();
+		Simulation& simulation = Application::instance().getSimulation();
+		simulation.setRunning(true);
+		Game::instance().startIntoAITMainMenu();
+	}
 }
 
 void GameApp::onGamePaused(bool canRestart)

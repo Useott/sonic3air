@@ -771,7 +771,7 @@ void OptionsMenu::update(float timeElapsed)
 
 						case option::_OPEN_MANUAL:
 						{
-							PlatformFunctions::openURLExternal("https://sonic3air.org/Manual.pdf");
+							PlatformFunctions::openURLExternal("https://raw.githubusercontent.com/Useott/sonic3air/refs/heads/angel-island-tour/Oxygen/sonic3air/_master_image_template/Manual.pdf");
 							break;
 						}
 
@@ -842,7 +842,9 @@ void OptionsMenu::render()
 	renderContext.mDeltaSeconds = std::min(mDeltaSecondsForRendering, 0.1f);
 	mDeltaSecondsForRendering = 0.0f;
 
-	int anchorX = 200;
+	const int width = VideoOut::instance().getScreenWidth();
+
+	int anchorX = width/2;
 	int anchorY = 0;
 	float alpha = 1.0f;
 	if (mState != State::SHOW && mState != State::FADE_TO_GAME)
@@ -939,11 +941,12 @@ void OptionsMenu::render()
 		// Tab titles (must be rendered afterwards because it's meant to be on top)
 		{
 			// Background
-			int triangleScroll = mMenuBackground->mAnimationTimerAIT % 512;
-			drawer.drawRect(Recti(triangleScroll, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
-			drawer.drawRect(Recti(triangleScroll - 512, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
-			drawer.drawRect(Recti(512 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
-			drawer.drawRect(Recti(0 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
+			int triangleScroll = mMenuBackground->mAnimationTimerAIT;
+			const int scrHeight = VideoOut::instance().getScreenHeight();
+			drawer.drawSprite(Vec2i(triangleScroll % 256, 0), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+			drawer.drawSprite(Vec2i((triangleScroll % 256) + 512, 0), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+			drawer.drawSprite(Vec2i(-(triangleScroll % 256), scrHeight), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+			drawer.drawSprite(Vec2i(-(triangleScroll % 256) + 512, scrHeight), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
 
 			const int py = anchorY + 4;
 			const auto& entry = mTabMenuEntries[0];
@@ -968,8 +971,9 @@ void OptionsMenu::render()
 				{
 					const Color color2 = (k == entry.mSelectedIndex) ? color : Color(0.9f, 0.9f, 0.9f, alpha * 0.8f);
 					const std::string& text = entry.mOptions[k].mText;
+					std::string renderedText = checkForAvailableTranslation(text, 0);
 					const int px = roundToInt(((float)k - mActiveTabAnimated) * 180.0f) + center - 80;
-					drawer.printText(global::mSonicFontC, Recti(px, py, 160, 23), text, 5, color2);
+					drawer.printText(global::mSonicFontC, Recti(px, py, 160, 23), renderedText, 5, color2);
 				}
 			}
 
@@ -1015,7 +1019,7 @@ void OptionsMenu::render()
 			if (visibility > 0.0f && nullptr != message)
 			{
 				bottomY -= 16;
-				const Recti rect(0, bottomY + roundToInt((1.0f - visibility) * 20.0f), 400, 20);
+				const Recti rect(0, bottomY + roundToInt((1.0f - visibility) * 20.0f), width, 20);
 
 				drawer.drawRect(rect, Color(0.0f, 0.0f, 0.5f, alpha * 0.95f));
 				drawer.printText(global::mOxyfontSmall, rect - Vec2i(0, 2), message, 5, Color(1.0f, 1.0f, 1.0f, alpha));
@@ -1047,6 +1051,7 @@ void OptionsMenu::setupOptionsMenu(uint8 enteredFromIngame)
 		enteredFromIngame = false;
 		mEnteredFromIngame = false;
 	}
+	else AudioOut::instance().setMenuMusic(0x2d);
 
 	for (const ConditionalOption& option : CONDITIONAL_OPTIONS)
 	{
@@ -1501,4 +1506,97 @@ void OptionsMenu::goBack()
 		mState = State::FADE_TO_MENU;
 	}
 
+}
+
+std::string OptionsMenu::checkForAvailableTranslation(std::string text, int type)
+{
+	std::string file = "";
+	uint8 id = 255;
+	if (type == 0 || text == "Back" || text == "not available") // Menu tabs and some stuff
+	{
+		file = "options";
+		if (text == "MODS") id = 0;
+		if (text == "SYSTEM") id = 1;
+		if (text == "DISPLAY") id = 2;
+		if (text == "AUDIO") id = 3;
+		if (text == "VISUALS") id = 4;
+		if (text == "CONTROLS") id = 5;
+		if (text == "GAMEPLAY") id = 6;
+		if (text == "TWEAKS") id = 7;
+		if (text == "MORE") id = 8;
+		if (text == "Back") id = 9;
+		if (text == "not available") id = 10;
+		if (text == "(modded)") id = 11;
+		if (text == "* Update *") id = 12;
+		if (text == "Your game version:") id = 13;
+		if (text == "* Ghost Sync *") id = 15;
+		if (text == "If enabled, Ghost Sync shares your position in the game and\nshows all other players in the same stage as ghosts.") id = 16;
+		if (text == "* More Info *") id = 17;
+		if (text == "Open Manual") id = 18;
+		if (text == "* Debugging *") id = 19;
+		if (text == "These settings are meant only for debugging very specific issues.\nIt's recommended to leave them at their default values.") id = 20;
+		if (text == "* General *") id = 21;
+		if (text == "* Window Mode *") id = 22;
+		if (text == "* Performance Output *") id = 23;
+		if (text == "* Volume *") id = 24;
+		if (text == "* Soundtrack *") id = 25;
+		if (text == "* Theme Selection *") id = 26;
+		if (text == "* Level Music *") id = 27;
+		if (text == "* Music Selection *") id = 28;
+		if (text == "* Music Behavior *") id = 29;
+		if (text == "* Effects *") id = 30;
+		if (text == "* Visual Enhancements *") id = 31;
+		if (text == "* Camera *") id = 32;
+		if (text == "* Objects *") id = 33;
+		if (text == "* Color Changes *") id = 34;
+		if (text == "* Special Stages *") id = 35;
+		if (text == "* Levels *") id = 36;
+		if (text == "* Difficulty Changes *") id = 37;
+		if (text == "* Time Attack *") id = 38;
+		if (text == "* Unlocked by Secrets *") id = 39;
+		if (text == "* Controllers *") id = 40;
+		if (text == "* Virtual Gamepad *") id = 41;
+		if (text == "* Controller Rumble *") id = 42;
+		if (text == "* Abilities *") id = 43;
+		if (text == "* Super & Hyper Forms *") id = 44;
+		if (text == "* Accessibility *") id = 45;
+		if (text == "* Game Variety *") id = 46;
+		if (text == "* Region *") id = 47;
+		if (text == "* Speedrunning *") id = 48;
+		if (text == "* Other Enhancements *") id = 49;
+		if (text == "* Stable *") id = 50;
+		if (text == "* Experimental *") id = 51;
+	}
+	else if (type == 1)
+	{
+		file = "options_texts";
+		if (text == "Off") id = 0;
+		if (text == "On") id = 1;
+		if (text == "Disabled") id = 2;
+		if (text == "Enabled") id = 3;
+		if (text == "Classic Shield") id = 4;
+		if (text == "Classic Transparency") id = 5;
+		if (text == "Act Select Giant Rings") id = 6;
+		if (text == "Language") id = 7;
+		if (text == "Aspect Ratio") id = 8;
+		if (text == "Waterfall SFX") id = 9;
+		if (text == "Sonic 1") id = 10;
+		if (text == "Sonic 2") id = 11;
+		if (text == "Shields Only") id = 12;
+		if (text == "Shields and Afterimages") id = 13;
+		if (text == "Full") id = 14;
+		if (text == "Warp to Special Stage") id = 15;
+		if (text == "English" || text == "Portugues") id = 16;
+		if (text == "4:3") id = 17;
+		if (text == "16:9") id = 18;
+		if (text == "2:1") id = 19;
+		if (text == "As Original") id = 20;
+	}
+
+	if (!file.empty() && id != 255)
+	{
+		MenuBackground menubg;
+		return menubg.askLemonScriptNicelyForATranslatedString(file, id);
+	}
+	return text;
 }

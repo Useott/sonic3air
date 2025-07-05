@@ -120,6 +120,7 @@ private:
 	void openOptionsMenu();
 	void openOptionsMenuFromAITMenu();
 	void openModsMenu();
+	void openTimeAttackMenu();
 
 	inline bool isNormalGame()	{ return isInNormalGameMode(); }
 	inline bool isTimeAttack()	{ return isInTimeAttackMode(); }
@@ -134,6 +135,7 @@ private:
 	void endSkippableCutscene();
 	bool isInSkippableCutscene();
 	uint32 getBuildNumber();
+	void exit();
 
 private:
 	EmulatorInterface* mEmulatorInterface = nullptr;

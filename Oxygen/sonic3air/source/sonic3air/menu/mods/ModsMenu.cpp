@@ -22,6 +22,7 @@
 #include "oxygen/application/gameview/GameView.h"
 #include "oxygen/application/input/InputManager.h"
 #include "oxygen/application/modding/ModManager.h"
+#include "oxygen/application/video/VideoOut.h"
 #include "oxygen/helper/DrawerHelper.h"
 #include "oxygen/helper/FileHelper.h"
 
@@ -83,8 +84,6 @@ void ModsMenu::onFadeIn()
 
 	mMenuBackground->showPreview(false, false);
 	mMenuBackground->startTransition(MenuBackground::Target::ALTER);
-
-	AudioOut::instance().setMenuMusic(0x2f);
 
 	refreshControlsDisplay();
 }
@@ -606,11 +605,13 @@ void ModsMenu::render()
 
 	const int globalOffsetX = 0;
 
+	const int width = VideoOut::instance().getScreenWidth();
+
 	int infoOverlayPosition = 224;
 	if (mInfoOverlay.mVisibility > 0.0f)
 	{
 		infoOverlayPosition -= getInfoOverlayHeight();
-		drawer.pushScissor(Recti(0, 0, 400, infoOverlayPosition));
+		drawer.pushScissor(Recti(0, 0, width, infoOverlayPosition));
 	}
 
 	const int minTabIndex = 0;
@@ -639,7 +640,7 @@ void ModsMenu::render()
 		}
 		else
 		{
-			drawer.pushScissor(Recti(rightTabStart + globalOffsetX, 0, 400, 224));
+			drawer.pushScissor(Recti(rightTabStart + globalOffsetX, 0, width, 224));
 		}
 
 		{
@@ -679,7 +680,7 @@ void ModsMenu::render()
 
 			Recti visualRect = rect;
 			visualRect.x -= roundToInt(saturate(1.0f - mVisibility - lineOffset / 500.0f) * 300.0f);
-			visualRect.x += roundToInt(entry.mAnimation.mOffset.x * 200.0f);
+			visualRect.x += roundToInt(entry.mAnimation.mOffset.x * width/2);
 			visualRect.y += roundToInt(entry.mAnimation.mOffset.y * rect.height);
 
 			renderContext.mVisualRect = visualRect;
@@ -741,11 +742,12 @@ void ModsMenu::render()
 	// Draw separator line
 	drawer.drawRect(Recti(rightTabStart + globalOffsetX, 8, 1, 208), Color(0.0f, 0.0f, 0.0f, 0.2f));
 
-	int triangleScroll = mMenuBackground->mAnimationTimerAIT % 512;
-	drawer.drawRect(Recti(triangleScroll, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
-	drawer.drawRect(Recti(triangleScroll - 512, 0 - 24, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
-	drawer.drawRect(Recti(512 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
-	drawer.drawRect(Recti(0 - triangleScroll, 0 + 200, 512, 48), global::mOptionsTopBar, Color(1.0f, 1.0f, 1.0f, 1.0f));
+	int triangleScroll = mMenuBackground->mAnimationTimerAIT;
+	const int scrHeight = VideoOut::instance().getScreenHeight();
+	drawer.drawSprite(Vec2i(triangleScroll % 256, 0), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+	drawer.drawSprite(Vec2i((triangleScroll % 256) + 512, 0), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+	drawer.drawSprite(Vec2i(-(triangleScroll % 256), scrHeight), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+	drawer.drawSprite(Vec2i(-(triangleScroll % 256) + 512, scrHeight), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
 
 	// So the active/inactive mods text appears on top
 	for (size_t tabIndex = minTabIndex; tabIndex <= maxTabIndex; ++tabIndex)
@@ -782,7 +784,7 @@ void ModsMenu::render()
 	{
 		drawer.popScissor();
 
-		Recti rect(globalOffsetX, infoOverlayPosition, 400, 224 - infoOverlayPosition);
+		Recti rect(globalOffsetX, infoOverlayPosition, width, 224 - infoOverlayPosition);
 		drawer.drawRect(rect, Color(0.0f, 0.0f, 0.0f, mVisibility * 0.9f));
 		drawer.drawRect(Recti(rect.x, rect.y - 1, rect.width, 1), Color(1.0f, 1.0f, 1.0f, mVisibility));
 
@@ -855,7 +857,7 @@ void ModsMenu::render()
 	// "Applying changes" box
 	if (mApplyingChangesFrameCounter > 0)
 	{
-		Recti rect(100, 94, 200, 35);
+		Recti rect(width/2-100, 94, 200, 35);
 		DrawerHelper::drawBorderedRect(drawer, rect, 1, Color(0.055f, 0.0f, 0.333f, 0.95f), Color(1.0f, 0.859f, 0.0f, 1.0f));
 		drawer.printText(global::mOxyfontRegular, rect, "Applying changes...", 5);
 	}

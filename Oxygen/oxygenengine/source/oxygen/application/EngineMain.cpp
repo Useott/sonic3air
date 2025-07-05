@@ -163,6 +163,9 @@ uint32 EngineMain::getPlatformFlags() const
 	#elif defined(PLATFORM_ANDROID) || defined(PLATFORM_WEB) || defined(PLATFORM_IOS)
 		flags |= 0x0002;
 	#endif
+	#if defined(PLATFORM_WEB) || defined(PLATFORM_IOS) // iOS is currently the same as the web port, right?
+		flags |= 0x0004;
+	#endif
 		return flags;
 	}
 }

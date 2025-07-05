@@ -1,21 +1,4 @@
 // Functions for Angel Island Tour's new menus.
-global bool returnToCXXMenu = false
-
-function void Game.returnToMainMenu()
-{
-	if (returnToCXXMenu)
-	{
-		returnToCXXMenu = 0
-		base.Game.returnToMainMenu()
-		return
-	}
-	u8 use_touch_controls = touchdebug.use_touch_controls
-	zeroMemory(0x800000, 0x0fffff)
-	zeroMemory(0xff0000, 0xffff)
-	GamePause.visibility = 0.0f
-	touchdebug.use_touch_controls = use_touch_controls
-	EntryFunctions.AITourMenus()
-}
 
 function void AITourMenus.beforeMainMenuOpens()
 {
@@ -31,6 +14,8 @@ function void AITourMenus.Menu()
 	u16 framesSinceLastTouch = 0
 	bool ignoreFramesSinceLastTouch
 
+	u8 exitHoldTimer = 0
+
 	u32 framecounter = 0
 	u8 selectedEntry = touchdebug.use_touch_controls ? 255 : 0
 
@@ -43,8 +28,6 @@ function void AITourMenus.Menu()
 	constant u8 menu.MAIN_MENU = 0
 	constant u8 menu.ACT_SELECT = 1
 	constant u8 menu.TIME_ATTACK = 2
-	constant u8 menu.SETTINGS = 3
-	constant u8 menu.MODS = 4
 
 	u8 result
 	constant u8 MENU = 0
@@ -69,7 +52,8 @@ function void AITourMenus.Menu()
 	VDP.Config.setNameTableBasePlaneB(0)
 	VDP.Config.setNameTableBasePlaneA(0)
 
-	playMusic(MUSIC_DATASELECT)
+	if (!Audio.isPlayingAudio(0x2d))
+		Audio.playAudio("2D", AudioContext.CONTEXT_MUSIC) // I don't want this to be affected by the Competition Menu Theme option
 
 	levelselect.characters = 0
 	global.zone = 0
@@ -156,7 +140,14 @@ function void AITourMenus.Menu()
 		{
 			if (currentMenu == menu.MAIN_MENU)
 			{
-				if (Input.buttonPressed(BUTTON_DOWN))
+				s16 px = (!touchdebug.use_touch_controls ? 64 : 20) + Renderer.getTextWidth("oxyfont_small", AITourMenus.getMainMenuTexts(19)) + (selectedEntry == 254 ? 16 : 0) - 9
+				if ((Input.buttonDown(BUTTON_Y) && Input.buttonDown(BUTTON_DOWN)) || (touchdebug.use_touch_controls && checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, 0, getScreenHeight() - 32, px, 16)))
+				{
+					exitHoldTimer += 2
+					if (exitHoldTimer >= 32)
+						result = EXIT
+				}
+				else if (Input.buttonPressed(BUTTON_DOWN))
 				{
 					selectedEntry += 1
 					if (selectedEntry >= 6)
@@ -178,8 +169,8 @@ function void AITourMenus.Menu()
 						result = NORMAL_GAME
 					if (selectedEntry == 1)
 						result = ACT_SELECT
-					//if (selectedEntry == 2)
-					//	result = TIME_ATTACK
+					if (selectedEntry == 2)
+						result = TIME_ATTACK
 					if (selectedEntry == 3)
 						result = OPTIONS
 					if (selectedEntry == 4)
@@ -192,11 +183,20 @@ function void AITourMenus.Menu()
 						result = TITLE_SCREEN
 				}
 
+				if (exitHoldTimer > 0)
+				{
+					--exitHoldTimer
+					s16 py = getScreenHeight() - 17
+					Renderer.drawRect(0, py, Math.lerp(0, px, float(exitHoldTimer) / 30.8f), 1, 0xffb100ff, 0x8000, false)
+				}
+
 				if (Input.buttonPressed(BUTTON_B) || Input.buttonPressed(BUTTON_BACK))
 					result = TITLE_SCREEN
 			}
 			else
 			{
+				exitHoldTimer = 0
+
 				if (currentMenu == menu.ACT_SELECT)
 				{
 					u8 maxButtons = Game.isSecretUnlocked(SECRET_EMERALD_SELECT) ? 4 : 3
@@ -276,7 +276,6 @@ function void AITourMenus.Menu()
 
 					if (Input.buttonPressed(BUTTON_START) || ((touchdebug.use_touch_controls && !(screenTouchX || screenTouchY) && framesSinceLastTouch > 0 && framesSinceLastTouch < 5) && screenTouchCounter < 20 && selectedEntry == 253))
 					{
-						// Start game now
 						levelselect.characters = actSelChar
 						global.zone_act = ActSelect.TranslateZoneAct(actSelZone, actSelAct)
 						Audio.playAudio(0xaf)
@@ -317,8 +316,6 @@ function void AITourMenus.Menu()
 		}
 		if (result == ACT_SELECT)
 		{
-			/*AITourMenus.handleFading(1)
-			EntryFunctions.actSelectMenu()*/
 			Audio.playAudio(0x63)
 			result = MENU
 			currentMenu = menu.ACT_SELECT
@@ -330,8 +327,15 @@ function void AITourMenus.Menu()
 		{
 			Audio.playAudio(0x63)
 			AITourMenus.handleFading(1)
-			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
-			returnToCXXMenu = true
+			Game.openTimeAttackMenu()
+			Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), 255, 0xff80, false)
+			AITourMenus.handleFading(0)
+			currentMenu = menu.TIME_ATTACK // We actually leave the lemonscript menu running, to use the touch controls.
+			while (true)
+			{
+				// This is where the entire time attack lemon code resides. Rendering is done through C++, Lemon is only doing touch screen stuff.
+				yieldExecution()
+			}
 			Game.returnToMainMenu()
 		}
 		if (result == OPTIONS)
@@ -368,6 +372,14 @@ function void AITourMenus.Menu()
 			AITourMenus.handleFading(1)
 			GameModeControlLoop()
 		}
+		if (result == EXIT)
+		{
+			Audio.playAudio(0xad)
+			AITourMenus.handleFading(1)
+			for (u8 i; i < 50; ++i)
+				yieldExecution()
+			Game.exit()
+		}
 	}
 }
 
@@ -375,11 +387,17 @@ function void AITourMenus.drawMenuBackground(u8 menu, u32 framecounter)
 {
 	if (menu == 0)
 	{
+		// Before you change this, it's important to know this does NOT affect the Time Attack, Settings and Mods menus. The code for those menus were ported from the original Lemon script code, but still are written in C++.
 		s16 px = -(framecounter / 8) % 512
 		s16 py = Math.roundToInt(2.0f * Math.sin(2 * 3.1415 * 128 * float(u8(framecounter)))) - 8
 		Renderer.drawSprite("main_menu.background", px, py, 0, 0, 0x1000)
 		Renderer.drawSprite("main_menu.background", px + 512, py, 0, 0, 0x1000)
 		Renderer.drawSprite("main_menu.foreground", 0, 0, 0, 0, 0x2000)
+	}
+	if (menu == 1)
+	{
+		Renderer.drawSprite("extras.background", 0, 0, 0, 0, 0x2000)
+
 	}
 }
 
@@ -418,9 +436,23 @@ function void AITourMenus.drawMenu(u8 menu, u8 selectedEntry, u32 framecounter, 
 			Renderer.drawSpriteTinted(key, px, py, 0, SPRITE_FLAG_PRIO, renderQueue + 2, 0, selectedEntry == 254 ? 0xffffffff : 0x000000ff, 1.0f)
 		}
 
+		if (System.hasPlatformFlag(PlatformFlags.WEB) || System.hasPlatformFlag(PlatformFlags.DESKTOP))
+		{
+			px = (!touchdebug.use_touch_controls ? 64 : 20) + Renderer.getTextWidth(font, AITourMenus.getMainMenuTexts(19)) + (selectedEntry == 254 ? 16 : 0)
+			py = getScreenHeight() - 24
+			if (!touchdebug.use_touch_controls)
+			{
+				Renderer.drawSprite("@input_icon_button_Y", 11, py, 0, SPRITE_FLAG_PRIO, renderQueue + 2)
+				Renderer.drawText(font, 27, py, "+", selectedEntry == 254 ? 0xffff00ff : 0xffffffff, 6, 0, renderQueue + 3, false)
+				Renderer.drawSprite("@input_icon_button_down", 36, py, 0, SPRITE_FLAG_PRIO, renderQueue + 2)
+			}
+			Renderer.drawText(font, px - 16, py, AITourMenus.getMainMenuTexts(19), selectedEntry == 254 ? 0xffff00ff : 0xffffffff, 6, 0, renderQueue + 3, false)
+			Renderer.drawSpriteTinted(key, px, py, 0, SPRITE_FLAG_PRIO, renderQueue + 2, 0, selectedEntry == 254 ? 0xffffffff : 0x000000ff, 1.0f)
+		}
+
 		Renderer.drawSprite("main_menu.circle", getScreenWidth() + 56, getScreenCenterY() + 5, 0, SPRITE_FLAG_PRIO, renderQueue + 1)
 
-		Renderer.drawSprite("main_menu.sonic_art", 32, 64, 0, SPRITE_FLAG_PRIO, renderQueue)
+		Renderer.drawSprite("main_menu.sonic_art", 32, 56 + Math.roundToInt(4.0f * Math.sin(2 * 3.1415 * 256 * float(u8(framecounter)))), 0, SPRITE_FLAG_PRIO, renderQueue)
 
 		u8 build.yr = Game.getBuildNumber() >> 24
 		u8 build.dy = Game.getBuildNumber() >> 16
@@ -514,10 +546,20 @@ function void AITourMenus.drawMenu(u8 menu, u8 selectedEntry, u32 framecounter, 
 		}
 	}
 
-	Renderer.drawSprite("main_menu.triangles", framecounter % 256, 0, 0, SPRITE_FLAG_PRIO, renderQueue)
-	Renderer.drawSprite("main_menu.triangles", (framecounter % 256) + 512, 0, 0, SPRITE_FLAG_PRIO, renderQueue)
-	Renderer.drawSprite("main_menu.triangles", -(framecounter % 256), getScreenHeight(), 0, SPRITE_FLAG_PRIO|SPRITE_FLAG_FLIP_Y, renderQueue)
-	Renderer.drawSprite("main_menu.triangles", -(framecounter % 256) + 512, getScreenHeight(), 0, SPRITE_FLAG_PRIO|SPRITE_FLAG_FLIP_Y, renderQueue)
+	if (menu == 2)
+	{
+		Renderer.drawSprite("extras.triangles", framecounter % 256, 0, 0, SPRITE_FLAG_PRIO, renderQueue)
+		Renderer.drawSprite("extras.triangles", (framecounter % 256) + 512, 0, 0, SPRITE_FLAG_PRIO, renderQueue)
+		Renderer.drawSprite("extras.triangles", -(framecounter % 256), getScreenHeight(), 0, SPRITE_FLAG_PRIO, renderQueue)
+		Renderer.drawSprite("extras.triangles", -(framecounter % 256) + 512, getScreenHeight(), 0, SPRITE_FLAG_PRIO, renderQueue)
+	}
+	else
+	{
+		Renderer.drawSprite("main_menu.triangles", framecounter % 256, 0, 0, SPRITE_FLAG_PRIO, renderQueue)
+		Renderer.drawSprite("main_menu.triangles", (framecounter % 256) + 512, 0, 0, SPRITE_FLAG_PRIO, renderQueue)
+		Renderer.drawSprite("main_menu.triangles", -(framecounter % 256), getScreenHeight(), 0, SPRITE_FLAG_PRIO, renderQueue)
+		Renderer.drawSprite("main_menu.triangles", -(framecounter % 256) + 512, getScreenHeight(), 0, SPRITE_FLAG_PRIO, renderQueue)
+	}
 }
 
 function void AITourMenus.handleFading(u8 type)

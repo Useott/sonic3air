@@ -80,6 +80,8 @@ public:
 	virtual void triggerButton() {}
 	virtual bool shouldBeShown() { return true; }	// Note that this is only one of multiple conditions for whether the options entry is shown
 
+	static std::string checkForAvailableTranslations(RenderContext& renderContext_, std::string text, int type);
+
 protected:
 	void renderInternal(RenderContext& renderContext_, const Color& normalColor, const Color& selectedColor);
 

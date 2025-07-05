@@ -20,6 +20,7 @@
 
 #include "oxygen/application/Application.h"
 #include "oxygen/application/modding/Mod.h"
+#include "oxygen/application/video/VideoOut.h"
 #include "oxygen/download/Downloader.h"
 
 
@@ -70,8 +71,10 @@ void TitleMenuEntry::renderEntry(RenderContext& renderContext_)
 	const int baseX = renderContext.mCurrentPosition.x;
 	int& py = renderContext.mCurrentPosition.y;
 
-	py += 15;
-	drawer.printText(global::mSonicFontB, Recti(baseX, py, 0, 10), ("* " + mText + " *"), 5, Color(0.6f, 0.8f, 1.0f, renderContext.mTabAlpha));
+	py += VideoOut::instance().getScreenWidth() < 400 ? 6: 15;
+	std::string text = ("* " + mText + " *");
+	text = OptionsMenuEntry::checkForAvailableTranslations(renderContext, text, 0);
+	drawer.printText(global::mSonicFontB, Recti(baseX, py, 0, 10), text, 5, Color(0.6f, 0.8f, 1.0f, renderContext.mTabAlpha));
 	py += 2;
 }
 
@@ -160,7 +163,7 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 	Drawer& drawer = *renderContext.mDrawer;
 	const int baseX = renderContext.mCurrentPosition.x;
 	int& py = renderContext.mCurrentPosition.y;
-	Font& font = (mUseSmallFont || renderContext.mIsModsTab || mData == option::SOUND_TEST_MUSIC || mData == option::SOUND_TEST_SFX) ? global::mOxyfontSmall : global::mOxyfontRegular;
+	Font& font = (mUseSmallFont || renderContext.mIsModsTab || mData == option::SOUND_TEST_MUSIC || mData == option::SOUND_TEST_SFX || VideoOut::instance().getScreenWidth() < 400) ? global::mOxyfontSmall : global::mOxyfontRegular;
 
 	const bool isSelected = renderContext.mIsSelected;
 	const bool isDisabled = !isInteractable();
@@ -182,13 +185,13 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 		}
 		else
 		{
-			drawer.printText(font, Recti(baseX, py, 0, 10), mText, 5, color);
+			drawer.printText(font, Recti(baseX, py, 0, 10), OptionsMenuEntry::checkForAvailableTranslations(renderContext, mText, 1), 5, color);
 		}
 
 		if (isSelected)
 		{
 			// Draw arrows
-			const int halfTextWidth = font.getWidth(mText) / 2;
+			const int halfTextWidth = font.getWidth(OptionsMenuEntry::checkForAvailableTranslations(renderContext, mText, 1)) / 2;
 			const int offset = (int)std::fmod(FTX::getTime() * 6.0f, 6.0f);
 			const int arrowDistance = 16 + ((offset > 3) ? (6 - offset) : offset);
 			drawer.printText(font, Recti(baseX - halfTextWidth - arrowDistance, py, 0, 10), ">>", 5, color);
@@ -204,7 +207,7 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 		const bool canGoLeft  = !isDisabled && (mSelectedIndex > 0);
 		const bool canGoRight = !isDisabled && (mSelectedIndex < mOptions.size() - 1);
 
-		const int center = mText.empty() ? baseX : (baseX + 88);
+		const int center = OptionsMenuEntry::checkForAvailableTranslations(renderContext, mText, 1).empty() ? baseX : (baseX + 88);
 		int arrowDistance = 75;
 		if (isSelected)
 		{
@@ -213,7 +216,7 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 		}
 
 		// Description
-		if (!mText.empty())
+		if (!OptionsMenuEntry::checkForAvailableTranslations(renderContext, mText, 1).empty())
 		{
 			if (mData == option::SOUND_TEST_MUSIC)
 			{
@@ -228,7 +231,7 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 				if (isSelected)
 					drawer.printText(global::mOxyfontRegular, Recti(baseX - 40, py - 28, 0, 10), "Sound Test:", 6, color);
 			}
-			drawer.printText(font, Recti(baseX - 40, py, 0, 10), mText, 6, color);
+			drawer.printText(font, Recti(baseX - 40, py, 0, 10), OptionsMenuEntry::checkForAvailableTranslations(renderContext, mText, 1), 6, color);
 		}
 
 		// Value text
@@ -243,7 +246,7 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 				if (nullptr != audioDefinitionMusic && AudioOut::instance().getAudioKeyType(audioDefinitionMusic->mKeyId) == AudioOutBase::AudioKeyType::MODDED)
 				{
 					static std::string combinedText;
-					combinedText = *text + " (modded)";
+					combinedText = OptionsMenuEntry::checkForAvailableTranslations(renderContext, *text, 1) + " " + OptionsMenuEntry::checkForAvailableTranslations(renderContext, "(modded)", 0);
 					text = &combinedText;
 				}
 			}
@@ -253,11 +256,13 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 				if (nullptr != audioDefinitionSFX && AudioOut::instance().getAudioKeyType(audioDefinitionSFX->mKeyId) == AudioOutBase::AudioKeyType::MODDED)
 				{
 					static std::string combinedText;
-					combinedText = *text + " (modded)";
+					combinedText = OptionsMenuEntry::checkForAvailableTranslations(renderContext, *text, 1) + " " + OptionsMenuEntry::checkForAvailableTranslations(renderContext, "(modded)", 0);
 					text = &combinedText;
+					if (VideoOut::instance().getScreenWidth() < 400)
+						py += 7;
 				}
 			}
-			drawer.printText(font, Recti(center - 80, py, 160, 10), *text, 5, color);
+			drawer.printText(font, Recti(center - 80, py, 160, 10), OptionsMenuEntry::checkForAvailableTranslations(renderContext, *text, 1), 5, color);
 		}
 
 		if (canGoLeft)
@@ -268,17 +273,20 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 		// Additional text for sound test
 		if ((mData == option::SOUND_TEST_MUSIC || mData == option::SOUND_TEST_SFX) && (nullptr == audioDefinitionMusic && nullptr == audioDefinitionSFX) == 0)
 		{
+			int addOffset = 0;
 			if (mData == option::SOUND_TEST_SFX)
 			{
 				py -= 12;
 				if (isSelected)
-					drawer.printText(global::mOxyfontTiny, Recti(center - 80, py - 16, 160, 10), audioDefinitionSFX->mDisplayName, 5, color);
+					drawer.printText(global::mOxyfontTiny, Recti(center - 80, py - 16 + addOffset, 160, 10), audioDefinitionSFX->mDisplayName, 5, color);
 			}
 			else
 			{
+				if (VideoOut::instance().getScreenWidth() < 400)
+					addOffset = -7;
 				py -= 16;
 				if (isSelected)
-					drawer.printText(global::mOxyfontTiny, Recti(center - 80, py, 160, 10), audioDefinitionMusic->mDisplayName, 5, color);
+					drawer.printText(global::mOxyfontTiny, Recti(center - 80, py, 160 + addOffset, 10), audioDefinitionMusic->mDisplayName, 5, color);
 			}
 		}
 	}
@@ -308,7 +316,7 @@ void UpdateCheckMenuEntry::renderEntry(RenderContext& renderContext_)
 	int& py = renderContext.mCurrentPosition.y;
 	const float alpha = renderContext.mTabAlpha;
 
-	drawer.printText(global::mOxyfontSmall, Recti(baseX - 100, py, 0, 10), "Your Game Version:", 4, Color(1.0f, 1.0f, 1.0f, alpha));
+	drawer.printText(global::mOxyfontSmall, Recti(baseX - 100, py, 0, 10), OptionsMenuEntry::checkForAvailableTranslations(renderContext, "Your game version:", 0), 4, Color(1.0f, 1.0f, 1.0f, alpha));
 	drawer.printText(global::mOxyfontSmall, Recti(baseX + 100, py, 0, 10), "v" BUILD_STRING, 6, Color(0.8f, 1.0f, 0.8f, alpha));
 	py += 12;
 
@@ -463,4 +471,12 @@ void SoundtrackDownloadMenuEntry::triggerButton()
 bool SoundtrackDownloadMenuEntry::shouldBeShown()
 {
 	return (ConfigurationImpl::instance().mActiveSoundtrack == 1 && Downloader::isDownloaderSupported() && !AudioOut::instance().hasLoadedRemasteredSoundtrack());
+}
+
+std::string OptionsMenuEntry::checkForAvailableTranslations(RenderContext& renderContext_, std::string text, int type)
+{
+	OptionsMenuRenderContext& renderContext = renderContext_.as<OptionsMenuRenderContext>();
+	if (renderContext.mIsModsTab)
+		return text;
+	return OptionsMenu::checkForAvailableTranslation(text, type);
 }

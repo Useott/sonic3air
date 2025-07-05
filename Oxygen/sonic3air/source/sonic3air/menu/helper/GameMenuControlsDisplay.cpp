@@ -10,6 +10,8 @@
 #include "sonic3air/menu/helper/GameMenuControlsDisplay.h"
 #include "sonic3air/menu/SharedResources.h"
 
+#include "oxygen/application/video/VideoOut.h"
+
 
 void GameMenuControlsDisplay::clear()
 {
@@ -62,7 +64,8 @@ void GameMenuControlsDisplay::render(Drawer& drawer, float visibility)
 	}
 
 	// Right-aligned entries (in reverse order)
-	pos.x = 400 - 8;
+	const int width = VideoOut::instance().getScreenWidth();
+	pos.x = width - 8;
 	for (auto it = mControls.crbegin(); it != mControls.crend(); ++it)
 	{
 		const Control& control = *it;

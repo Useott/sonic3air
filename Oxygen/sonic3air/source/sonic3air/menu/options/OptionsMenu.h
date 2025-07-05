@@ -36,6 +36,7 @@ public:
 	virtual void textinput(const rmx::TextInputEvent& ev) override;
 	virtual void update(float timeElapsed) override;
 	virtual void render() override;
+	static std::string checkForAvailableTranslation(std::string text, int type);
 
 	void setupOptionsMenu(uint8 enteredFromIngame);
 	void removeControllerSetupMenu();
