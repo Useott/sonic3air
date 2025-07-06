@@ -1050,8 +1050,8 @@ void Game::returnToMainMenu()
 {
 	mReturnToMenuTriggered = true;
 
-	// Do not restart data select music
-	if (AudioOut::instance().isPlayingSfxId(0x2f))
+	// Do not restart competition music
+	if (AudioOut::instance().isPlayingSfxId(0x2d))
 	{
 		AudioOut::instance().moveIngameMusicToMenu();
 	}
@@ -1072,16 +1072,19 @@ void Game::openOptionsMenu()
 void Game::openOptionsMenuFromAITMenu()
 {
 	GameApp::instance().openOptionsMenu();
+	AudioOut::instance().moveIngameMusicToMenu();
 }
 
 void Game::openModsMenu()
 {
 	GameApp::instance().openModsMenu();
+	AudioOut::instance().moveIngameMusicToMenu();
 }
 
 void Game::openTimeAttackMenu()
 {
 	GameApp::instance().openTimeAttackMenu();
+	AudioOut::instance().moveIngameMusicToMenu();
 }
 
 bool Game::onTimeAttackFinish()

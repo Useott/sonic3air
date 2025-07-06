@@ -472,6 +472,9 @@ void OptionsMenu::update(float timeElapsed)
 	mDeltaSecondsForRendering += timeElapsed;
 	mActiveTabAnimated += clamp((float)mActiveTab - mActiveTabAnimated, -timeElapsed * 4.0f, timeElapsed * 4.0f);
 
+	// Play "Competition Menu" music inside this menu
+	AudioOut::instance().setMenuMusic(0x2d);
+
 	// Don't react to input during transitions (i.e. when state is not SHOW), or when child menu is active
 	if (mState == State::SHOW && !mControllerSetupMenu->isVisible())
 	{
@@ -1051,7 +1054,6 @@ void OptionsMenu::setupOptionsMenu(uint8 enteredFromIngame)
 		enteredFromIngame = false;
 		mEnteredFromIngame = false;
 	}
-	else AudioOut::instance().setMenuMusic(0x2d);
 
 	for (const ConditionalOption& option : CONDITIONAL_OPTIONS)
 	{
@@ -1186,7 +1188,7 @@ void OptionsMenu::createOptionMenuEntry(GameMenuEntries& entries, const OptionsC
 
 		case option::GHOST_SYNC:
 		{
-			entries.addEntry<LabelMenuEntry>().initEntry("If enabled, Ghost Sync shares your position in the game and\nshows all other players online in the same stage as ghosts.", Color(0.8f, 0.8f, 1.0f));
+			entries.addEntry<LabelMenuEntry>().initEntry("ghost_sync_text", Color(0.8f, 0.8f, 1.0f));
 			entries.addEntry<OptionsMenuEntry>()
 				.setUseSmallFont(true)
 				.initEntry(setting.mName, option::GHOST_SYNC)
@@ -1209,7 +1211,7 @@ void OptionsMenu::createOptionMenuEntry(GameMenuEntries& entries, const OptionsC
 
 		case option::SCRIPT_OPTIMIZATION:
 		{
-			entries.addEntry<LabelMenuEntry>().initEntry("These settings are meant only for debugging very specific issues.\nIt's recommended to leave them at their default values.", Color(1.0f, 0.8f, 0.6f));
+			entries.addEntry<LabelMenuEntry>().initEntry("debugging_text", Color(1.0f, 0.8f, 0.6f));
 
 			GameMenuEntry& entry = entries.addEntry<AdvancedOptionMenuEntry>()
 				.setDefaultValue(-1)
@@ -1512,7 +1514,7 @@ std::string OptionsMenu::checkForAvailableTranslation(std::string text, int type
 {
 	std::string file = "";
 	uint8 id = 255;
-	if (type == 0 || text == "Back" || text == "not available") // Menu tabs and some stuff
+	if (type == 0 || text == "Back" || text == "not available" || text == "Open Manual") // Menu tabs and some stuff
 	{
 		file = "options";
 		if (text == "MODS") id = 0;
@@ -1530,11 +1532,11 @@ std::string OptionsMenu::checkForAvailableTranslation(std::string text, int type
 		if (text == "* Update *") id = 12;
 		if (text == "Your game version:") id = 13;
 		if (text == "* Ghost Sync *") id = 15;
-		if (text == "If enabled, Ghost Sync shares your position in the game and\nshows all other players in the same stage as ghosts.") id = 16;
+		if (text == "ghost_sync_text") id = 16;
 		if (text == "* More Info *") id = 17;
 		if (text == "Open Manual") id = 18;
 		if (text == "* Debugging *") id = 19;
-		if (text == "These settings are meant only for debugging very specific issues.\nIt's recommended to leave them at their default values.") id = 20;
+		if (text == "debugging_text") id = 20;
 		if (text == "* General *") id = 21;
 		if (text == "* Window Mode *") id = 22;
 		if (text == "* Performance Output *") id = 23;

@@ -273,7 +273,7 @@ function void DataSelect.setup()
 	VDP.Config.setVerticalScrolling(false, 0)	// Horizontal scrolling mode without scroll mask
 	VDP.Config.setRenderingModeConfiguration(false)
 	VDP.Config.setPlayfieldSizeInPixels(1024, 256)
-	VDP.Config.setupWindowPlane(true, 0)
+	//VDP.Config.setupWindowPlane(true, 0)
 
 	zeroMemory(0xffffac00, 0x400)
 	zeroMemory(0xffffb000, 0x2000)
@@ -372,7 +372,12 @@ function void DataSelect.setup()
 	A0 = A1 - 0x08c0
 	copyMemory(A1, A0, 0x540)
 
+#if STANDALONE
+	if (!Audio.isPlayingAudio(0x2d))
+		Audio.playAudio("2D", AudioContext.CONTEXT_MUSIC) // I don't want this to be affected by the Competition Menu Theme option
+#else
 	playMusic(MUSIC_DATASELECT)
+#endif
 	vint.update_subroutine = 0x00c890
 	global.frame_state = 0x1e
 	waitForNextFrame()
@@ -1652,10 +1657,11 @@ function void fn00da4e()
 #if STANDALONE
 function void DataSelect.drawCustomPlanes()
 {
-	// Draw our own widescreen version of the background
-	// TODO: The actual background still gets rendered, though it's not visible at all
-	//  -> Maybe the plane W is used here?
-	Renderer.drawCustomSprite("bg_dataselect", s16(getScreenWidth() - 512) / 2, 0, 0x00, 0, 0x2000)
+	//Renderer.drawCustomSprite("bg_dataselect", s16(getScreenWidth() - 512) / 2, 0, 0x00, 0, 0x2000)
+	Renderer.enableDefaultPlane(1, false)
+	Renderer.enableDefaultPlane(3, false)
+	AITourMenus.drawMenuBackground(0, global.framecounter)
+	AITourMenus.drawMenu(3, 0, global.framecounter, 0x2010)
 
 	// Custom rendering of plane B (which is not the background here) to ignore the wrapping
 	s16 px = s16(camera.foreground.x.u16)

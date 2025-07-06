@@ -21,6 +21,7 @@
 #include "oxygen/application/gameview/GameView.h"
 #include "oxygen/application/input/InputManager.h"
 #include "oxygen/application/video/VideoOut.h"
+#include "oxygen/simulation/EmulatorInterface.h"
 #include "oxygen/simulation/Simulation.h"
 
 
@@ -178,18 +179,11 @@ void TimeAttackMenu::update(float timeElapsed)
 			const InputManager::ControllerScheme& keys = InputManager::instance().getController(0);
 			const uint32 selectedData = mMenuEntries.selected().mData;
 
-			if (keys.Start.justPressed() || keys.A.justPressed() || keys.X.justPressed())
+			if (keys.Start.justPressed() || keys.A.justPressed() || keys.X.justPressed() || EmulatorInterface::instance().readMemory8(0x80100b) == 1)
 			{
-				if (selectedData == 0x10)
-				{
-					backToMainMenu();
-				}
-				else
-				{
-					triggerStartGame();
-				}
+				triggerStartGame();
 			}
-			else if (keys.B.justPressed())
+			else if (keys.B.justPressed() || EmulatorInterface::instance().readMemory8(0x80100b) == 2)
 			{
 				backToMainMenu();
 			}
@@ -264,41 +258,6 @@ void TimeAttackMenu::render()
 	std::string textToRender = mMenuBackground->askLemonScriptNicelyForATranslatedString("main_menu", 8);
 	drawer.printText(global::mSonicFontC, Recti(anchorX, 7, 0, 18), textToRender, 5, Color(1.0f, 1.0f, 1.0f, alpha));
 
-	// Menu entries
-	/*const int positionY[] = { 116, 138, 160, 198 };
-	for (size_t line = 0; line < mMenuEntries.size(); ++line)
-	{
-		const auto& entry = mMenuEntries[line];
-		const std::string& text = entry.mOptions.empty() ? entry.mText : entry.mOptions[entry.mSelectedIndex].mText;
-		const bool canGoLeft  = entry.mOptions.empty() ? false : (entry.mSelectedIndex > 0);
-		const bool canGoRight = entry.mOptions.empty() ? false : (entry.mSelectedIndex < entry.mOptions.size() - 1);
-
-		const int py = positionY[line];
-		const bool isSelected = ((int)line == mMenuEntries.mSelectedEntryIndex);
-		const Color color = (isSelected) ? Color(1.0f, 1.0f, 0.0f, alpha) : Color(1.0f, 1.0f, 1.0f, alpha * 0.9f);
-
-		int arrowAnimOffset = 0;
-		if (isSelected)
-		{
-			arrowAnimOffset = (int)std::fmod(FTX::getTime() * 6.0f, 6.0f);
-			arrowAnimOffset = (arrowAnimOffset > 3) ? (6 - arrowAnimOffset) : arrowAnimOffset;
-		}
-
-		int px = 200;
-		if (mState != State::SHOW && mState != State::FADE_TO_GAME)
-		{
-			const int lineOffset = (mState < State::SHOW) ? (int)(mMenuEntries.size() - 1 - line) : (int)line;
-			px = 200 + roundToInt(saturate(1.0f - alpha - lineOffset * 0.15f) * 200.0f);
-		}
-
-		if (canGoLeft)
-			drawer.printText(global::mOxyfontRegular, Recti(px - 145 - arrowAnimOffset, py, 10, 10), "<", 5, color);
-		if (canGoRight)
-			drawer.printText(global::mOxyfontRegular, Recti(px + 15 + arrowAnimOffset, py, 10, 10), ">", 5, color);
-
-		drawer.printText(global::mOxyfontRegular, Recti(px - 160, py, 200, 10), text, 5, color);
-	}*/
-
 	int16 px = 192;
 	int16 py = 128;
 	for (uint8 i = 0; i < 3; ++i)
@@ -331,9 +290,25 @@ void TimeAttackMenu::render()
 		py += 26;
 	}
 
+	bool touchdebug_use_touch_controls = EmulatorInterface::instance().readMemory8(0x801007);
+	uint16 getScreenExtend = (width - 320) / 2;
+	px = width - 72 - getScreenExtend - (EmulatorInterface::instance().readMemory8(0x80100b) % 10 == 1 ? 16 : 0);
+	drawer.drawSprite(Vec2i(px, 160), rmx::getMurmur2_64("main_menu.text_bg"), EmulatorInterface::instance().readMemory8(0x80100b) % 10 == 1 ? Color(1.0f, 1.0f, 1.0f, 1.0f) : Color(0.0f, 0.0f, 0.0f, 1.0f), Vec2f(-1.0f, 1.0f));
+	drawer.printText(global::mOxyfontRegular, Recti(px + (touchdebug_use_touch_controls ? 16 : 32), 160, 0, 0), mMenuBackground->askLemonScriptNicelyForATranslatedString("main_menu", 9), 4, EmulatorInterface::instance().readMemory8(0x80100b) % 10 == 1 ? Color(1.0f, 1.0f, 0.0f, 1.0f) : Color(1.0f, 1.0f, 1.0f, 1.0f));
+	if (!touchdebug_use_touch_controls)
+		drawer.drawSprite(Vec2i(px + 20, 160), rmx::getMurmur2_64("@input_icon_button_start"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+
+#if defined(PLATFORM_ANDROID) || defined(PLATFORM_IOS) || defined(PLATFORM_WEB)
+	px = 64 + (EmulatorInterface::instance().readMemory8(0x80100b) % 10 == 2 ? 16 : 0);
+	py = 24;
+
+	drawer.drawSprite(Vec2i(px, py), rmx::getMurmur2_64("main_menu.text_bg_small"), EmulatorInterface::instance().readMemory8(0x80100b) % 10 == 2 ? Color(1.0f, 1.0f, 1.0f, 1.0f) : Color(0.0f, 0.0f, 0.0f, 1.0f), Vec2f(1.0f, 1.0f));
+	drawer.printText(global::mOxyfontSmall, Recti(px - 16, py, 0, 0), mMenuBackground->askLemonScriptNicelyForATranslatedString("main_menu", 6), 6, EmulatorInterface::instance().readMemory8(0x80100b) % 10 == 2 ? Color(1.0f, 1.0f, 0.0f, 1.0f) : Color(1.0f, 1.0f, 1.0f, 1.0f));
+#endif
+
 	for (int i = 0; i < 5; ++i)
 	{
-		Recti rect(anchorX + 90, 118 + i * 18, 80, 18);
+		Recti rect(anchorX + (i * 60) - 160, VideoOut::instance().getScreenHeight() - 24, 80, 18);
 		if (i < (int)mBestTimes.size())
 			drawer.printText(global::mOxyfontRegular, rect, mBestTimes[i], 5, Color(1.0f, 1.0f, 1.0f, alpha));
 		else

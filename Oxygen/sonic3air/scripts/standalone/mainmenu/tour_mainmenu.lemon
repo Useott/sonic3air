@@ -331,9 +331,66 @@ function void AITourMenus.Menu()
 			Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), 255, 0xff80, false)
 			AITourMenus.handleFading(0)
 			currentMenu = menu.TIME_ATTACK // We actually leave the lemonscript menu running, to use the touch controls.
+			u8[0x801008] = 0
+			u8[0x801009] = 2
+			u8[0x80100a] = 2
+			u8[0x80100b] = 0
 			while (true)
 			{
 				// This is where the entire time attack lemon code resides. Rendering is done through C++, Lemon is only doing touch screen stuff.
+				s16 px = 176
+				s16 py = 128
+				if (!(screenTouchX || screenTouchY) && u8[0x80100b] >= 10)
+				{
+					u8[0x80100b] -= 10
+				}
+				else u8[0x80100b] = 0
+				for (u8 i = 0; i < 7; ++i)
+				{
+					if (i == 3)
+					{
+						px = getScreenWidth() - 72 - (getScreenExtend())
+						py = 160
+						if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px - 16, py - 12, getScreenWidth() - px, 24))
+							u8[0x80100b] = 11
+					}
+					else if (i == 4)
+					{
+						px = 0
+						py = 24
+						if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px, py - 8, 64, 16))
+							u8[0x80100b] = 12
+					}
+					else if (i == 5)
+					{
+						px = 204
+						py = 128 + (u8[0x801008] * 26)
+						if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px - 8, py - 8, 16, 16) && u8[0x801009] == 2)
+							u8[0x801009] = 3
+						else if (screenTouchX || screenTouchY)
+							u8[0x801009] = 10
+						else u8[0x801009] = 2
+						continue
+					}
+					else if (i == 6)
+					{
+						px = 204
+						py = 128 + (u8[0x801008] * 26)
+						if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px - 160, py - 8, 16, 16) && u8[0x80100a] == 2)
+							u8[0x80100a] = 1
+						else if (screenTouchX || screenTouchY)
+							u8[0x80100a] = 10
+						else u8[0x80100a] = 2
+						continue
+					}
+					else if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px - 128, py - 8, 160, 16))
+						u8[0x801008] = i
+
+					py += 26
+				}
+
+				if (u8[0x80100a] == 1)
+					u8[0x801009] = u8[0x80100a]
 				yieldExecution()
 			}
 			Game.returnToMainMenu()
@@ -397,7 +454,6 @@ function void AITourMenus.drawMenuBackground(u8 menu, u32 framecounter)
 	if (menu == 1)
 	{
 		Renderer.drawSprite("extras.background", 0, 0, 0, 0, 0x2000)
-
 	}
 }
 

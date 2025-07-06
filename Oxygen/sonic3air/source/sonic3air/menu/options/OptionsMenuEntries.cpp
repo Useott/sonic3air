@@ -140,8 +140,10 @@ void LabelMenuEntry::renderEntry(RenderContext& renderContext_)
 	int& py = renderContext.mCurrentPosition.y;
 
 	py -= 1;
-	const Vec2i boxSize = global::mOxyfontTiny.getTextBoxSize(mText);
-	drawer.printText(global::mOxyfontTiny, Recti(baseX, py, 0, 10), mText, 5, Color(mColor.r, mColor.g, mColor.b, mColor.a * renderContext.mTabAlpha));
+	std::string text = mText;
+	text = OptionsMenuEntry::checkForAvailableTranslations(renderContext, text, 0);
+	const Vec2i boxSize = global::mOxyfontTiny.getTextBoxSize(text);
+	drawer.printText(global::mOxyfontTiny, Recti(baseX, py, 0, 10), text, 5, Color(mColor.r, mColor.g, mColor.b, mColor.a * renderContext.mTabAlpha));
 	py += boxSize.y - 4;
 }
 

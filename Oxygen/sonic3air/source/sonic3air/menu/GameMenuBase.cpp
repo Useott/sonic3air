@@ -7,11 +7,13 @@
 */
 
 #include "sonic3air/pch.h"
+#include "sonic3air/menu/TimeAttackMenu.h"
 #include "sonic3air/menu/GameMenuBase.h"
 #include "sonic3air/menu/SharedResources.h"
 #include "sonic3air/audio/AudioOut.h"
 
 #include "oxygen/application/input/InputManager.h"
+#include "oxygen/simulation/EmulatorInterface.h"
 
 
 void GameMenuEntry::performRenderEntry(RenderContext& renderContext)
@@ -319,19 +321,37 @@ GameMenuEntries::UpdateResult GameMenuEntries::update()
 	// Evaluate input
 	if (!FTX::keyState(SDLK_LALT) && !FTX::keyState(SDLK_RALT))
 	{
-		const int entryChange = getEntryChangeByInput();
-		if (entryChange != 0)
+		if (EmulatorInterface::instance().readMemory8(0x801007))
 		{
-			changeSelectedIndex(entryChange);
-			return UpdateResult::ENTRY_CHANGED;
-		}
-
-		const int optionChange = getOptionChangeByInput();
-		if (optionChange != 0)
-		{
-			if (mEntries[mSelectedEntryIndex]->changeSelectedIndex(optionChange))
+			if (EmulatorInterface::instance().readMemory8(0x801009))
 			{
-				return UpdateResult::OPTION_CHANGED;
+				const int8 optionChange = EmulatorInterface::instance().readMemory8(0x801009) - 2;
+				if (optionChange != 0 && optionChange < 5)
+				{
+					if (mEntries[mSelectedEntryIndex]->changeSelectedIndex(optionChange))
+					{
+						return UpdateResult::OPTION_CHANGED;
+					}
+				}
+			}
+			mSelectedEntryIndex = EmulatorInterface::instance().readMemory8(0x801008);
+		}
+		else
+		{
+			const int entryChange = getEntryChangeByInput();
+			if (entryChange != 0)
+			{
+				changeSelectedIndex(entryChange);
+				return UpdateResult::ENTRY_CHANGED;
+			}
+
+			const int optionChange = getOptionChangeByInput();
+			if (optionChange != 0)
+			{
+				if (mEntries[mSelectedEntryIndex]->changeSelectedIndex(optionChange))
+				{
+					return UpdateResult::OPTION_CHANGED;
+				}
 			}
 		}
 	}
