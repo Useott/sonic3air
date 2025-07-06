@@ -104,7 +104,7 @@ echo
 echo Packing as tar.gz
 
 pushd $DestDir
-	tar -czvf angel_island_tour.tar.gz angelislandtour
+	tar -czvf angel_island_tour.tar.gz angel_island_tour
 popd
 
 
