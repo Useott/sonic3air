@@ -68,6 +68,7 @@ function void AITourMenus.Menu()
 	while (result == MENU)
 	{
 		@MenuWhileLoop:
+		u8[0x80100c] = 0
 		++framecounter
 
 		Renderer.resetSprites()
@@ -337,6 +338,8 @@ function void AITourMenus.Menu()
 			u8[0x80100b] = 0
 			while (true)
 			{
+				u8[0x80100c] = 1
+
 				// This is where the entire time attack lemon code resides. Rendering is done through C++, Lemon is only doing touch screen stuff.
 				s16 px = 176
 				s16 py = 128
@@ -394,6 +397,7 @@ function void AITourMenus.Menu()
 				yieldExecution()
 			}
 			Game.returnToMainMenu()
+			u8[0x80100c] = 0
 		}
 		if (result == OPTIONS)
 		{

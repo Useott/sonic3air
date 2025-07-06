@@ -321,7 +321,7 @@ GameMenuEntries::UpdateResult GameMenuEntries::update()
 	// Evaluate input
 	if (!FTX::keyState(SDLK_LALT) && !FTX::keyState(SDLK_RALT))
 	{
-		if (EmulatorInterface::instance().readMemory8(0x801007))
+		if (EmulatorInterface::instance().readMemory8(0x801007) && EmulatorInterface::instance().readMemory8(0x80100c))
 		{
 			if (EmulatorInterface::instance().readMemory8(0x801009))
 			{
