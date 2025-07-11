@@ -10,5 +10,9 @@
 
 	// DEZ backgrounds
 	"bg_dez1": { "File": "dez1_background.bmp", "Center": "224,0" },
-	"bg_dez2": { "File": "dez2_background.bmp", "Center": "224,0" }
+	"bg_dez2": { "File": "dez2_background.bmp", "Center": "224,0" },
+
+	// Falling snow outside ICZ (for a neat easter egg)
+	"non_icz_snow_0": { "File": "non_icz_snow.png", "Rect": "0,0,4,4" },
+	"non_icz_snow_1": { "File": "non_icz_snow.png", "Rect": "4,0,4,4" },
 }

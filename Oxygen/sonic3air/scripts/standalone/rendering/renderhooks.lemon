@@ -256,6 +256,15 @@ function bool Standalone.onWriteToSpriteTable(s16 px, s16 py, u16 renderQueue)
 		return true
 	}
 
+	// Falling snow outside ICZ
+	if (objA0.update_address == 0x08b73a && global.zone != 0x05)
+	{
+		if (!(objA0.flags38 & 0x01 || (Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) < 3)))
+			return true
+		Renderer.drawCustomSprite(stringformat("non_icz_snow_%d", objA0.animation.sprite == 0x0b), px, py, 0, prioFlag ? SPRITE_FLAG_PRIO : 0, renderQueue)
+		return true
+	}
+
 	// FBZ 2 boss fight Egg Robo head
 	if (objA0.update_address == 0x067b96 && isMainCharacter(CHARACTER_KNUCKLES))
 	{

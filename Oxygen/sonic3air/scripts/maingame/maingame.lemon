@@ -686,6 +686,15 @@ function void initializeMainGame()
 #if STANDALONE
 	// Just in case active display got disabled before (when entering Hidden Palace through a Giant Ring)
 	VDP.Config.setActiveDisplay(true)
+
+	// Check if it's December 25th, then make snow fall
+	if (System.getSystemClockData(DATE_DAY) == 25 && System.getSystemClockData(DATE_MONTH) == 12 && global.zone != 0x01 && global.zone != 0x04 && global.zone != 0x05 && global.zone < 0x08)
+	{
+		if (allocDynamicObjectStd())
+		{
+			objA1.update_address = 0x08b660
+		}
+	}
 #endif
 }
 
