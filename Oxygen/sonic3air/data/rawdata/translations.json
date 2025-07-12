@@ -1,13 +1,13 @@
 {
-	"lang_en_main_menu": { "File": "lang/main_menu.en.bin" },
-	"lang_en_misc_strings": { "File": "lang/misc_strings.en.bin" },
-	"lang_en_options": { "File": "lang/options.en.bin" },
-	"lang_en_options_texts": { "File": "lang/options_texts.en.bin" },
-	"lang_en_extras": { "File": "lang/extras.en.bin" },
+	"lang_en_main_menu": { "File": "../lang/main_menu.en.bin" },
+	"lang_en_misc_strings": { "File": "../lang/misc_strings.en.bin" },
+	"lang_en_options": { "File": "../lang/options.en.bin" },
+	"lang_en_options_texts": { "File": "../lang/options_texts.en.bin" },
+	"lang_en_extras": { "File": "../lang/extras.en.bin" },
 
-	"lang_pt_main_menu": { "File": "lang/main_menu.pt.bin" },
-	"lang_pt_misc_strings": { "File": "lang/misc_strings.pt.bin" },
-	"lang_pt_options": { "File": "lang/options.pt.bin" },
-	"lang_pt_options_texts": { "File": "lang/options_texts.pt.bin" },
-	"lang_pt_extras": { "File": "lang/extras.pt.bin" }
+	"lang_pt_main_menu": { "File": "../lang/main_menu.pt.bin" },
+	"lang_pt_misc_strings": { "File": "../lang/misc_strings.pt.bin" },
+	"lang_pt_options": { "File": "../lang/options.pt.bin" },
+	"lang_pt_options_texts": { "File": "../lang/options_texts.pt.bin" },
+	"lang_pt_extras": { "File": "../lang/extras.pt.bin" }
 }

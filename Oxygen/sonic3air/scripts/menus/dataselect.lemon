@@ -1660,7 +1660,7 @@ function void DataSelect.drawCustomPlanes()
 	//Renderer.drawCustomSprite("bg_dataselect", s16(getScreenWidth() - 512) / 2, 0, 0x00, 0, 0x2000)
 	Renderer.enableDefaultPlane(1, false)
 	Renderer.enableDefaultPlane(3, false)
-	AITourMenus.drawMenuBackground(0, global.framecounter)
+	AITourMenus.drawMenuBackground(0, global.framecounter, 0x200a, 0x200b)
 	AITourMenus.drawMenu(3, 0, global.framecounter, 0x2010)
 
 	// Custom rendering of plane B (which is not the background here) to ignore the wrapping

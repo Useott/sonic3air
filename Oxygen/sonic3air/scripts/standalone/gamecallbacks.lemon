@@ -154,9 +154,26 @@ function string Standalone.getTranslatedString(string key, u8 id)
 	string textstring = ""
 	u8 string_count = id != 0xff
 	bool ignoreNextChar = false
+
 	if (System.hasExternalRawData(langkey))
 	{
-		u64 characters = System.loadExternalRawData(langkey, 0x819080)
+		u64 charIndex = 0
+		u64 characters = 0
+		if (id != 0xff)
+		{
+			for (u64 j = 0; j < 0xffff; ++j)
+			{
+				System.loadExternalRawData(langkey, 0x819080 + characters, j, 1, true, true)
+				if (string_count == id + 1)
+				{
+					if (u8[0x819080 + characters] == 0x0a)
+						break
+					characters += 1
+				}
+				else if (u8[0x819080] == 0x0a)
+					string_count += 1
+			}
+		}
 		for (u64 i = 0; i < characters; ++i)
 		{
 			if (ignoreNextChar == true)
@@ -196,6 +213,5 @@ function void Standalone.getTranslatedStringForCXX(u64 key, u8 id)
 {
 	// First, we add some keys we expect to use, but aren't used anywhere in scripts, otherwise the call below will result in nothing
 	"options"
-	"options_texts"
 	lastTranslatedString = Standalone.getTranslatedString(stringformat("%s", key), id)
 }

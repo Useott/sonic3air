@@ -446,18 +446,23 @@ function void AITourMenus.Menu()
 
 function void AITourMenus.drawMenuBackground(u8 menu, u32 framecounter)
 {
+	AITourMenus.drawMenuBackground(menu, framecounter, 0x1000, 0x2000)
+}
+
+function void AITourMenus.drawMenuBackground(u8 menu, u32 framecounter, u16 renderQueue1, u16 renderQueue2)
+{
 	if (menu == 0)
 	{
 		// Before you change this, it's important to know this does NOT affect the Time Attack, Settings and Mods menus. The code for those menus were ported from the original Lemon script code, but still are written in C++.
 		s16 px = -(framecounter / 8) % 512
 		s16 py = Math.roundToInt(2.0f * Math.sin(2 * 3.1415 * 128 * float(u8(framecounter)))) - 8
-		Renderer.drawSprite("main_menu.background", px, py, 0, 0, 0x1000)
-		Renderer.drawSprite("main_menu.background", px + 512, py, 0, 0, 0x1000)
-		Renderer.drawSprite("main_menu.foreground", 0, 0, 0, 0, 0x2000)
+		Renderer.drawSprite("main_menu.background", px, py, 0, 0, renderQueue1)
+		Renderer.drawSprite("main_menu.background", px + 512, py, 0, 0, renderQueue1)
+		Renderer.drawSprite("main_menu.foreground", 0, 0, 0, 0, renderQueue2)
 	}
 	if (menu == 1)
 	{
-		Renderer.drawSprite("extras.background", 0, 0, 0, 0, 0x2000)
+		Renderer.drawSprite("extras.background", 0, 0, 0, 0, renderQueue2)
 	}
 }
 

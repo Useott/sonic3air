@@ -1,0 +1,145 @@
+-
+Mods
+System
+Display
+Audio
+Visuals
+Gameplay
+Controls
+Tweaks
+More
+Back
+Update
+Your game version:
+-
+Ghost Sync
+If enabled, Ghost Sync shares your position in the game and\nshows all other players online in the same stage as ghosts.
+Enable Ghost Sync
+Disabled
+Enabled
+Ghost Display
+Full Opacity
+Semi-transparent
+Ghost Style
+More Info
+Open Manual
+Debugging
+These settings are meant only for debugging very specific issues.\nIt's recommended to leave them at their default values.
+Script Optimization
+Auto (default)
+Basic
+Full
+Debug Game Recording
+General
+Renderer:
+Fail-Safe / Software
+OpenGL Software
+OpenGL Hardware
+Frame Sync:
+V-Sync Off
+V-Sync On
+V-Sync + FPS Cap
+Upscaling:
+Integer Scale
+Aspect Fit
+Stretch 50%
+Stretch 100%
+Backdrop:
+Black
+Classic Box 1
+Classic Box 2
+Classic Box 3
+Screen Filter:
+Sharp
+Soft 1
+Soft 2
+Scanlines:
+Off
+Background Blur:
+Window Mode
+Current Screen:
+Startup Screen:
+Windowed
+Fullscreen
+Exclusive Fullscreen
+Performance Output
+Show Performance:
+Show Framerate
+Full Profiling
+Volume
+Overall Volume:
+Music Volume:
+Sound Volume:
+Soundtrack
+Soundtrack Type:
+Emulated
+Remastered
+Sound Test:
+Music and Jingles:
+Sound Effects:
+Theme Selection
+Title Theme:
+Sonic 3
+Sonic & Knuckles
+1-up Jingle:
+Pick by Zone
+Invincibility Theme:
+Super/Hyper Theme:
+Normal level music
+Fast level music
+Sonic 2
+S3 Prototype
+Mini-Boss Theme:
+Knuckles' Theme:
+Level Music
+Carnival Night Act 1:
+As Released
+Carnival Night Act 2:
+IceCap Act 1:
+IceCap Act 2:
+Launch Base Act 1:
+Launch Base Act 2:
+Music Selection
+FBZ Laser Trap Boss:
+Mini-Boss Music
+Main Boss Music
+In Hidden Palace:
+S3 + S&K Mini-Boss
+Sky Sanctuary Bosses:
+Normal Boss Music
+Sonic 1 & 2 Tracks
+Outro Music:
+Sky Sanctuary
+Sonic 3 Credits
+Competition Menu:
+Continue Screen:
+Music Behavior
+On Level (Re)Start:
+Restart Music
+Continue Music
+Effects
+Underwater Sound:
+Normal
+Muffled
+
+Visual enhancements
+Camera
+Objects
+Color changes
+Special Stages
+Levels
+Difficulty changes
+Time Attack
+Unlocked by secrets
+Controllers
+Virtual gamepad
+Controller rumble
+Abilities
+Super & Hyper forms
+Accessibility
+Game Variety
+Region
+Speedrunning
+Other enhancements
+Stable
+Experimental

@@ -239,8 +239,6 @@ OptionsMenu::OptionsMenu(MenuBackground& menuBackground) :
 		entries.addEntry();		// Dummy entry representing the title in menu navigation
 	}
 
-	// Mods tab needs to be rebuilt each time again, see "initialize"
-
 	createOptionMenuTab(Tab::Id::SYSTEM,	mOptionsConfig.mSystemOptions);
 	createOptionMenuTab(Tab::Id::DISPLAY,	mOptionsConfig.mDisplayOptions);
 	createOptionMenuTab(Tab::Id::AUDIO,		mOptionsConfig.mAudioOptions);
@@ -326,6 +324,9 @@ void OptionsMenu::onFadeIn()
 		optionEntry.loadValue();
 	}
 
+	// Play "Competition Menu" music inside this menu
+	AudioOut::instance().setMenuMusic(0x2d);
+
 	mPlayingSoundTest = nullptr;
 }
 
@@ -342,7 +343,6 @@ void OptionsMenu::initialize()
 		addChild(*mControllerSetupMenu);
 	}
 
-	// Rebuild mods tab & mods option entries
 	createModsTab();
 
 	mSoundtrackDownloadMenuEntry->setVisible(mSoundtrackDownloadMenuEntry->shouldBeShown());
@@ -471,9 +471,6 @@ void OptionsMenu::update(float timeElapsed)
 {
 	mDeltaSecondsForRendering += timeElapsed;
 	mActiveTabAnimated += clamp((float)mActiveTab - mActiveTabAnimated, -timeElapsed * 4.0f, timeElapsed * 4.0f);
-
-	// Play "Competition Menu" music inside this menu
-	AudioOut::instance().setMenuMusic(0x2d);
 
 	// Don't react to input during transitions (i.e. when state is not SHOW), or when child menu is active
 	if (mState == State::SHOW && !mControllerSetupMenu->isVisible())
@@ -884,6 +881,7 @@ void OptionsMenu::render()
 				renderContext.mCurrentPosition.set(baseX, startY + 12);
 				renderContext.mTabAlpha = tabAlpha;
 				renderContext.mIsModsTab = isModsTab;
+				renderContext.mCurrentTab = tabIndex;
 
 				for (size_t line = 1; line < tab.mMenuEntries.size(); ++line)
 				{
@@ -973,10 +971,9 @@ void OptionsMenu::render()
 				if (entry.mOptions[k].mVisible)
 				{
 					const Color color2 = (k == entry.mSelectedIndex) ? color : Color(0.9f, 0.9f, 0.9f, alpha * 0.8f);
-					const std::string& text = entry.mOptions[k].mText;
-					std::string renderedText = checkForAvailableTranslation(text, 0);
+					const std::string& text = checkForAvailableTranslation(entry.mOptions[k].mText);
 					const int px = roundToInt(((float)k - mActiveTabAnimated) * 180.0f) + center - 80;
-					drawer.printText(global::mSonicFontC, Recti(px, py, 160, 23), renderedText, 5, color2);
+					drawer.printText(global::mSonicFontC, Recti(px, py, 160, 23), text, 5, color2);
 				}
 			}
 
@@ -1188,7 +1185,7 @@ void OptionsMenu::createOptionMenuEntry(GameMenuEntries& entries, const OptionsC
 
 		case option::GHOST_SYNC:
 		{
-			entries.addEntry<LabelMenuEntry>().initEntry("ghost_sync_text", Color(0.8f, 0.8f, 1.0f));
+			entries.addEntry<LabelMenuEntry>().initEntry("If enabled, Ghost Sync shares your position in the game and\nshows all other players online in the same stage as ghosts.", Color(0.8f, 0.8f, 1.0f));
 			entries.addEntry<OptionsMenuEntry>()
 				.setUseSmallFont(true)
 				.initEntry(setting.mName, option::GHOST_SYNC)
@@ -1211,7 +1208,7 @@ void OptionsMenu::createOptionMenuEntry(GameMenuEntries& entries, const OptionsC
 
 		case option::SCRIPT_OPTIMIZATION:
 		{
-			entries.addEntry<LabelMenuEntry>().initEntry("debugging_text", Color(1.0f, 0.8f, 0.6f));
+			entries.addEntry<LabelMenuEntry>().initEntry("These settings are meant only for debugging very specific issues.\nIt's recommended to leave them at their default values.", Color(1.0f, 0.8f, 0.6f));
 
 			GameMenuEntry& entry = entries.addEntry<AdvancedOptionMenuEntry>()
 				.setDefaultValue(-1)
@@ -1510,90 +1507,132 @@ void OptionsMenu::goBack()
 
 }
 
-std::string OptionsMenu::checkForAvailableTranslation(std::string text, int type)
+std::string OptionsMenu::checkForAvailableTranslation(std::string text)
 {
-	std::string file = "";
 	uint8 id = 255;
-	if (type == 0 || text == "Back" || text == "not available" || text == "Open Manual") // Menu tabs and some stuff
-	{
-		file = "options";
-		if (text == "MODS") id = 0;
-		if (text == "SYSTEM") id = 1;
-		if (text == "DISPLAY") id = 2;
-		if (text == "AUDIO") id = 3;
-		if (text == "VISUALS") id = 4;
-		if (text == "CONTROLS") id = 5;
-		if (text == "GAMEPLAY") id = 6;
-		if (text == "TWEAKS") id = 7;
-		if (text == "MORE") id = 8;
-		if (text == "Back") id = 9;
-		if (text == "not available") id = 10;
-		if (text == "(modded)") id = 11;
-		if (text == "* Update *") id = 12;
-		if (text == "Your game version:") id = 13;
-		if (text == "* Ghost Sync *") id = 15;
-		if (text == "ghost_sync_text") id = 16;
-		if (text == "* More Info *") id = 17;
-		if (text == "Open Manual") id = 18;
-		if (text == "* Debugging *") id = 19;
-		if (text == "debugging_text") id = 20;
-		if (text == "* General *") id = 21;
-		if (text == "* Window Mode *") id = 22;
-		if (text == "* Performance Output *") id = 23;
-		if (text == "* Volume *") id = 24;
-		if (text == "* Soundtrack *") id = 25;
-		if (text == "* Theme Selection *") id = 26;
-		if (text == "* Level Music *") id = 27;
-		if (text == "* Music Selection *") id = 28;
-		if (text == "* Music Behavior *") id = 29;
-		if (text == "* Effects *") id = 30;
-		if (text == "* Visual Enhancements *") id = 31;
-		if (text == "* Camera *") id = 32;
-		if (text == "* Objects *") id = 33;
-		if (text == "* Color Changes *") id = 34;
-		if (text == "* Special Stages *") id = 35;
-		if (text == "* Levels *") id = 36;
-		if (text == "* Difficulty Changes *") id = 37;
-		if (text == "* Time Attack *") id = 38;
-		if (text == "* Unlocked by Secrets *") id = 39;
-		if (text == "* Controllers *") id = 40;
-		if (text == "* Virtual Gamepad *") id = 41;
-		if (text == "* Controller Rumble *") id = 42;
-		if (text == "* Abilities *") id = 43;
-		if (text == "* Super & Hyper Forms *") id = 44;
-		if (text == "* Accessibility *") id = 45;
-		if (text == "* Game Variety *") id = 46;
-		if (text == "* Region *") id = 47;
-		if (text == "* Speedrunning *") id = 48;
-		if (text == "* Other Enhancements *") id = 49;
-		if (text == "* Stable *") id = 50;
-		if (text == "* Experimental *") id = 51;
-	}
-	else if (type == 1)
-	{
-		file = "options_texts";
-		if (text == "Off") id = 0;
-		if (text == "On") id = 1;
-		if (text == "Disabled") id = 2;
-		if (text == "Enabled") id = 3;
-		if (text == "Classic Shield") id = 4;
-		if (text == "Classic Transparency") id = 5;
-		if (text == "Act Select Giant Rings") id = 6;
-		if (text == "Language") id = 7;
-		if (text == "Aspect Ratio") id = 8;
-		if (text == "Waterfall SFX") id = 9;
-		if (text == "Sonic 1") id = 10;
-		if (text == "Sonic 2") id = 11;
-		if (text == "Shields Only") id = 12;
-		if (text == "Shields and Afterimages") id = 13;
-		if (text == "Full") id = 14;
-		if (text == "Warp to Special Stage") id = 15;
-		if (text == "English" || text == "Portugues") id = 16;
-		if (text == "4:3") id = 17;
-		if (text == "16:9") id = 18;
-		if (text == "2:1") id = 19;
-		if (text == "As Original") id = 20;
-	}
+	std::string file = "options";
+	if (text == "MODS") id = 0;
+	if (text == "SYSTEM") id = 1;
+	if (text == "DISPLAY") id = 2;
+	if (text == "AUDIO") id = 3;
+	if (text == "VISUALS") id = 4;
+	if (text == "GAMEPLAY") id = 5;
+	if (text == "CONTROLS") id = 6;
+	if (text == "TWEAKS") id = 7;
+	if (text == "MORE") id = 8;
+	if (text == "Back") id = 9;
+	if (text == "Update") id = 10;
+	if (text == "Your game version:") id = 11;
+	//if (text == "Mods") id = 12;
+	if (text == "Ghost Sync") id = 13;
+	if (text == "If enabled, Ghost Sync shares your position in the game and\nshows all other players online in the same stage as ghosts.") id = 14;
+	if (text == "Enable Ghost Sync") id = 15;
+	if (text == "Disabled") id = 16;
+	if (text == "Enabled") id = 17;
+	if (text == "Ghost Display") id = 18;
+	if (text == "Full Opacity") id = 19;
+	if (text == "Semi-transparent") id = 20;
+	if (text == "Ghost Style") id = 21;
+	if (text == "More Info") id = 22;
+	if (text == "Open Manual") id = 23;
+	if (text == "Debugging") id = 24;
+	if (text == "These settings are meant only for debugging very specific issues.\nIt's recommended to leave them at their default values.") id = 25;
+	if (text == "Script Optimization") id = 26;
+	if (text == "Auto (default)") id = 27;
+	if (text == "Basic") id = 28;
+	if (text == "Full") id = 29;
+	if (text == "Debug Game Recording") id = 30;
+	if (text == "General") id = 31;
+	if (text == "Renderer:") id = 32;
+	if (text == "Fail-Safe / Software") id = 33;
+	if (text == "OpenGL Software") id = 34;
+	if (text == "OpenGL Hardware") id = 35;
+	if (text == "Frame Sync:") id = 36;
+	if (text == "V-Sync Off") id = 37;
+	if (text == "V-Sync On") id = 38;
+	if (text == "V-Sync + FPS Cap") id = 39;
+	if (text == "Upscaling:") id = 40;
+	if (text == "Integer Scale") id = 41;
+	if (text == "Aspect Fit") id = 42;
+	if (text == "Stretch 50%") id = 43;
+	if (text == "Stretch 100%") id = 44;
+	if (text == "Backdrop:") id = 45;
+	if (text == "Black") id = 46;
+	if (text == "Classic Box 1") id = 47;
+	if (text == "Classic Box 2") id = 48;
+	if (text == "Classic Box 3") id = 49;
+	if (text == "Screen Filter:") id = 50;
+	if (text == "Sharp") id = 51;
+	if (text == "Soft 1") id = 52;
+	if (text == "Soft 2") id = 53;
+	if (text == "Scanlines:") id = 54;
+	if (text == "Off") id = 55;
+	if (text == "Background Blur:") id = 56;
+	if (text == "Window Mode") id = 57;
+	if (text == "Current Screen:") id = 58;
+	if (text == "Startup Screen:") id = 59;
+	if (text == "Windowed") id = 60;
+	if (text == "Fullscreen") id = 61;
+	if (text == "Exclusive Fullscreen") id = 62;
+	if (text == "Performance Output") id = 63;
+	if (text == "Show Performance:") id = 64;
+	if (text == "Show Framerate") id = 65;
+	if (text == "Full Profiling") id = 66;
+	if (text == "Volume") id = 67;
+	if (text == "Overall Volume:") id = 68;
+	if (text == "Music Volume:") id = 69;
+	if (text == "Sound Volume:") id = 70;
+	if (text == "Soundtrack") id = 71;
+	if (text == "Soundtrack Type:") id = 72;
+	if (text == "Emulated") id = 73;
+	if (text == "Remastered") id = 74;
+	if (text == "Sound Test:") id = 75;
+	if (text == "Music and Jingles:") id = 76;
+	if (text == "Sound Effects:") id = 77;
+	if (text == "Theme Selection") id = 78;
+	if (text == "Title Theme:") id = 79;
+	if (text == "Sonic 3") id = 80;
+	if (text == "Sonic & Knuckles") id = 81;
+	if (text == "1-up Jingle:") id = 82;
+	if (text == "Pick by Zone") id = 83;
+	if (text == "Invincibility Theme:") id = 84;
+	if (text == "Super/Hyper Theme:") id = 85;
+	if (text == "Normal level music") id = 86;
+	if (text == "Fast level music") id = 87;
+	if (text == "Sonic 2") id = 88;
+	if (text == "S3 Prototype") id = 89;
+	if (text == "Mini-Boss Theme:") id = 90;
+	if (text == "Knuckles' Theme:") id = 91;
+	if (text == "Level Music") id = 92;
+	if (text == "Carnival Night Act 1:") id = 93;
+	if (text == "As Released") id = 94;
+	if (text == "Carnival Night Act 2:") id = 95;
+	if (text == "IceCap Act 1:") id = 96;
+	if (text == "IceCap Act 2:") id = 97;
+	if (text == "Launch Base Act 1:") id = 98;
+	if (text == "Launch Base Act 2:") id = 99;
+	if (text == "Music Selection") id = 100;
+	if (text == "FBZ Laser Trap Boss:") id = 101;
+	if (text == "Mini-Boss Music") id = 102;
+	if (text == "Main Boss Music") id = 103;
+	if (text == "In Hidden Palace:") id = 104;
+	if (text == "S3 + S&K Mini-Boss") id = 105;
+	if (text == "Sky Sanctuary Bosses:") id = 106;
+	if (text == "Normal Boss Music") id = 107;
+	if (text == "Sonic 1 & 2 Tracks") id = 108;
+	if (text == "Outro Music:") id = 109;
+	if (text == "Sky Sanctuary") id = 110;
+	if (text == "Sonic 3 Credits") id = 111;
+	if (text == "Competition Menu:") id = 112;
+	if (text == "Continue Screen:") id = 113;
+	if (text == "Music Behavior") id = 114;
+	if (text == "On Level (Re)Start:") id = 115;
+	if (text == "Restart Music") id = 116;
+	if (text == "Continue Music") id = 117;
+	if (text == "Effects") id = 118;
+	if (text == "Underwater Sound:") id = 119;
+	if (text == "Normal") id = 120;
+	if (text == "Muffled") id = 121;
 
 	if (!file.empty() && id != 255)
 	{

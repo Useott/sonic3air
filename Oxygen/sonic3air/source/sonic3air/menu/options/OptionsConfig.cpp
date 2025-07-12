@@ -722,7 +722,7 @@ void OptionsConfig::buildTourOptions()
 
 		configBuilder.addSetting("Language", option::LANGUAGE)
 			.addOption("English", 0)
-			.addOption("Portugues", 1);
+			.addOption("Portugues (sem acento)", 1);
 	}
 
 	CATEGORY("Experimental")

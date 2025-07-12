@@ -1,0 +1,123 @@
+-
+Mods
+Sistema
+Tela
+Audio
+Graficos
+Gameplay
+Controles
+Ajustes
+Mais
+Voltar
+Atualizacoes
+Versao atual:
+-
+Ghost Sync
+Caso ativado, o Ghost Sync compartilha sua posicao na fase e\nmostra todos os outros jogadores como fantasmas.
+Ativar Ghost Sync
+Desativado
+Ativado
+Aparencia
+Opaco
+Semi-transparente
+Como fantasma
+Mais informacao
+Abrir manual
+Depuracao
+Esses ajustes apenas deverao ser usados para depurar bugs especificos\nRecomenda-se de que deixe do jeito que estao.
+Otimizacao de scripts
+Auto (padrao)
+Basico
+Total
+Gravacao de depuracao
+Geral
+Renderizador:
+Fail-Safe / Software
+OpenGL Software
+OpenGL Hardware
+V-Sync:
+Desligado
+Ligado
+Ligado + FPS limitado
+Upscaling:
+Escala inteira
+Esticar para encaixar
+Esticar total 50%
+Esticar total 100%
+Bordas:
+Preto
+Caixa classica 1
+Caixa classica 2
+Caixa classica 3
+Filtro:
+Sharp
+Suave 1
+Suave 2
+Scanlines:
+Desligado
+Desfoque do fundo:
+Modo janela
+Modo atual:
+Modo ao abrir:
+Janela
+Tela cheia
+Tela cheia exclusiva
+Registro de desempenho
+Mostrar desempenho:
+Mostrar FPS
+Mostrar tudo
+Volume
+Volume geral:
+Volume da musica:
+Volume dos sons:
+Trilha sonora
+Tipo da musica:
+Emulada
+Remasterizada
+Sound Test:
+Musica:
+Sons:
+Escolha de tema
+Tela inicial:
+Sonic 3
+Sonic & Knuckles
+Jingle de vida extra:
+Escolher por zona
+Musica da invincibilidade:
+Musica do Super/Hyper:
+Musica da fase normal
+Musica da fase rapida
+Sonic 2
+Prototipo do S3
+Tema do mini-chefe:
+Tema do Knuckles:
+Musica da fase
+Carnival Night Ato 1:
+Como lancado
+Carnival Night Ato 2:
+IceCap Ato 1:
+IceCap Ato 2:
+Launch Base Ato 1:
+Launch Base Ato 2:
+Selecao de musica
+Chefe do laser da FBZ:
+Musica do mini-chefe
+Musica do chefe
+Na Hidden Palace:
+Mini-chefe S3 e S&K
+Chefes da Sky Sanctuary:
+Musica de chefe normal
+Musicas do Sonic 1 & 2
+Musica no final:
+Sky Sanctuary
+Creditos do Sonic 3
+Menu do Modo Disputa:
+Tela de Continuar:
+Comportamento da musica
+Ao (Re)Iniciar a fase:
+Reiniciar a musica
+Continuar a musica
+Efeitos
+Audio quando submerso:
+Normal
+Abafado
