@@ -35,6 +35,9 @@ function void SmallExplosion.Init1()
 		objA1.position.x.u16 = objA0.position.x.u16
 		objA1.position.y.u16 = objA0.position.y.u16
 		u16[A1 + 0x3e] = objA0.value3e
+	#if STANDALONE
+		objA1.value26 = objA0.value26 // Force specific animal from that zone
+	#endif
 	}
 
 	SmallExplosion.Init2()

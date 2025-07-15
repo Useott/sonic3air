@@ -97,8 +97,12 @@ function void fn02c8b8()
 	{
 		objA0.base_state += 2
 
-		// Randomly decide which critter to spawn
+		// Randomly decide which critter to spawn in most cases
+	#if STANDALONE
+		D0.u16 = objA0.value26 != 0 ? objA0.value26 - 1 : getRandomNumber() & 0x01
+	#else
 		D0.u16 = getRandomNumber() & 0x01
+	#endif
 		objA0.sprite_attributes = (D0.u16 == 0) ? 0x0580 : 0x0592
 
 		// Decides the two critter's movement pattern for each zone

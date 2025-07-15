@@ -33,6 +33,10 @@ function void Penguin.Update()
 	//  - 0x08bd3c	-> objA0.base_state = 0x0e
 	call tableLookupAddress(0x08bafe, objA0.base_state)
 
+#if STANDALONE
+	objA0.value26 = 1	// Force the penguin to spawn when this badnik explodes
+#endif
+
 	Object.loadSpritePatterns(0x08be02)
 	fn085208()
 }

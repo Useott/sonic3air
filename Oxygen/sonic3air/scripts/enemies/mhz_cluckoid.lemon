@@ -31,6 +31,10 @@ function void Cluckoid.BaseUpdate()
 	//  - 0x08e21a	-> objA0.base_state = 0x06
 	call tableLookupAddress(0x08e1a2, objA0.base_state)
 
+#if STANDALONE
+	objA0.value26 = 2	// Force the chicken to spawn when this badnik explodes
+#endif
+
 	Object.loadSpritePatterns(0x08e410)
 	fn085208()
 }
