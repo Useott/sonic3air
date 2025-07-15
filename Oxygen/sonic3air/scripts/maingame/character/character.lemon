@@ -5569,6 +5569,13 @@ function void Character.GettingHurt()
 			canLoseShield = false
 		}
 	}
+#if STANDALONE
+	else if (debug_mode.state != 0)
+	{
+		// Prevent damage in debug mode
+		return
+	}
+#endif
 
 	if (canLoseShield && (char.bonus_effect & char.bonus.ANY_SHIELD) == 0)
 	{
