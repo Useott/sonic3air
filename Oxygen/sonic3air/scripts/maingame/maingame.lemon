@@ -688,7 +688,7 @@ function void initializeMainGame()
 	VDP.Config.setActiveDisplay(true)
 
 	// Check if it's December 25th, then make snow fall
-	if (System.getSystemClockData(DATE_DAY) == 25 && System.getSystemClockData(DATE_MONTH) == 12 && global.zone != 0x01 && global.zone != 0x04 && global.zone != 0x05 && global.zone < 0x08)
+	if (System.getSystemClockData(DATE_DAY) >= 25 && System.getSystemClockData(DATE_MONTH) == 12 && global.zone != 0x01 && global.zone != 0x04 && global.zone != 0x05 && global.zone < 0x08)
 	{
 		if (allocDynamicObjectStd())
 		{
