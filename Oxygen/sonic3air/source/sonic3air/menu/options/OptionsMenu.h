@@ -84,6 +84,7 @@ private:
 	void createOptionMenuEntry(GameMenuEntries& entries, const OptionsConfig::Setting& setting);
 
 	void createModsTab();
+	void createLiterallyEveryOtherTab();
 
 	void playSoundtest(const AudioCollection::AudioDefinition& audioDefinition);
 	void refreshGamepadLists(bool forceUpdate = false);
@@ -124,7 +125,9 @@ private:
 	int mAnimationTimer = 0;
 	float mWarningMessageTimeout = 0.0f;
 	float mAudioWarningMessageTimeout = 0.0f;
+	float mTranslationWarningMessageTimeout = 0.0f;
 	bool mShowedAudioWarningMessage = false;
+	bool mShowedTranslationWarningMessage = false;
 	int mOriginalScriptOptimizationLevel = -1;
 
 	bool mHasAnyModOptions = false;

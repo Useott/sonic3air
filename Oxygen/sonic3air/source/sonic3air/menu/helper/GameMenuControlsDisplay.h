@@ -27,11 +27,12 @@ private:
 	{
 		std::string mDisplayText;
 		bool mAlignRight = false;
+		bool mWasTranslated = false;
 		std::vector<uint64> mSpriteKeys;
 	};
 
 private:
-	void drawControl(const Control& control, Drawer& drawer, Vec2i& pos);
+	void drawControl(Control control, Drawer& drawer, Vec2i& pos);
 
 private:
 	std::vector<Control> mControls;

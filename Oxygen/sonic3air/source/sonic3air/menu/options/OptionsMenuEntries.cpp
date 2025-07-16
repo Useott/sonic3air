@@ -61,6 +61,7 @@ TitleMenuEntry::TitleMenuEntry()
 TitleMenuEntry& TitleMenuEntry::initEntry(const std::string& text)
 {
 	mText = text;
+	mUntranslatedText = text;
 	return *this;
 }
 
@@ -71,12 +72,13 @@ void TitleMenuEntry::renderEntry(RenderContext& renderContext_)
 	const int baseX = renderContext.mCurrentPosition.x;
 	int& py = renderContext.mCurrentPosition.y;
 
+	Font& font = (VideoOut::instance().getScreenWidth() < 400) ? global::mOxyfontSmall : global::mSonicFontB;
+
+	if (mUntranslatedText == mText)
+		mText = OptionsMenu::checkForAvailableTranslation(mText);
+
 	py += VideoOut::instance().getScreenWidth() < 400 ? 6: 15;
-	std::string text = mText;
-	if (py > 16 && py < 200)
-		text = OptionsMenu::checkForAvailableTranslation(mText);
-	std::string displayText = ("* " + text + " *");
-	drawer.printText(global::mSonicFontB, Recti(baseX, py, 0, 10), displayText, 5, Color(0.6f, 0.8f, 1.0f, renderContext.mTabAlpha));
+	drawer.printText(font, Recti(baseX, py, 0, 10), "* " + mText + " *", 5, Color(0.6f, 0.8f, 1.0f, renderContext.mTabAlpha));
 	py += 2;
 }
 
@@ -130,6 +132,7 @@ LabelMenuEntry::LabelMenuEntry()
 LabelMenuEntry& LabelMenuEntry::initEntry(const std::string& text, const Color& color)
 {
 	mText = text;
+	mUntranslatedText = text;
 	mColor = color;
 	return *this;
 }
@@ -142,11 +145,10 @@ void LabelMenuEntry::renderEntry(RenderContext& renderContext_)
 	int& py = renderContext.mCurrentPosition.y;
 
 	py -= 1;
-	std::string text = mText;
-	if (py > 16 && py < 200)
-		text = OptionsMenu::checkForAvailableTranslation(text);
-	const Vec2i boxSize = global::mOxyfontTiny.getTextBoxSize(text);
-	drawer.printText(global::mOxyfontTiny, Recti(baseX, py, 0, 10), text, 5, Color(mColor.r, mColor.g, mColor.b, mColor.a * renderContext.mTabAlpha));
+	if (!renderContext.mIsModsTab && mUntranslatedText == mText)
+		mText = OptionsMenu::checkForAvailableTranslation(mText);
+	const Vec2i boxSize = global::mOxyfontTiny.getTextBoxSize(mText);
+	drawer.printText(global::mOxyfontTiny, Recti(baseX, py, 0, 10), mText, 5, Color(mColor.r, mColor.g, mColor.b, mColor.a * renderContext.mTabAlpha));
 	py += boxSize.y - 4;
 }
 
@@ -168,10 +170,15 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 	Drawer& drawer = *renderContext.mDrawer;
 	const int baseX = renderContext.mCurrentPosition.x;
 	int& py = renderContext.mCurrentPosition.y;
-	Font& font = (mUseSmallFont || renderContext.mIsModsTab || mData == option::SOUND_TEST_MUSIC || mData == option::SOUND_TEST_SFX || VideoOut::instance().getScreenWidth() < 400) ? global::mOxyfontSmall : global::mOxyfontRegular;
+	Font& font = (VideoOut::instance().getScreenWidth() < 400) ? global::mOxyfontTiny : (mUseSmallFont || renderContext.mIsModsTab || mData == option::SOUND_TEST_MUSIC || mData == option::SOUND_TEST_SFX) ? global::mOxyfontSmall : global::mOxyfontRegular;
 
-	if (!renderContext.mIsModsTab && py > 16 && py < 200)
+	if (!renderContext.mIsModsTab && mWasTranslated == false)
+	{
+		if (mData == option::CONTROLLER_SETUP)
+			mText = Application::instance().hasKeyboard() ? "Setup Keyboard & Game Controllers..." : "Setup Game Controllers...";
 		mText = OptionsMenu::checkForAvailableTranslation(mText);
+		mWasTranslated = true;
+	}
 
 	const bool isSelected = renderContext.mIsSelected;
 	const bool isDisabled = !isInteractable();
@@ -187,14 +194,7 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 			py += 16;
 		}
 
-		if (mData == option::CONTROLLER_SETUP)
-		{
-			drawer.printText(font, Recti(baseX, py, 0, 10), Application::instance().hasKeyboard() ? "Setup Keyboard & Game Controllers..." : "Setup Game Controllers...", 5, color);
-		}
-		else
-		{
-			drawer.printText(font, Recti(baseX, py, 0, 10), mText, 5, color);
-		}
+		drawer.printText(font, Recti(baseX, py, 0, 10), mText, 5, color);
 
 		if (isSelected)
 		{
@@ -226,18 +226,17 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 		// Description
 		if (!mText.empty())
 		{
+			Font& font2 = (VideoOut::instance().getScreenWidth() < 400) ? global::mOxyfontTiny : global::mOxyfontRegular;
 			if (mData == option::SOUND_TEST_MUSIC)
 			{
-				drawer.printText(global::mOxyfontRegular, Recti(baseX - 40, py, 0, 10), "Sound Test:", 6, color);
-				if (isSelected)
-					drawer.printText(global::mOxyfontRegular, Recti(baseX - 40, py, 0, 10), "Sound Test:", 6, color);
+				drawer.printText(font2, Recti(baseX - 40, py, 0, 10), OptionsMenu::checkForAvailableTranslation("Sound Test:"), 6, color);
 				py += 16;
 			}
 			else if (mData == option::SOUND_TEST_SFX)
 			{
 				py += 12;
 				if (isSelected)
-					drawer.printText(global::mOxyfontRegular, Recti(baseX - 40, py - 28, 0, 10), "Sound Test:", 6, color);
+					drawer.printText(font2, Recti(baseX - 40, py - 28, 0, 10), OptionsMenu::checkForAvailableTranslation("Sound Test:"), 6, color);
 			}
 			drawer.printText(font, Recti(baseX - 40, py, 0, 10), mText, 6, color);
 		}
@@ -246,8 +245,14 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 		const AudioCollection::AudioDefinition* audioDefinitionMusic = nullptr;
 		const AudioCollection::AudioDefinition* audioDefinitionSFX = nullptr;
 		{
-			static const std::string TEXT_NOT_AVAILABLE = "not available";
+			if (!renderContext.mIsModsTab && mOptions[mSelectedIndex].mWasTranslated == false && mData != option::SOUND_TEST_MUSIC && mData != option::SOUND_TEST_SFX)
+			{
+				mOptions[mSelectedIndex].mText = OptionsMenu::checkForAvailableTranslation(mOptions[mSelectedIndex].mText);
+				mOptions[mSelectedIndex].mWasTranslated = true;
+			}
+			static const std::string TEXT_NOT_AVAILABLE = OptionsMenu::checkForAvailableTranslation("not available");
 			const std::string* text = (isDisabled && mData != option::RENDERER) ? &TEXT_NOT_AVAILABLE : &mOptions[mSelectedIndex].mText;
+
 			if (mData == option::SOUND_TEST_MUSIC)
 			{
 				audioDefinitionMusic = renderContext.mOptionsMenu->getSoundTestAudioDefinitionMusic(selected().mValue);
@@ -270,10 +275,7 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 						py += 7;
 				}
 			}
-			std::string displayText = *text;
-			if (py > 16 && py < 200)
-				displayText = OptionsMenu::checkForAvailableTranslation(displayText);
-			drawer.printText(font, Recti(center - 80, py, 160, 10), displayText, 5, color);
+			drawer.printText(font, Recti(center - 80, py, 160, 10), *text, 5, color);
 		}
 
 		if (canGoLeft)
@@ -327,51 +329,12 @@ void UpdateCheckMenuEntry::renderEntry(RenderContext& renderContext_)
 	int& py = renderContext.mCurrentPosition.y;
 	const float alpha = renderContext.mTabAlpha;
 
-	drawer.printText(global::mOxyfontSmall, Recti(baseX - 100, py, 0, 10), "Your game version:", 4, Color(1.0f, 1.0f, 1.0f, alpha));
+	if (mUntranslatedText == mText)
+		mText = OptionsMenu::checkForAvailableTranslation(mText);
+
+	drawer.printText(global::mOxyfontSmall, Recti(baseX - 100, py, 0, 10), OptionsMenu::checkForAvailableTranslation("Your game version:"), 4, Color(1.0f, 1.0f, 1.0f, alpha));
 	drawer.printText(global::mOxyfontSmall, Recti(baseX + 100, py, 0, 10), "v" BUILD_STRING, 6, Color(0.8f, 1.0f, 0.8f, alpha));
 	py += 12;
-
-	UpdateCheck& updateCheck = GameClient::instance().getUpdateCheck();
-	switch (updateCheck.getState())
-	{
-		case UpdateCheck::State::FAILED:
-		{
-			drawer.printText(global::mOxyfontSmall, Recti(baseX, py, 0, 10), "Can't connect to server", 5, Color(1.0f, 0.0f, 0.0f, alpha));
-			break;
-		}
-		case UpdateCheck::State::SEND_QUERY:
-		case UpdateCheck::State::WAITING_FOR_RESPONSE:
-		{
-			drawer.printText(global::mOxyfontSmall, Recti(baseX, py, 0, 10), "Connecting to server...", 5, Color(1.0f, 1.0f, 1.0f, alpha));
-			break;
-		}
-		case UpdateCheck::State::HAS_RESPONSE:
-		{
-			if (updateCheck.hasUpdate())
-			{
-				drawer.printText(global::mOxyfontSmall, Recti(baseX - 100, py, 0, 10), "Update available:", 4, Color(1.0f, 1.0f, 1.0f, alpha));
-				drawer.printText(global::mOxyfontSmall, Recti(baseX + 100, py, 0, 10), getVersionString(updateCheck.getResponse()->mAvailableAppVersion), 6, Color(1.0f, 1.0f, 0.6f, alpha));
-			}
-			else
-			{
-				drawer.printText(global::mOxyfontSmall, Recti(baseX, py, 0, 10), "You're using the latest version", 5, Color(0.8f, 1.0f, 0.8f, alpha));
-			}
-			break;
-		}
-		default:
-		{
-			drawer.printText(global::mOxyfontSmall, Recti(baseX, py, 0, 10), "Ready to check for updates", 5, Color(0.8f, 0.8f, 0.8f, alpha));
-			break;
-		}
-	}
-	py += 20;
-
-	const bool useTextUpdateLink = updateCheck.hasUpdate();
-	if (mTextUpdateLink != useTextUpdateLink)
-	{
-		mTextUpdateLink = useTextUpdateLink;
-		mText = useTextUpdateLink ? "Open download page" : "Check for updates";
-	}
 
 	OptionsMenuEntry::renderEntry(renderContext);
 }

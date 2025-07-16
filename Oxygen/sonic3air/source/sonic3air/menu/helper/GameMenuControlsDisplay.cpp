@@ -9,6 +9,7 @@
 #include "sonic3air/pch.h"
 #include "sonic3air/menu/helper/GameMenuControlsDisplay.h"
 #include "sonic3air/menu/SharedResources.h"
+#include "sonic3air/menu/options/OptionsMenu.h"
 
 #include "oxygen/application/video/VideoOut.h"
 
@@ -76,9 +77,14 @@ void GameMenuControlsDisplay::render(Drawer& drawer, float visibility)
 	}
 }
 
-void GameMenuControlsDisplay::drawControl(const Control& control, Drawer& drawer, Vec2i& pos)
+void GameMenuControlsDisplay::drawControl(Control control, Drawer& drawer, Vec2i& pos)
 {
 	Font& font = global::mOxyfontTinyRect;
+	if (control.mWasTranslated == false)
+	{
+		control.mDisplayText = OptionsMenu::checkForAvailableTranslation(control.mDisplayText);
+		control.mWasTranslated = true;
+	}
 	const int textWidth = font.getWidth(control.mDisplayText);
 
 	if (control.mAlignRight)

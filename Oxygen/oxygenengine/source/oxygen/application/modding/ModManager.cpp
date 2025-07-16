@@ -241,6 +241,13 @@ bool ModManager::scanMods()
 			Json::Value metadataJson = root["Metadata"];
 			if (metadataJson.isObject())
 			{
+				JsonHelper jsonHelper(metadataJson);
+				jsonHelper.tryReadBool("NotNeededInAITour", mNotNeededInAITour);
+				if (mNotNeededInAITour)
+				{
+					errorMessage = "Mod '" + directoryName + "' is not needed in Angel Island Tour.";
+				}
+
 				Json::Value value = metadataJson["GameVersion"];
 				if (value.isString())
 				{
@@ -299,6 +306,8 @@ bool ModManager::scanMods()
 			const uint64 idHash = rmx::getMurmur2_64(mod->mUniqueID);
 			mModsByIDHash[idHash] = mod;
 		}
+
+		mNotNeededInAITour = false;
 	}
 
 	// Check for mods still marked dirty, those got deleted

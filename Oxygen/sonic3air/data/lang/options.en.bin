@@ -11,14 +11,14 @@ More
 Back
 Update
 Your game version:
--
+Go to Angel Island Tour's download page
 Ghost Sync
 If enabled, Ghost Sync shares your position in the game and\nshows all other players online in the same stage as ghosts.
 Enable Ghost Sync
 Disabled
 Enabled
 Ghost Display
-Full Opacity
+Full opacity
 Semi-transparent
 Ghost Style
 More Info
@@ -26,7 +26,7 @@ Open Manual
 Debugging
 These settings are meant only for debugging very specific issues.\nIt's recommended to leave them at their default values.
 Script Optimization
-Auto (default)
+Auto (Default)
 Basic
 Full
 Debug Game Recording
@@ -121,25 +121,135 @@ Effects
 Underwater Sound:
 Normal
 Muffled
-
-Visual enhancements
+Visual Enhancements
+Character Rotation:
+Original
+Smooth
+Mania-Accurate
+Time Display:
+Extended
+Lives Display:
+Auto
+Classic
+Mobile
+Speed Shoes Effect:
+None (Original)
+After-Images
+Fast Run Animation:
+Peel-Out
+Flicker Effects:
+As Original
+Slightly Smoothed
+Heavily Smoothed
 Camera
+Outrun Camera:
+On
+Extended Camera:
 Objects
-Color changes
+Monitor Style:
+Sonic 1 / 2
+Sonic 3 & Knuckles
+Color Changes
+IceCap Startup Time:
+Daytime
+Morning Dawn
 Special Stages
+Blue Spheres Style:
+Modernized
+Ring Counter:
+Counting Up
+Counting Down
 Levels
-Difficulty changes
+Level Layouts:
+Sonic 3 A.I.R.
+Angel Island Tour
+Difficulty Changes
+Angel Island Bombing:
+Alternative
+Big Arms Boss Fight:
+Only Knuckles
+All characters
+Sandopolis Ghosts:
+Lava Reef Act 2 Boss:
+8 hits
+14 hits (original)
+Keep Shield after Zone:
 Time Attack
-Unlocked by secrets
+Max. Recorded Ghosts:
+Quick Restart:
+Hold Y Button
+Press Y Button
+Unlocked by Secrets
+Sonic Drop Dash:
+Classic Shield Only
+Sonic Super Peel-Out:
 Controllers
-Virtual gamepad
-Controller rumble
+Setup Keyboard & Game Controllers...
+Setup Game Controllers...
+Controller Player 1
+Controller Player 2
+Controller Player 3
+Controller Player 4
+None (Touch only)
+None (Keyboard only)
+Other controllers
+Not used
+Assign to Player 1
+Assign to Player 2
+Assign to Player 3
+Assign to Player 4
+Virtual Gamepad
+Visibility:
+D-Pad Size:
+Buttons Size:
+Set Touch Gamepad Layout...
+Controller Rumble
+Rumble Player 1
+Rumble Player 2
+Rumble Player 3
+Rumble Player 4
 Abilities
-Super & Hyper forms
+Sonic Insta-Shield:
+Tails Assist:
+Sonic 3 A.I.R. Style
+Hybrid Style
+Sonic Mania Style
+Tails Flight Cancel:
+Down + Jump
+Roll Jump Control Lock:
+Locked (Classic)
+Free Movement
+Bubble Shield Bounce:
+Sonic 3 Style
+Super & Hyper Forms
+Tails Super Forms:
+Only Super Tails
+Super & Hyper Tails
+Super Cancel:
+Super Sonic Jump Ability:
+Shield
+Super Dash
+Sonic Hyper Dash:
+Only when D-pad held
+Debug Mode:
+Title Screen:
+Game Speed:
+50 Hz (slower)
+60 Hz (normal)
+75 Hz (faster)
+90 Hz (much faster)
+120 Hz (ridiculous)
+144 Hz (ludicrous)
 Accessibility
+Infinite Lives:
+Infinite Time:
 Game Variety
-Region
-Speedrunning
-Other enhancements
-Stable
-Experimental
+Shields:
+Classic Shield
+Elemental Shields
+Classic + Elemental
+Upgradable Shields
+Randomized Monitors:
+Normal Monitors
+Random Shields
+Random Monitors

@@ -238,46 +238,6 @@ OptionsMenu::OptionsMenu(MenuBackground& menuBackground) :
 		entries.reserve(20);
 		entries.addEntry();		// Dummy entry representing the title in menu navigation
 	}
-
-	createOptionMenuTab(Tab::Id::SYSTEM,	mOptionsConfig.mSystemOptions);
-	createOptionMenuTab(Tab::Id::DISPLAY,	mOptionsConfig.mDisplayOptions);
-	createOptionMenuTab(Tab::Id::AUDIO,		mOptionsConfig.mAudioOptions);
-	createOptionMenuTab(Tab::Id::VISUALS,	mOptionsConfig.mVisualsOptions);
-	createOptionMenuTab(Tab::Id::GAMEPLAY,	mOptionsConfig.mGameplayOptions);
-	createOptionMenuTab(Tab::Id::CONTROLS,	mOptionsConfig.mControlsOptions);
-	createOptionMenuTab(Tab::Id::TWEAKS,	mOptionsConfig.mTweaksOptions);
-	createOptionMenuTab(Tab::Id::TOUR_OPTIONS,	mOptionsConfig.mTourOptions);
-
-	// Post-processing
-	for (int i = 1; i < Tab::Id::_NUM; ++i)		// Exclude Mods tab
-	{
-		GameMenuEntries& entries = mTabs[i].mMenuEntries;
-		entries.addEntry<OptionsMenuEntry>().initEntry("Back", option::_BACK);
-
-		for (size_t k = 0; k < entries.size(); ++k)
-		{
-			GameMenuEntry& entry = entries[k];
-			OptionEntry& optionEntry = mOptionEntries[entry.mData];
-			optionEntry.mOptionId = (option::Option)entry.mData;
-			optionEntry.mGameMenuEntry = &entry;
-		}
-	}
-
-	{
-		// Gather unlockable entries
-		const std::vector<option::Option> unlockables[2] =
-		{
-			{ option::DROP_DASH, option::SUPER_PEELOUT },						// Controls tab
-			{ option::DEBUG_MODE, option::TITLE_SCREEN, option::GAME_SPEED }	// Tweaks tab
-		};
-		for (int k = 0; k < 2; ++k)
-		{
-			for (option::Option unlockable : unlockables[k])
-			{
-				mUnlockedSecretsEntries[k].push_back(mOptionEntries[unlockable].mGameMenuEntry);
-			}
-		}
-	}
 }
 
 OptionsMenu::~OptionsMenu()
@@ -344,6 +304,7 @@ void OptionsMenu::initialize()
 	}
 
 	createModsTab();
+	createLiterallyEveryOtherTab();
 
 	mSoundtrackDownloadMenuEntry->setVisible(mSoundtrackDownloadMenuEntry->shouldBeShown());
 
@@ -662,6 +623,11 @@ void OptionsMenu::update(float timeElapsed)
 									mAudioWarningMessageTimeout = 4.0f;
 									mShowedAudioWarningMessage = true;
 								}
+								if (!mShowedTranslationWarningMessage && selectedData == option::LANGUAGE)
+								{
+									mTranslationWarningMessageTimeout = 4.0f;
+									mShowedTranslationWarningMessage = true;
+								}
 								break;
 							}
 						}
@@ -726,18 +692,9 @@ void OptionsMenu::update(float timeElapsed)
 							break;
 						}
 
-						case option::_CHECK_FOR_UPDATE:
-						case option::RELEASE_CHANNEL:
+						case option::_GO_TO_DOWNLOAD:
 						{
-							UpdateCheck& updateCheck = GameClient::instance().getUpdateCheck();
-							if (updateCheck.hasUpdate())
-							{
-								PlatformFunctions::openURLExternal(updateCheck.getResponse()->mUpdateInfoURL.empty() ? "https://sonic3air.org" : updateCheck.getResponse()->mUpdateInfoURL);
-							}
-							else
-							{
-								updateCheck.startUpdateCheck();
-							}
+							PlatformFunctions::openURLExternal("https://discord.com/channels/1265095148061196369/1299481852364587059");
 							break;
 						}
 
@@ -1000,12 +957,17 @@ void OptionsMenu::render()
 			//}
 		}
 
-		if (mEnteredFromIngame)
+		if (mEnteredFromIngame || mTranslationWarningMessageTimeout > 0.0f)
 		{
 			const char* message = nullptr;
 			float visibility = 0.0f;
 
-			if (mAudioWarningMessageTimeout > 0.0f)
+			if (mTranslationWarningMessageTimeout > 0.0f)
+			{
+				visibility = saturate(mTranslationWarningMessageTimeout / 0.3f);
+				message = "Note: You must leave this menu for translations to apply fully.";
+			}
+			else if (mAudioWarningMessageTimeout > 0.0f)
 			{
 				visibility = saturate(mAudioWarningMessageTimeout / 0.3f);
 				message = "Note: Music changes don't affect already playing tracks.";
@@ -1022,11 +984,7 @@ void OptionsMenu::render()
 				const Recti rect(0, bottomY + roundToInt((1.0f - visibility) * 20.0f), width, 20);
 
 				drawer.drawRect(rect, Color(0.0f, 0.0f, 0.5f, alpha * 0.95f));
-				drawer.printText(global::mOxyfontSmall, rect - Vec2i(0, 2), message, 5, Color(1.0f, 1.0f, 1.0f, alpha));
-				/*drawer.drawRect(Recti(rect.x, rect.y-1, rect.width, 1), Color(0.4f, 0.2f, 0.0f, alpha * 0.95f));
-				drawer.drawRect(Recti(rect.x, rect.y-2, rect.width, 1), Color(0.9f, 0.9f, 0.9f, alpha * 0.9f));
-				drawer.drawRect(Recti(rect.x, rect.y-3, rect.width, 1), Color(0.9f, 0.9f, 0.9f, alpha * 0.6f));
-				drawer.drawRect(Recti(rect.x, rect.y-4, rect.width, 1), Color(0.9f, 0.9f, 0.9f, alpha * 0.3f));*/
+				drawer.printText(global::mOxyfontSmall, rect - Vec2i(0, 2), OptionsMenu::checkForAvailableTranslation(message), 5, Color(1.0f, 1.0f, 1.0f, alpha));
 			}
 		}
 
@@ -1084,7 +1042,9 @@ void OptionsMenu::setupOptionsMenu(uint8 enteredFromIngame)
 
 	mWarningMessageTimeout = enteredFromIngame ? 4.0f : 0.0f;
 	mAudioWarningMessageTimeout = 0.0f;
+	mTranslationWarningMessageTimeout = 0.0f;
 	mShowedAudioWarningMessage = false;
+	mShowedTranslationWarningMessage = false;
 
 	refreshControlsDisplay();
 }
@@ -1154,6 +1114,7 @@ void OptionsMenu::setupOptionEntryPercent(option::Option optionId, float* valueP
 void OptionsMenu::createOptionMenuTab(Tab::Id tabId, const OptionsConfig::OptionsTab& optionsTab)
 {
 	GameMenuEntries& entries = mTabs[tabId].mMenuEntries;
+	entries.resize(1);
 
 	// Go through all categories
 	for (const OptionsConfig::OptionsCategory& category : optionsTab.mCategories)
@@ -1173,13 +1134,9 @@ void OptionsMenu::createOptionMenuEntry(GameMenuEntries& entries, const OptionsC
 	// Some settings require special handling, though most use the default
 	switch (setting.mKey)
 	{
-		case option::_CHECK_FOR_UPDATE:
+		case option::_GO_TO_DOWNLOAD:
 		{
-			entries.addEntry<UpdateCheckMenuEntry>().initEntry(setting.mName, option::_CHECK_FOR_UPDATE);
-			entries.addEntry<OptionsMenuEntry>()
-				.setUseSmallFont(true)
-				.initEntry("", option::RELEASE_CHANNEL)
-				.addOptions(setting);
+			entries.addEntry<UpdateCheckMenuEntry>().initEntry(setting.mName, option::_GO_TO_DOWNLOAD);
 			break;
 		}
 
@@ -1334,6 +1291,49 @@ void OptionsMenu::createModsTab()
 
 	mHasAnyModOptions = (nextOptionId > option::_NUM + 1);
 	mTabMenuEntries[0].mSelectedIndex = mActiveTab;
+}
+
+void OptionsMenu::createLiterallyEveryOtherTab()
+{
+	createOptionMenuTab(Tab::Id::SYSTEM,	mOptionsConfig.mSystemOptions);
+	createOptionMenuTab(Tab::Id::DISPLAY,	mOptionsConfig.mDisplayOptions);
+	createOptionMenuTab(Tab::Id::AUDIO,		mOptionsConfig.mAudioOptions);
+	createOptionMenuTab(Tab::Id::VISUALS,	mOptionsConfig.mVisualsOptions);
+	createOptionMenuTab(Tab::Id::GAMEPLAY,	mOptionsConfig.mGameplayOptions);
+	createOptionMenuTab(Tab::Id::CONTROLS,	mOptionsConfig.mControlsOptions);
+	createOptionMenuTab(Tab::Id::TWEAKS,	mOptionsConfig.mTweaksOptions);
+	createOptionMenuTab(Tab::Id::TOUR_OPTIONS,	mOptionsConfig.mTourOptions);
+
+	// Post-processing
+	for (int i = 1; i < Tab::Id::_NUM; ++i)		// Exclude Mods tab
+	{
+		GameMenuEntries& entries = mTabs[i].mMenuEntries;
+		entries.addEntry<OptionsMenuEntry>().initEntry("Back", option::_BACK);
+
+		for (size_t k = 0; k < entries.size(); ++k)
+		{
+			GameMenuEntry& entry = entries[k];
+			OptionEntry& optionEntry = mOptionEntries[entry.mData];
+			optionEntry.mOptionId = (option::Option)entry.mData;
+			optionEntry.mGameMenuEntry = &entry;
+		}
+	}
+
+	{
+		// Gather unlockable entries
+		const std::vector<option::Option> unlockables[2] =
+		{
+			{ option::DROP_DASH, option::SUPER_PEELOUT },						// Controls tab
+			{ option::DEBUG_MODE, option::TITLE_SCREEN, option::GAME_SPEED }	// Tweaks tab
+		};
+		for (int k = 0; k < 2; ++k)
+		{
+			for (option::Option unlockable : unlockables[k])
+			{
+				mUnlockedSecretsEntries[k].push_back(mOptionEntries[unlockable].mGameMenuEntry);
+			}
+		}
+	}
 }
 
 void OptionsMenu::playSoundtest(const AudioCollection::AudioDefinition& audioDefinition)
@@ -1511,128 +1511,327 @@ std::string OptionsMenu::checkForAvailableTranslation(std::string text)
 {
 	uint8 id = 255;
 	std::string file = "options";
+	// i am crying
+	// please forgive me
+	// i beg of you
 	if (text == "MODS") id = 0;
-	if (text == "SYSTEM") id = 1;
-	if (text == "DISPLAY") id = 2;
-	if (text == "AUDIO") id = 3;
-	if (text == "VISUALS") id = 4;
-	if (text == "GAMEPLAY") id = 5;
-	if (text == "CONTROLS") id = 6;
-	if (text == "TWEAKS") id = 7;
-	if (text == "MORE") id = 8;
-	if (text == "Back") id = 9;
-	if (text == "Update") id = 10;
-	if (text == "Your game version:") id = 11;
-	//if (text == "Mods") id = 12;
-	if (text == "Ghost Sync") id = 13;
-	if (text == "If enabled, Ghost Sync shares your position in the game and\nshows all other players online in the same stage as ghosts.") id = 14;
-	if (text == "Enable Ghost Sync") id = 15;
-	if (text == "Disabled") id = 16;
-	if (text == "Enabled") id = 17;
-	if (text == "Ghost Display") id = 18;
-	if (text == "Full Opacity") id = 19;
-	if (text == "Semi-transparent") id = 20;
-	if (text == "Ghost Style") id = 21;
-	if (text == "More Info") id = 22;
-	if (text == "Open Manual") id = 23;
-	if (text == "Debugging") id = 24;
-	if (text == "These settings are meant only for debugging very specific issues.\nIt's recommended to leave them at their default values.") id = 25;
-	if (text == "Script Optimization") id = 26;
-	if (text == "Auto (default)") id = 27;
-	if (text == "Basic") id = 28;
-	if (text == "Full") id = 29;
-	if (text == "Debug Game Recording") id = 30;
-	if (text == "General") id = 31;
-	if (text == "Renderer:") id = 32;
-	if (text == "Fail-Safe / Software") id = 33;
-	if (text == "OpenGL Software") id = 34;
-	if (text == "OpenGL Hardware") id = 35;
-	if (text == "Frame Sync:") id = 36;
-	if (text == "V-Sync Off") id = 37;
-	if (text == "V-Sync On") id = 38;
-	if (text == "V-Sync + FPS Cap") id = 39;
-	if (text == "Upscaling:") id = 40;
-	if (text == "Integer Scale") id = 41;
-	if (text == "Aspect Fit") id = 42;
-	if (text == "Stretch 50%") id = 43;
-	if (text == "Stretch 100%") id = 44;
-	if (text == "Backdrop:") id = 45;
-	if (text == "Black") id = 46;
-	if (text == "Classic Box 1") id = 47;
-	if (text == "Classic Box 2") id = 48;
-	if (text == "Classic Box 3") id = 49;
-	if (text == "Screen Filter:") id = 50;
-	if (text == "Sharp") id = 51;
-	if (text == "Soft 1") id = 52;
-	if (text == "Soft 2") id = 53;
-	if (text == "Scanlines:") id = 54;
-	if (text == "Off") id = 55;
-	if (text == "Background Blur:") id = 56;
-	if (text == "Window Mode") id = 57;
-	if (text == "Current Screen:") id = 58;
-	if (text == "Startup Screen:") id = 59;
-	if (text == "Windowed") id = 60;
-	if (text == "Fullscreen") id = 61;
-	if (text == "Exclusive Fullscreen") id = 62;
-	if (text == "Performance Output") id = 63;
-	if (text == "Show Performance:") id = 64;
-	if (text == "Show Framerate") id = 65;
-	if (text == "Full Profiling") id = 66;
-	if (text == "Volume") id = 67;
-	if (text == "Overall Volume:") id = 68;
-	if (text == "Music Volume:") id = 69;
-	if (text == "Sound Volume:") id = 70;
-	if (text == "Soundtrack") id = 71;
-	if (text == "Soundtrack Type:") id = 72;
-	if (text == "Emulated") id = 73;
-	if (text == "Remastered") id = 74;
-	if (text == "Sound Test:") id = 75;
-	if (text == "Music and Jingles:") id = 76;
-	if (text == "Sound Effects:") id = 77;
-	if (text == "Theme Selection") id = 78;
-	if (text == "Title Theme:") id = 79;
-	if (text == "Sonic 3") id = 80;
-	if (text == "Sonic & Knuckles") id = 81;
-	if (text == "1-up Jingle:") id = 82;
-	if (text == "Pick by Zone") id = 83;
-	if (text == "Invincibility Theme:") id = 84;
-	if (text == "Super/Hyper Theme:") id = 85;
-	if (text == "Normal level music") id = 86;
-	if (text == "Fast level music") id = 87;
-	if (text == "Sonic 2") id = 88;
-	if (text == "S3 Prototype") id = 89;
-	if (text == "Mini-Boss Theme:") id = 90;
-	if (text == "Knuckles' Theme:") id = 91;
-	if (text == "Level Music") id = 92;
-	if (text == "Carnival Night Act 1:") id = 93;
-	if (text == "As Released") id = 94;
-	if (text == "Carnival Night Act 2:") id = 95;
-	if (text == "IceCap Act 1:") id = 96;
-	if (text == "IceCap Act 2:") id = 97;
-	if (text == "Launch Base Act 1:") id = 98;
-	if (text == "Launch Base Act 2:") id = 99;
-	if (text == "Music Selection") id = 100;
-	if (text == "FBZ Laser Trap Boss:") id = 101;
-	if (text == "Mini-Boss Music") id = 102;
-	if (text == "Main Boss Music") id = 103;
-	if (text == "In Hidden Palace:") id = 104;
-	if (text == "S3 + S&K Mini-Boss") id = 105;
-	if (text == "Sky Sanctuary Bosses:") id = 106;
-	if (text == "Normal Boss Music") id = 107;
-	if (text == "Sonic 1 & 2 Tracks") id = 108;
-	if (text == "Outro Music:") id = 109;
-	if (text == "Sky Sanctuary") id = 110;
-	if (text == "Sonic 3 Credits") id = 111;
-	if (text == "Competition Menu:") id = 112;
-	if (text == "Continue Screen:") id = 113;
-	if (text == "Music Behavior") id = 114;
-	if (text == "On Level (Re)Start:") id = 115;
-	if (text == "Restart Music") id = 116;
-	if (text == "Continue Music") id = 117;
-	if (text == "Effects") id = 118;
-	if (text == "Underwater Sound:") id = 119;
-	if (text == "Normal") id = 120;
-	if (text == "Muffled") id = 121;
+	else if (text == "SYSTEM") id = 1;
+	else if (text == "DISPLAY") id = 2;
+	else if (text == "AUDIO") id = 3;
+	else if (text == "VISUALS") id = 4;
+	else if (text == "GAMEPLAY") id = 5;
+	else if (text == "CONTROLS") id = 6;
+	else if (text == "TWEAKS") id = 7;
+	else if (text == "MORE") id = 8;
+	else if (text == "Back") id = 9;
+	else if (text == "Update") id = 10;
+	else if (text == "Your game version:") id = 11;
+	else if (text == "Go to Angel Island Tour's download page") id = 12;
+	else if (text == "Ghost Sync") id = 13;
+	else if (text == "If enabled, Ghost Sync shares your position in the game and\nshows all other players online in the same stage as ghosts.") id = 14;
+	else if (text == "Enable Ghost Sync") id = 15;
+	else if (text == "Disabled") id = 16;
+	else if (text == "Enabled") id = 17;
+	else if (text == "Ghost Display") id = 18;
+	else if (text == "Full opacity") id = 19;
+	else if (text == "Semi-transparent") id = 20;
+	else if (text == "Ghost Style") id = 21;
+	else if (text == "More Info") id = 22;
+	else if (text == "Open Manual") id = 23;
+	else if (text == "Debugging") id = 24;
+	else if (text == "These settings are meant only for debugging very specific issues.\nIt's recommended to leave them at their default values.") id = 25;
+	else if (text == "Script Optimization") id = 26;
+	else if (text == "Auto (Default)") id = 27;
+	else if (text == "Basic") id = 28;
+	else if (text == "Full") id = 29;
+	else if (text == "Debug Game Recording") id = 30;
+	else if (text == "General") id = 31;
+	else if (text == "Renderer:") id = 32;
+	else if (text == "Fail-Safe / Software") id = 33;
+	else if (text == "OpenGL Software") id = 34;
+	else if (text == "OpenGL Hardware") id = 35;
+	else if (text == "Frame Sync:") id = 36;
+	else if (text == "V-Sync Off") id = 37;
+	else if (text == "V-Sync On") id = 38;
+	else if (text == "V-Sync + FPS Cap") id = 39;
+	else if (text == "Upscaling:") id = 40;
+	else if (text == "Integer Scale") id = 41;
+	else if (text == "Aspect Fit") id = 42;
+	else if (text == "Stretch 50%") id = 43;
+	else if (text == "Stretch 100%") id = 44;
+	else if (text == "Backdrop:") id = 45;
+	else if (text == "Black") id = 46;
+	else if (text == "Classic Box 1") id = 47;
+	else if (text == "Classic Box 2") id = 48;
+	else if (text == "Classic Box 3") id = 49;
+	else if (text == "Screen Filter:") id = 50;
+	else if (text == "Sharp") id = 51;
+	else if (text == "Soft 1") id = 52;
+	else if (text == "Soft 2") id = 53;
+	else if (text == "Scanlines:") id = 54;
+	else if (text == "Off") id = 55;
+	else if (text == "Background Blur:") id = 56;
+	else if (text == "Window Mode") id = 57;
+	else if (text == "Current Screen:") id = 58;
+	else if (text == "Startup Screen:") id = 59;
+	else if (text == "Windowed") id = 60;
+	else if (text == "Fullscreen") id = 61;
+	else if (text == "Exclusive Fullscreen") id = 62;
+	else if (text == "Performance Output") id = 63;
+	else if (text == "Show Performance:") id = 64;
+	else if (text == "Show Framerate") id = 65;
+	else if (text == "Full Profiling") id = 66;
+	else if (text == "Volume") id = 67;
+	else if (text == "Overall Volume:") id = 68;
+	else if (text == "Music Volume:") id = 69;
+	else if (text == "Sound Volume:") id = 70;
+	else if (text == "Soundtrack") id = 71;
+	else if (text == "Soundtrack Type:") id = 72;
+	else if (text == "Emulated") id = 73;
+	else if (text == "Remastered") id = 74;
+	else if (text == "Sound Test:") id = 75;
+	else if (text == "Music and Jingles:") id = 76;
+	else if (text == "Sound Effects:") id = 77;
+	else if (text == "Theme Selection") id = 78;
+	else if (text == "Title Theme:") id = 79;
+	else if (text == "Sonic 3") id = 80;
+	else if (text == "Sonic & Knuckles") id = 81;
+	else if (text == "1-up Jingle:") id = 82;
+	else if (text == "Pick by Zone") id = 83;
+	else if (text == "Invincibility Theme:") id = 84;
+	else if (text == "Super/Hyper Theme:") id = 85;
+	else if (text == "Normal level music") id = 86;
+	else if (text == "Fast level music") id = 87;
+	else if (text == "Sonic 2") id = 88;
+	else if (text == "S3 Prototype") id = 89;
+	else if (text == "Mini-Boss Theme:") id = 90;
+	else if (text == "Knuckles' Theme:") id = 91;
+	else if (text == "Level Music") id = 92;
+	else if (text == "Carnival Night Act 1:") id = 93;
+	else if (text == "As Released") id = 94;
+	else if (text == "Carnival Night Act 2:") id = 95;
+	else if (text == "IceCap Act 1:") id = 96;
+	else if (text == "IceCap Act 2:") id = 97;
+	else if (text == "Launch Base Act 1:") id = 98;
+	else if (text == "Launch Base Act 2:") id = 99;
+	else if (text == "Music Selection") id = 100;
+	else if (text == "FBZ Laser Trap Boss:") id = 101;
+	else if (text == "Mini-Boss Music") id = 102;
+	else if (text == "Main Boss Music") id = 103;
+	else if (text == "In Hidden Palace:") id = 104;
+	else if (text == "S3 + S&K Mini-Boss") id = 105;
+	else if (text == "Sky Sanctuary Bosses:") id = 106;
+	else if (text == "Normal Boss Music") id = 107;
+	else if (text == "Sonic 1 & 2 Tracks") id = 108;
+	else if (text == "Outro Music:") id = 109;
+	else if (text == "Sky Sanctuary") id = 110;
+	else if (text == "Sonic 3 Credits") id = 111;
+	else if (text == "Competition Menu:") id = 112;
+	else if (text == "Continue Screen:") id = 113;
+	else if (text == "Music Behavior") id = 114;
+	else if (text == "On Level (Re)Start:") id = 115;
+	else if (text == "Restart Music") id = 116;
+	else if (text == "Continue Music") id = 117;
+	else if (text == "Effects") id = 118;
+	else if (text == "Underwater Sound:") id = 119;
+	else if (text == "Normal") id = 120;
+	else if (text == "Muffled") id = 121;
+	else if (text == "Visual Enhancements") id = 122;
+	else if (text == "Character Rotation:") id = 123;
+	else if (text == "Original") id = 124;
+	else if (text == "Smooth") id = 125;
+	else if (text == "Mania-Accurate") id = 126;
+	else if (text == "Time Display:") id = 127;
+	else if (text == "Extended") id = 128;
+	else if (text == "Lives Display:") id = 129;
+	else if (text == "Auto") id = 130;
+	else if (text == "Classic") id = 131;
+	else if (text == "Mobile") id = 132;
+	else if (text == "Speed Shoes Effect:") id = 133;
+	else if (text == "None (Original)") id = 134;
+	else if (text == "After-Images") id = 135;
+	else if (text == "Fast Run Animation:") id = 136;
+	else if (text == "Peel-Out") id = 137;
+	else if (text == "Flicker Effects:") id = 138;
+	else if (text == "As Original") id = 139;
+	else if (text == "Slightly Smoothed") id = 140;
+	else if (text == "Heavily Smoothed") id = 141;
+	else if (text == "Camera") id = 142;
+	else if (text == "Outrun Camera:") id = 143;
+	else if (text == "On") id = 144;
+	else if (text == "Extended Camera:") id = 145;
+	else if (text == "Objects") id = 146;
+	else if (text == "Monitor Style:") id = 147;
+	else if (text == "Sonic 1 / 2") id = 148;
+	else if (text == "Sonic 3 & Knuckles") id = 149;
+	else if (text == "Color Changes") id = 150;
+	else if (text == "IceCap Startup Time:") id = 151;
+	else if (text == "Daytime") id = 152;
+	else if (text == "Morning Dawn") id = 153;
+	else if (text == "Special Stages") id = 154;
+	else if (text == "Blue Spheres Style:") id = 155;
+	else if (text == "Modernized") id = 156;
+	else if (text == "Ring Counter:") id = 157;
+	else if (text == "Counting Up") id = 158;
+	else if (text == "Counting Down") id = 159;
+	else if (text == "Levels") id = 160;
+	else if (text == "Level Layouts:") id = 161;
+	else if (text == "Sonic 3 A.I.R.") id = 162;
+	else if (text == "Angel Island Tour") id = 163;
+	else if (text == "Difficulty Changes") id = 164;
+	else if (text == "Angel Island Bombing:") id = 165;
+	else if (text == "Alternative") id = 166;
+	else if (text == "Big Arms Boss Fight:") id = 167;
+	else if (text == "Only Knuckles") id = 168;
+	else if (text == "All characters") id = 169;
+	else if (text == "Sandopolis Ghosts:") id = 170;
+	else if (text == "Lava Reef Act 2 Boss:") id = 171;
+	else if (text == "8 hits") id = 172;
+	else if (text == "14 hits (original)") id = 173;
+	else if (text == "Keep Shield after Zone:") id = 174;
+	else if (text == "Time Attack") id = 175;
+	else if (text == "Max. Recorded Ghosts:") id = 176;
+	else if (text == "Quick Restart:") id = 177;
+	else if (text == "Hold Y Button") id = 178;
+	else if (text == "Press Y Button") id = 179;
+	else if (text == "Unlocked by Secrets") id = 180;
+	else if (text == "Sonic Drop Dash:") id = 181;
+	else if (text == "Classic Shield Only") id = 182;
+	else if (text == "Sonic Super Peel-Out:") id = 183;
+	else if (text == "Controllers") id = 184;
+	else if (text == "Setup Keyboard & Game Controllers...") id = 185;
+	else if (text == "Setup Game Controllers...") id = 186;
+	else if (text == "Controller Player 1") id = 187;
+	else if (text == "Controller Player 2") id = 188;
+	else if (text == "Controller Player 3") id = 189;
+	else if (text == "Controller Player 4") id = 190;
+	else if (text == "None (Touch only)") id = 191;
+	else if (text == "None (Keyboard only)") id = 192;
+	else if (text == "Other controllers") id = 193;
+	else if (text == "Not used") id = 194;
+	else if (text == "Assign to Player 1") id = 195;
+	else if (text == "Assign to Player 2") id = 196;
+	else if (text == "Assign to Player 3") id = 197;
+	else if (text == "Assign to Player 4") id = 198;
+	else if (text == "Virtual Gamepad") id = 199;
+	else if (text == "Visibility:") id = 200;
+	else if (text == "D-Pad Size:") id = 201;
+	else if (text == "Buttons Size:") id = 202;
+	else if (text == "Set Touch Gamepad Layout...") id = 203;
+	else if (text == "Controller Rumble") id = 204;
+	else if (text == "Rumble Player 1") id = 205;
+	else if (text == "Rumble Player 2") id = 206;
+	else if (text == "Rumble Player 3") id = 207;
+	else if (text == "Rumble Player 4") id = 208;
+	else if (text == "Abilities") id = 209;
+	else if (text == "Sonic Insta-Shield:") id = 210;
+	else if (text == "Tails Assist:") id = 211;
+	else if (text == "Sonic 3 A.I.R. Style") id = 212;
+	else if (text == "Hybrid Style") id = 213;
+	else if (text == "Sonic Mania Style") id = 214;
+	else if (text == "Tails Flight Cancel:") id = 215;
+	else if (text == "Down + Jump") id = 216;
+	else if (text == "Roll Jump Control Lock:") id = 217;
+	else if (text == "Locked (Classic)") id = 218;
+	else if (text == "Free Movement") id = 219;
+	else if (text == "Bubble Shield Bounce:") id = 220;
+	else if (text == "Sonic 3 Style") id = 221;
+	else if (text == "Super & Hyper Forms") id = 222;
+	else if (text == "Tails Super Forms:") id = 223;
+	else if (text == "Only Super Tails") id = 224;
+	else if (text == "Super & Hyper Tails") id = 225;
+	else if (text == "Super Cancel:") id = 226;
+	else if (text == "Super Sonic Jump Ability:") id = 227;
+	else if (text == "Shield") id = 228;
+	else if (text == "Super Dash") id = 229;
+	else if (text == "Sonic Hyper Dash:") id = 230;
+	else if (text == "Only when D-pad held") id = 231;
+	else if (text == "Debug Mode:") id = 232;
+	else if (text == "Title Screen:") id = 233;
+	else if (text == "Game Speed:") id = 234;
+	else if (text == "50 Hz (slower)") id = 235;
+	else if (text == "60 Hz (normal)") id = 236;
+	else if (text == "75 Hz (faster)") id = 237;
+	else if (text == "90 Hz (much faster)") id = 238;
+	else if (text == "120 Hz (ridiculous)") id = 239;
+	else if (text == "144 Hz (ludicrous)") id = 240;
+	else if (text == "Accessibility") id = 241;
+	else if (text == "Infinite Lives:") id = 242;
+	else if (text == "Infinite Time:") id = 243;
+	else if (text == "Game Variety") id = 244;
+	else if (text == "Shields:") id = 245;
+	else if (text == "Classic Shield") id = 246;
+	else if (text == "Elemental Shields") id = 247;
+	else if (text == "Classic + Elemental") id = 248;
+	else if (text == "Upgradable Shields") id = 249;
+	else if (text == "Randomized Monitors:") id = 250;
+	else if (text == "Normal Monitors") id = 251;
+	else if (text == "Random Shields") id = 252;
+	else if (text == "Random Monitors") id = 253;
+	else
+	{
+		file = "options2";
+		if (text == "Monitor Behavior:") id = 0;
+		else if (text == "Default") id = 1;
+		else if (text == "Fall down when hit") id = 2;
+		else if (text == "Hidden Monitors:") id = 3;
+		else if (text == "No hint") id = 4;
+		else if (text == "Sparkle near signpost") id = 5;
+		else if (text == "Special Stage Layouts:") id = 6;
+		else if (text == "Randomly Generated") id = 7;
+		else if (text == "On Fail:") id = 8;
+		else if (text == "Advance to next") id = 9;
+		else if (text == "Do not advance") id = 10;
+		else if (text == "Region") id = 11;
+		else if (text == "Region Code:") id = 12;
+		else if (text == "Western (\"Tails\")") id = 13;
+		else if (text == "Japan (\"Miles\")") id = 14;
+		else if (text == "Speedrunning") id = 15;
+		else if (text == "Glitch Fixes:") id = 16;
+		else if (text == "No glitch fixes") id = 17;
+		else if (text == "Only basic fixes") id = 18;
+		else if (text == "All (recommended)") id = 19;
+		else if (text == "Other Enhancements") id = 20;
+		else if (text == "Object Pushing Speed:") id = 21;
+		else if (text == "Faster") id = 22;
+		else if (text == "Score Tally Speed-Up:") id = 23;
+		else if (text == "LBZ Tube Transport:") id = 24;
+		else if (text == "Original Speed") id = 25;
+		else if (text == "MHZ Elevator:") id = 26;
+		else if (text == "FBZ Door Opening:") id = 27;
+		else if (text == "SOZ Pyramid Rising:") id = 28;
+		else if (text == "AIZ Knuckles Intro:") id = 29;
+		else if (text == "FBZ Cylinder Behavior:") id = 30;
+		else if (text == "Can enter from top") id = 31;
+		else if (text == "Offscreen Player 2:") id = 32;
+		else if (text == "Not shown") id = 33;
+		else if (text == "Show at border") id = 34;
+		else if (text == "Stable") id = 35;
+		else if (text == "Classic Shield:") id = 36;
+		else if (text == "Sonic 1") id = 37;
+		else if (text == "Sonic 2") id = 38;
+		else if (text == "Classic Transparency:") id = 39;
+		else if (text == "Shields only") id = 40;
+		else if (text == "Shields and Afterimages") id = 41;
+		else if (text == "Act Select Giant Rings:") id = 42;
+		else if (text == "Warp to Special Stage") id = 43;
+		else if (text == "Language:") id = 44;
+		else if (text == "Experimental") id = 45;
+		else if (text == "Aspect Ratio:") id = 46;
+		else if (text == "Waterfall SFX:") id = 47;
+		else if (text == "Prev / Next category") id = 48;
+		else if (text == "Switch Tab") id = 49;
+		else if (text == "Expand") id = 50;
+		else if (text == "Collapse") id = 51;
+		else if (text == "Change") id = 52;
+		else if (text == "Play") id = 53;
+		else if (text == "Select") id = 54;
+		else if (text == "Hold: Quick Nav") id = 55;
+		else if (text == "not available") id = 56;
+		else if (text == "Note: You must leave this menu for translations to apply fully.") id = 57;
+		else if (text == "Note: Music changes don't affect already playing tracks.") id = 58;
+		else if (text == "Note: Some options are hidden while in-game.") id = 59;
+	}
 
 	if (!file.empty() && id != 255)
 	{

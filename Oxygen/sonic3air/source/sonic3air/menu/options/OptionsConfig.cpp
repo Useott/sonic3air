@@ -74,15 +74,12 @@ void OptionsConfig::buildSystem()
 {
 	ConfigBuilder configBuilder(mSystemOptions);
 
-#if !defined(PLATFORM_VITA)
 	CATEGORY("Update")
 	{
-		configBuilder.addSetting("Check for updates", option::_CHECK_FOR_UPDATE)
-			.addOption("Stable updates", 0)
-			.addOption("Stable & preview", 1)
-			.addOption("All incl. test builds", 2);
+		configBuilder.addSetting("Go to Angel Island Tour's download page", option::_GO_TO_DOWNLOAD);
 	}
 
+#if !defined(PLATFORM_VITA)
 	CATEGORY("Ghost Sync")
 	{
 		configBuilder.addSetting("Enable Ghost Sync", option::GHOST_SYNC)
@@ -98,7 +95,7 @@ void OptionsConfig::buildSystem()
 
 	CATEGORY("More Info")
 	{
-		configBuilder.addSetting("Open Game Homepage", option::_OPEN_HOMEPAGE);
+		//configBuilder.addSetting("Open Game Homepage", option::_OPEN_HOMEPAGE);
 		configBuilder.addSetting("Open Manual", option::_OPEN_MANUAL);
 	}
 
@@ -706,33 +703,33 @@ void OptionsConfig::buildTourOptions()
 
 	CATEGORY("Stable")
 	{
-		configBuilder.addSetting("Classic Shield", option::CLASSIC_SHIELD_SPRITE)
+		configBuilder.addSetting("Classic Shield:", option::CLASSIC_SHIELD_SPRITE)
 			.addOption("Sonic 1", 0)
 			.addOption("Sonic 2", 1);
 
-		configBuilder.addSetting("Classic Transparency", option::CLASSIC_TRANSPARENCY)
+		configBuilder.addSetting("Classic Transparency:", option::CLASSIC_TRANSPARENCY)
 			.addOption("Disabled", 0)
 			.addOption("Shields only", 1)
 			.addOption("Shields and Afterimages", 2)
 			.addOption("Full", 3);
 
-		configBuilder.addSetting("Act Select Giant Rings", option::ACT_SELECT_BIG_RINGS)
+		configBuilder.addSetting("Act Select Giant Rings:", option::ACT_SELECT_BIG_RINGS)
 			.addOption("Disabled", 0)
 			.addOption("Warp to Special Stage", 1);
 
-		configBuilder.addSetting("Language", option::LANGUAGE)
+		configBuilder.addSetting("Language:", option::LANGUAGE)
 			.addOption("English", 0)
 			.addOption("Portugues (sem acento)", 1);
 	}
 
 	CATEGORY("Experimental")
 	{
-		configBuilder.addSetting("Aspect Ratio", option::SCREEN_SIZE)
+		configBuilder.addSetting("Aspect Ratio:", option::SCREEN_SIZE)
 			.addOption("4:3", 0)
 			.addOption("16:9", 1)
 			.addOption("2:1", 2);
 
-		configBuilder.addSetting("Waterfall SFX", option::WATERFALL_SFX)
+		configBuilder.addSetting("Waterfall SFX:", option::WATERFALL_SFX)
 			.addOption("Disabled", 0)
 			.addOption("Enabled", 1);
 	}

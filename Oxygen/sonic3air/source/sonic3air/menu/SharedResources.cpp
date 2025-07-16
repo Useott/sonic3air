@@ -72,6 +72,7 @@ namespace global
 		fontCollection.registerManagedFont(mOxyfontTinyRect, "oxyfont_tiny");
 		fontCollection.registerManagedFont(mOxyfontSmallNoOutline, "oxyfont_small");
 		fontCollection.registerManagedFont(mOxyfontSmall, "oxyfont_small");
+		fontCollection.registerManagedFont(mOxyfontTiny, "oxyfont_tiny");
 		fontCollection.registerManagedFont(mMonofont, "monofont");
 		fontCollection.registerManagedFont(mOxyfontRegular, "oxyfont_regular");
 		fontCollection.registerManagedFont(mSonicFontB, "sonic3_fontA");

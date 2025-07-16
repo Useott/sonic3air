@@ -25,6 +25,7 @@ public:
 	struct Option
 	{
 		std::string mText;
+		bool mWasTranslated;
 		size_t mIndex = 0;
 		uint32 mValue = 0;
 		bool mVisible = true;
@@ -49,6 +50,8 @@ public:
 
 public:
 	std::string mText;
+	std::string mUntranslatedText;
+	bool mWasTranslated;
 	uint32 mData = 0;
 
 	std::vector<Option> mOptions;

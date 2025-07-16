@@ -11,7 +11,7 @@ Mais
 Voltar
 Atualizacoes
 Versao atual:
--
+Ir para a pagina de download do Angel Island Tour
 Ghost Sync
 Caso ativado, o Ghost Sync compartilha sua posicao na fase e\nmostra todos os outros jogadores como fantasmas.
 Ativar Ghost Sync
@@ -26,7 +26,7 @@ Abrir manual
 Depuracao
 Esses ajustes apenas deverao ser usados para depurar bugs especificos\nRecomenda-se de que deixe do jeito que estao.
 Otimizacao de scripts
-Auto (padrao)
+Automatico (Padrao)
 Basico
 Total
 Gravacao de depuracao
@@ -51,8 +51,8 @@ Caixa classica 2
 Caixa classica 3
 Filtro:
 Sharp
-Suave 1
-Suave 2
+Macio 1
+Macio 2
 Scanlines:
 Desligado
 Desfoque do fundo:
@@ -121,3 +121,135 @@ Efeitos
 Audio quando submerso:
 Normal
 Abafado
+Melhorias visuais
+Rotacao de personagem:
+Original
+Suave
+Como no Sonic Mania
+Contador de tempo:
+Extendido
+Contador de vidas:
+Automatico
+Classico
+Mobile
+Efeitos dos Super sapatos:
+Nada (Original)
+Pos-imagens
+Em alta velocidade:
+Animacao do Peel-Out
+Efeitos piscantes:
+Como no jogo original
+Levemente suavizados
+Intensamente suavizados
+Camera
+Ultrapassar camera:
+Ligado
+Camera extendida:
+Objetos
+Estilo dos monitores:
+Sonic 1 / 2
+Sonic 3 & Knuckles
+Mudancas de cor
+Horario inicial da IceCap:
+Dia
+Amanhecer
+Fases especiais
+Estilo do Blue Sphere:
+Modernizado
+Contador de aneis:
+Contar aneis coletados
+Contar aneis restantes
+Fases
+Layouts:
+Sonic 3 A.I.R.
+Angel Island Tour
+Mudancas de dificuldade
+Bombardeio na AIZ:
+Alternativo
+Batalha contra Big Arms:
+Somente Knuckles
+Todos os personagens
+Fantasmas da Sandopolis:
+Chefe na Lava Reef Ato 2:
+8 hits
+14 hits (original)
+Manter escudo apos zona:
+Contra o tempo
+Mostrar fantasmas:
+Reinicio rapido:
+Segurar botao Y
+Apertar botao Y
+Desbloqueado por segredos
+Drop Dash do Sonic:
+So com escudo classico
+Super Peel-Out do Sonic:
+Controles
+Configurar teclado & controles...
+Configurar controles...
+Controle do jogador 1
+Controle do jogador 2
+Controle do jogador 3
+Controle do jogador 4
+Nada (apenas toque)
+Nada (apenas teclado)
+Outros controles
+Nao usados
+Atribuir ao jogador 1
+Atribuir ao jogador 2
+Atribuir ao jogador 3
+Atribuir ao jogador 4
+Controle na tela
+Visibilidade:
+Tamanho do D-Pad:
+Tamanho dos botoes:
+Definir layout
+Vibracao do controle
+Vibracao do jogador 1
+Vibracao do jogador 2
+Vibracao do jogador 3
+Vibracao do jogador 4
+Habilidades
+Insta-Shield do Sonic:
+Assistencia do Tails:
+Estilo Sonic 3 A.I.R.
+Estilo Hibrido
+Estilo Sonic Mania
+Cancelar voo do Tails:
+Baixo + pulo
+Trava do rolar + pular:
+Travado (classico)
+Livre
+Salto do escudo de bolha:
+Estilo Sonic 3
+Formas Super & Hiper
+Formas do Tails:
+Somente Super Tails
+Super & Hiper Tails
+Cancelar forma Super:
+Habilidade do Super Sonic:
+Escudo
+Impulso super
+Impulso hiper do Sonic:
+Somente com o D-Pad segurado
+Modo Debug:
+Tela inicial:
+Velocidade do jogo:
+50 Hz (lento)
+60 Hz (normal)
+75 Hz (rapido)
+90 Hz (mais rapido)
+120 Hz (ridiculo)
+144 Hz (absurdo)
+Acessibilidade
+Vidas infinitas:
+Tempo infinito:
+Variedade
+Escudos:
+Escudo classico
+Escudos elementais
+Classico + elementais
+Escudos atualizaveis
+Monitores:
+Monitors normais
+Escudos aleatorios
+Monitores aleatorios

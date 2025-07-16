@@ -38,6 +38,8 @@ public:
 	void copyModSettingsFromConfig();
 	void copyModSettingsToConfig();
 
+	bool mNotNeededInAITour;
+
 private:
 	struct FoundMod
 	{

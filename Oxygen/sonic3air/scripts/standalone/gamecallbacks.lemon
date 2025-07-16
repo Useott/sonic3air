@@ -213,5 +213,6 @@ function void Standalone.getTranslatedStringForCXX(u64 key, u8 id)
 {
 	// First, we add some keys we expect to use, but aren't used anywhere in scripts, otherwise the call below will result in nothing
 	"options"
+	"options2"
 	lastTranslatedString = Standalone.getTranslatedString(stringformat("%s", key), id)
 }
