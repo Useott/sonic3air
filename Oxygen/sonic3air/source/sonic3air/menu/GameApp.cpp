@@ -219,7 +219,12 @@ void GameApp::openMainMenu()
 	Application::instance().getSimulation().setSpeed(1.0f);
 	GameApp::instance().getGameView().startFadingIn(0.1f);
 
-	gotoPhase(2);
+	InputManager::instance().setTouchInputMode(InputManager::TouchInputMode::HIDDEN_CONTROLS);
+	mCurrentState = State::INGAME;
+	Game::instance().resetCurrentMode();
+	Simulation& simulation = Application::instance().getSimulation();
+	simulation.setRunning(true);
+	Game::instance().startIntoAITMainMenu();
 }
 
 void GameApp::openOptionsMenuInGame()
@@ -447,6 +452,7 @@ void GameApp::gotoPhase(int phaseNumber)
 		case 1:
 		{
 			// Start with the intro & title screen
+			InputManager::instance().setTouchInputMode(InputManager::TouchInputMode::FULLSCREEN_START);
 			mCurrentState = State::TITLE_SCREEN;
 			Game::instance().startIntoTitleScreen();
 			break;
@@ -455,13 +461,7 @@ void GameApp::gotoPhase(int phaseNumber)
 		case 2:
 		{
 			// Start with the main menu
-			//openMainMenu();
-			InputManager::instance().setTouchInputMode(InputManager::TouchInputMode::HIDDEN_CONTROLS);
-			mCurrentState = State::INGAME;
-			Game::instance().resetCurrentMode();
-			Simulation& simulation = Application::instance().getSimulation();
-			simulation.setRunning(true);
-			Game::instance().startIntoAITMainMenu();
+			openMainMenu();
 			break;
 		}
 
