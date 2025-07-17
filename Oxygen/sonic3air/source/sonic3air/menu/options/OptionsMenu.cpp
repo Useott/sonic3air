@@ -1831,7 +1831,7 @@ std::string OptionsMenu::checkForAvailableTranslation(std::string text)
 	uint8 id = 255;
 	std::string file = "options";
 
-	for (int i; i < 2; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		for (uint8 j = 0; j < 254; j++)
 		{
