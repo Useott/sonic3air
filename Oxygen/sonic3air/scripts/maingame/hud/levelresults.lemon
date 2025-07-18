@@ -115,7 +115,11 @@ function void fn02dae6()
 
 	results.ring_bonus = u32(ring_counter) * 10
 	results.total_bonus = 0
+#if STANDALONE
+	objA0.countdown_value = 400
+#else
 	objA0.countdown_value = 360
+#endif
 	u16[A0 + 0x30] = 12
 	objA0.base_state += 2
 }
@@ -162,7 +166,7 @@ function void fn02dbca()
 					u16[A1 + 0x42] = 110
 					objA1.position.y.u16 += 32
 				}
-				else objA1.position.x.u16 += 1024
+				else objA1.position.x.u16 += 1024 + ((7 - D1) / 3 * 288)
 			}
 			#endif
 
@@ -190,10 +194,6 @@ function void LevelResults.UpdateBonusCounting()
 	if (objA0.countdown_value != 0)
 	{
 		--objA0.countdown_value
-	#if STANDALONE
-		if (objA0.countdown_value == 260)
-			playMusic(MUSIC_LEVELCLEAR)
-	#endif
 		if (objA0.countdown_value != 289)
 			return
 
@@ -201,9 +201,7 @@ function void LevelResults.UpdateBonusCounting()
 		u8[0xffffb000 + 0x2c] = 30
 		u8[0xffffb04a + 0x2c] = 30
 
-	#if !STANDALONE
 		playMusic(MUSIC_LEVELCLEAR)
-	#endif
 		return
 	}
 
