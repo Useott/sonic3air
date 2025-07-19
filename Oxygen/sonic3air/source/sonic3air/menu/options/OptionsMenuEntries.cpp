@@ -226,9 +226,13 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 		// Description
 		if (!mText.empty())
 		{
-			Font& font2 = (VideoOut::instance().getScreenWidth() < 360) ? global::mOxyfontTiny : global::mOxyfontRegular;
+			int py2 = (VideoOut::instance().getScreenWidth() < 360) ? 2 : (mUseSmallFont || renderContext.mIsModsTab || mData == option::SOUND_TEST_MUSIC || mData == option::SOUND_TEST_SFX || (VideoOut::instance().getScreenWidth() < 400)) ? 3 : 0;
+			Color bgtint = isSelected ? Color(1.0f, 1.0f, 1.0f) : Color(0.0f, 0.0f, 0.0f);
+			bgtint.a = color.a / (isSelected ? 1.0f : 5.0f);
+			Font& font2 = (VideoOut::instance().getScreenWidth() < 360) ? global::mOxyfontTiny : (VideoOut::instance().getScreenWidth() < 400) ? global::mOxyfontSmall : global::mOxyfontRegular;
 			if (mData == option::SOUND_TEST_MUSIC)
 			{
+				drawer.drawSprite(Vec2i(baseX - 12, py + 8 - py2), rmx::getMurmur2_64("main_menu.text_bg_options"), bgtint, Vec2f(1.0f, 1.0f));
 				drawer.printText(font2, Recti(baseX - 40, py, 0, 10), OptionsMenu::checkForAvailableTranslation("Sound Test:"), 6, color);
 				py += 16;
 			}
@@ -236,7 +240,14 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 			{
 				py += 12;
 				if (isSelected)
+				{
+					drawer.drawSprite(Vec2i(baseX - 12, py - 20 - py2), rmx::getMurmur2_64("main_menu.text_bg_options"), bgtint, Vec2f(1.0f, 1.0f));
 					drawer.printText(font2, Recti(baseX - 40, py - 28, 0, 10), OptionsMenu::checkForAvailableTranslation("Sound Test:"), 6, color);
+				}
+			}
+			else
+			{
+				drawer.drawSprite(Vec2i(baseX - 12, py + 4 - py2), rmx::getMurmur2_64("main_menu.text_bg_options"), bgtint, Vec2f(1.0f, 1.0f));
 			}
 			drawer.printText(font, Recti(baseX - 40, py, 0, 10), mText, 6, color);
 		}
@@ -274,6 +285,12 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 					if (VideoOut::instance().getScreenWidth() < 360)
 						py += 7;
 				}
+			}
+			{
+				int py2 = (VideoOut::instance().getScreenWidth() < 360) ? 2 : (mUseSmallFont || renderContext.mIsModsTab || mData == option::SOUND_TEST_MUSIC || mData == option::SOUND_TEST_SFX || (VideoOut::instance().getScreenWidth() < 400)) ? 3 : 0;
+				Color bgtint = isSelected ? Color(1.0f, 1.0f, 1.0f) : Color(0.0f, 0.0f, 0.0f);
+				bgtint.a = color.a / (isSelected ? 1.0f : 5.0f);
+				drawer.drawSprite(Vec2i(baseX + 12, py + 4 - py2), rmx::getMurmur2_64("main_menu.text_bg_options"), bgtint, Vec2f(-1.0f, 1.0f));
 			}
 			drawer.printText(font, Recti(center - 80, py, 160, 10), *text, 5, color);
 		}
