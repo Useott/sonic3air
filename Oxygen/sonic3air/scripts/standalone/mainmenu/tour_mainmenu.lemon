@@ -464,6 +464,14 @@ function void AITourMenus.drawMenuBackground(u8 menu, u32 framecounter, u16 rend
 	{
 		Renderer.drawSprite("extras.background", 0, 0, 0, 0, renderQueue2)
 	}
+	if (menu == 2)
+	{
+		s16 px = -(framecounter / 8) % 512
+		s16 py = Math.roundToInt(2.0f * Math.sin(2 * 3.1415 * 128 * float(u8(framecounter)))) - 8
+		Renderer.drawSprite("main_menu.background", px, py - 60, 0, 0, renderQueue1)
+		Renderer.drawSprite("main_menu.background", px + 512, py - 60, 0, 0, renderQueue1)
+		Renderer.drawSprite("main_menu.foreground_alt", 0, 0, 0, 0, renderQueue2)
+	}
 }
 
 function void AITourMenus.drawMenu(u8 menu, u8 selectedEntry, u32 framecounter, u16 renderQueue)

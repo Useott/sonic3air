@@ -372,12 +372,7 @@ function void DataSelect.setup()
 	A0 = A1 - 0x08c0
 	copyMemory(A1, A0, 0x540)
 
-#if STANDALONE
-	if (!Audio.isPlayingAudio(0x2d))
-		Audio.playAudio("2D", AudioContext.CONTEXT_MUSIC) // I don't want this to be affected by the Competition Menu Theme option
-#else
 	playMusic(MUSIC_DATASELECT)
-#endif
 	vint.update_subroutine = 0x00c890
 	global.frame_state = 0x1e
 	waitForNextFrame()
@@ -1660,7 +1655,7 @@ function void DataSelect.drawCustomPlanes()
 	//Renderer.drawCustomSprite("bg_dataselect", s16(getScreenWidth() - 512) / 2, 0, 0x00, 0, 0x2000)
 	Renderer.enableDefaultPlane(1, false)
 	Renderer.enableDefaultPlane(3, false)
-	AITourMenus.drawMenuBackground(0, global.framecounter, 0x200a, 0x200b)
+	AITourMenus.drawMenuBackground(2, global.framecounter, 0x200a, 0x200b)
 	AITourMenus.drawMenu(3, 0, global.framecounter, 0x2010)
 
 	// Custom rendering of plane B (which is not the background here) to ignore the wrapping
