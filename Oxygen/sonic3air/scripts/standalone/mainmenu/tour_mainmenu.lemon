@@ -456,9 +456,32 @@ function void AITourMenus.drawMenuBackground(u8 menu, u32 framecounter, u16 rend
 		// Before you change this, it's important to know this does NOT affect the Time Attack, Settings and Mods menus. The code for those menus were ported from the original Lemon script code, but still are written in C++.
 		s16 px = -(framecounter / 8) % 512
 		s16 py = Math.roundToInt(2.0f * Math.sin(2 * 3.1415 * 128 * float(u8(framecounter)))) - 8
-		Renderer.drawSprite("main_menu.background", px, py, 0, 0, renderQueue1)
-		Renderer.drawSprite("main_menu.background", px + 512, py, 0, 0, renderQueue1)
-		Renderer.drawSprite("main_menu.foreground", 0, 0, 0, 0, renderQueue2)
+		if (System.getSystemClockData(DATE_MONTH) == 12)
+		{
+			s16 px2 = -(framecounter / 4) % 512
+			Renderer.drawSprite("main_menu.background_december", 0, 0, 0, 0, renderQueue1)
+
+			Renderer.setViewport(0, 180, getScreenWidth(), 16, renderQueue1 + 1)
+
+			Renderer.drawSprite("main_menu.background_december", px, 0, 0, 0, renderQueue1 + 2)
+			Renderer.drawSprite("main_menu.background_december", px + 512, 0, 0, 0, renderQueue1 + 2)
+
+			Renderer.resetViewport(renderQueue1 + 3)
+			Renderer.setViewport(0, 196, getScreenWidth(), 60, renderQueue1 + 4)
+
+			Renderer.drawSprite("main_menu.background_december", px2, 0, 0, 0, renderQueue1 + 5)
+			Renderer.drawSprite("main_menu.background_december", px2 + 512, 0, 0, 0, renderQueue1 + 5)
+
+			Renderer.resetViewport(renderQueue1 + 6)
+
+			Renderer.drawSprite("main_menu.foreground_december", 0, 0, 0, 0, renderQueue2)
+		}
+		else
+		{
+			Renderer.drawSprite("main_menu.background", px, py, 0, 0, renderQueue1)
+			Renderer.drawSprite("main_menu.background", px + 512, py, 0, 0, renderQueue1)
+			Renderer.drawSprite("main_menu.foreground", 0, 0, 0, 0, renderQueue2)
+		}
 	}
 	if (menu == 1)
 	{
@@ -468,8 +491,8 @@ function void AITourMenus.drawMenuBackground(u8 menu, u32 framecounter, u16 rend
 	{
 		s16 px = -(framecounter / 8) % 512
 		s16 py = Math.roundToInt(2.0f * Math.sin(2 * 3.1415 * 128 * float(u8(framecounter)))) - 8
-		Renderer.drawSprite("main_menu.background", px, py - 60, 0, 0, renderQueue1)
-		Renderer.drawSprite("main_menu.background", px + 512, py - 60, 0, 0, renderQueue1)
+		Renderer.drawSprite("main_menu.background", px, py - 72, 0, 0, renderQueue1)
+		Renderer.drawSprite("main_menu.background", px + 512, py - 72, 0, 0, renderQueue1)
 		Renderer.drawSprite("main_menu.foreground_alt", 0, 0, 0, 0, renderQueue2)
 	}
 }
@@ -525,7 +548,7 @@ function void AITourMenus.drawMenu(u8 menu, u8 selectedEntry, u32 framecounter, 
 
 		Renderer.drawSprite("main_menu.circle", getScreenWidth() + 56, getScreenCenterY() + 5, 0, SPRITE_FLAG_PRIO, renderQueue + 1)
 
-		Renderer.drawSprite("main_menu.sonic_art", 32, 56 + Math.roundToInt(4.0f * Math.sin(2 * 3.1415 * 256 * float(u8(framecounter)))), 0, SPRITE_FLAG_PRIO, renderQueue)
+		Renderer.drawSprite(System.getSystemClockData(DATE_MONTH) == 12 ? "main_menu.sonic_art_december" : "main_menu.sonic_art", 32, 56 + Math.roundToInt(4.0f * Math.sin(2 * 3.1415 * 256 * float(u8(framecounter)))), 0, SPRITE_FLAG_PRIO, renderQueue)
 
 		u8 build.yr = Game.getBuildNumber() >> 24
 		u8 build.dy = Game.getBuildNumber() >> 16

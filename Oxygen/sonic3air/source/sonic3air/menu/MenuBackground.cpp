@@ -180,9 +180,38 @@ void MenuBackground::render()
 	{
 		int px = -(mAnimationTimerAIT / 8) % 512;
 		int py = int(3.0f * sin(2 * 3.1415 * 128 * float(uint8(mAnimationTimerAIT)))) - 8;
-		drawer.drawSprite(Vec2i(px, py), rmx::getMurmur2_64("main_menu.background"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
-		drawer.drawSprite(Vec2i(px + 512, py), rmx::getMurmur2_64("main_menu.background"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
-		drawer.drawSprite(Vec2i(0, 0), rmx::getMurmur2_64("main_menu.foreground"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+
+		const std::time_t current_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		char time_text[64];
+		strftime(time_text, sizeof time_text, std::string("%m").c_str(), std::localtime(&current_time));
+		int month = rmx::parseInteger(time_text);
+
+		if (month == 12)
+		{
+			int px2 = -(mAnimationTimerAIT / 4) % 512;
+			drawer.drawSprite(Vec2i(0, 0), rmx::getMurmur2_64("main_menu.background_december"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+
+			drawer.pushScissor(Recti(0, 180, VideoOut::instance().getScreenWidth(), 16));
+
+			drawer.drawSprite(Vec2i(px, 0), rmx::getMurmur2_64("main_menu.background_december"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+			drawer.drawSprite(Vec2i(px + 512, 0), rmx::getMurmur2_64("main_menu.background_december"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+
+			drawer.popScissor();
+			drawer.pushScissor(Recti(0, 196, VideoOut::instance().getScreenWidth(), 60));
+
+			drawer.drawSprite(Vec2i(px2, 0), rmx::getMurmur2_64("main_menu.background_december"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+			drawer.drawSprite(Vec2i(px2 + 512, 0), rmx::getMurmur2_64("main_menu.background_december"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+
+			drawer.popScissor();
+
+			drawer.drawSprite(Vec2i(0, 0), rmx::getMurmur2_64("main_menu.foreground_december"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+		}
+		else
+		{
+			drawer.drawSprite(Vec2i(px, py), rmx::getMurmur2_64("main_menu.background"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+			drawer.drawSprite(Vec2i(px + 512, py), rmx::getMurmur2_64("main_menu.background"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+			drawer.drawSprite(Vec2i(0, 0), rmx::getMurmur2_64("main_menu.foreground"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+		}
 
 		int triangleScroll = mAnimationTimerAIT;
 		const int scrHeight = VideoOut::instance().getScreenHeight();
