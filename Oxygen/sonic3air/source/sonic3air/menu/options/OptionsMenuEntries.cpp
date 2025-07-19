@@ -72,12 +72,12 @@ void TitleMenuEntry::renderEntry(RenderContext& renderContext_)
 	const int baseX = renderContext.mCurrentPosition.x;
 	int& py = renderContext.mCurrentPosition.y;
 
-	Font& font = (VideoOut::instance().getScreenWidth() < 400) ? global::mOxyfontSmall : global::mSonicFontB;
+	Font& font = (VideoOut::instance().getScreenWidth() < 360) ? global::mOxyfontSmall : global::mSonicFontB;
 
 	if (mUntranslatedText == mText)
 		mText = OptionsMenu::checkForAvailableTranslation(mText);
 
-	py += VideoOut::instance().getScreenWidth() < 400 ? 6: 15;
+	py += VideoOut::instance().getScreenWidth() < 360 ? 6: 15;
 	drawer.printText(font, Recti(baseX, py, 0, 10), "* " + mText + " *", 5, Color(0.6f, 0.8f, 1.0f, renderContext.mTabAlpha));
 	py += 2;
 }
@@ -170,7 +170,7 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 	Drawer& drawer = *renderContext.mDrawer;
 	const int baseX = renderContext.mCurrentPosition.x;
 	int& py = renderContext.mCurrentPosition.y;
-	Font& font = (VideoOut::instance().getScreenWidth() < 400) ? global::mOxyfontTiny : (mUseSmallFont || renderContext.mIsModsTab || mData == option::SOUND_TEST_MUSIC || mData == option::SOUND_TEST_SFX) ? global::mOxyfontSmall : global::mOxyfontRegular;
+	Font& font = (VideoOut::instance().getScreenWidth() < 360) ? global::mOxyfontTiny : (mUseSmallFont || renderContext.mIsModsTab || mData == option::SOUND_TEST_MUSIC || mData == option::SOUND_TEST_SFX || (VideoOut::instance().getScreenWidth() < 400)) ? global::mOxyfontSmall : global::mOxyfontRegular;
 
 	if (!renderContext.mIsModsTab && mWasTranslated == false)
 	{
@@ -226,7 +226,7 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 		// Description
 		if (!mText.empty())
 		{
-			Font& font2 = (VideoOut::instance().getScreenWidth() < 400) ? global::mOxyfontTiny : global::mOxyfontRegular;
+			Font& font2 = (VideoOut::instance().getScreenWidth() < 360) ? global::mOxyfontTiny : global::mOxyfontRegular;
 			if (mData == option::SOUND_TEST_MUSIC)
 			{
 				drawer.printText(font2, Recti(baseX - 40, py, 0, 10), OptionsMenu::checkForAvailableTranslation("Sound Test:"), 6, color);
@@ -271,7 +271,7 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 					static std::string combinedText;
 					combinedText = *text + " (modded)";
 					text = &combinedText;
-					if (VideoOut::instance().getScreenWidth() < 400)
+					if (VideoOut::instance().getScreenWidth() < 360)
 						py += 7;
 				}
 			}
@@ -295,7 +295,7 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 			}
 			else
 			{
-				if (VideoOut::instance().getScreenWidth() < 400)
+				if (VideoOut::instance().getScreenWidth() < 360)
 					addOffset = -7;
 				py -= 16;
 				if (isSelected)

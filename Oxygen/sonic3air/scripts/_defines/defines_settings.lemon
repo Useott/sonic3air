@@ -134,7 +134,7 @@ constant u32 SETTING_AUDIO_CONTINUE_SCREEN		= 0x80400a01
 // Code to copy:
 //  if (Game.getSetting(SETTING_XYZ))
 
-constant u32 SETTING_SCREEN_SIZE				= 0x00003401	// 0 = 4:3, 1 = 16:9, 2 = 2:1
+constant u32 SETTING_SCREEN_SIZE				= 0x00003402	// 0 = 4:3, 2 = 8:5 / 16:10, 2 = 16:9, 3 = 2:1 / 18:9
 constant u32 SETTING_CLASSIC_SHIELD_SPRITE		= 0x80003501
 constant u32 SETTING_CLASSIC_TRANSPARENCY		= 0x80003600	// 0 = None, 1 = Shields only, 2 = Shields and Afterimages only, 3 = Full
 constant u32 SETTING_WATERFALL_SFX				= 0x80003701

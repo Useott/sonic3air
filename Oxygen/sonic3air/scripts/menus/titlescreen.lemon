@@ -137,7 +137,7 @@ function void fn00440c()
 //# address-hook(0x003e32) end(0x004342)
 function void TitleScreen()
 {
-	Renderer.setScreenSize(Game.getSetting(SETTING_SCREEN_SIZE) == 2 ? 448 : Game.getSetting(SETTING_SCREEN_SIZE) == 0 ? 320 : 400, 224)
+	Renderer.setScreenSize(SCREEN_WIDTHS[Game.getSetting(SETTING_SCREEN_SIZE)], 224)
 
 	playMusic(MUSIC_CTRL_FADEOUT)
 	kosinski.queue_size = 0

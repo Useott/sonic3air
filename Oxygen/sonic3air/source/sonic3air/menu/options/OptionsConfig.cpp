@@ -726,8 +726,9 @@ void OptionsConfig::buildTourOptions()
 	{
 		configBuilder.addSetting("Aspect Ratio:", option::SCREEN_SIZE)
 			.addOption("4:3", 0)
-			.addOption("16:9", 1)
-			.addOption("2:1", 2);
+			.addOption("8:5", 1)
+			.addOption("16:9", 2)
+			.addOption("2:1", 3);
 
 		configBuilder.addSetting("Waterfall SFX:", option::WATERFALL_SFX)
 			.addOption("Disabled", 0)

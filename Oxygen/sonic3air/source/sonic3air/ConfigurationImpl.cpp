@@ -172,6 +172,13 @@ void ConfigurationImpl::serializeSettingsInternal(JsonSerializer& serializer)
 						ghostSetting = (ghostSetting >= 5) ? 5 : (ghostSetting >= 3) ? 3 : (ghostSetting >= 1) ? 1 : 0;
 					}
 
+					if (mGameVersionInSettings <= "25.16.07.0")
+					{
+						uint32& screenSize = mLocalGameSettings.accessValue((uint32)SharedDatabase::Setting::SETTING_SCREEN_SIZE);
+						if (screenSize > 0)
+							screenSize += 1; // A new setting was added between 4:3 and 16:9, meaning this setting's current option needs to be changed to the next one
+					}
+
 					serializer.endObject();
 				}
 			}
