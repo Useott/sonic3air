@@ -596,6 +596,14 @@ void OptionsMenu::update(float timeElapsed)
 								break;
 							}
 
+							case option::SCREEN_SIZE:
+							{
+								mOptionEntries[selectedData].applyValue();
+								uint16 screen_widths[]{ 320, 360, 400, 448 };
+								VideoOut::instance().setScreenSize(screen_widths[selectedEntry.selected().mValue], 224);
+								break;
+							}
+
 							default:
 							{
 								// Apply change
