@@ -8,8 +8,6 @@ function void AITourMenus.Menu()
 {
 	AITourMenus.beforeMainMenuOpens()
 
-	s16 screenTouchX.old = 0
-	s16 screenTouchY.old = 0
 	u16 screenTouchCounter = 0
 	u16 framesSinceLastTouch = 0
 	bool ignoreFramesSinceLastTouch
