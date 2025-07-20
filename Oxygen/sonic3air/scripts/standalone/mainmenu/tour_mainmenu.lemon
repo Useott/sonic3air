@@ -429,7 +429,7 @@ function void AITourMenus.Menu()
 		if (result == TITLE_SCREEN)
 		{
 			Audio.playAudio(0xad)
-			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
+			global.game_mode = 0x04
 			AITourMenus.handleFading(1)
 			GameModeControlLoop()
 		}

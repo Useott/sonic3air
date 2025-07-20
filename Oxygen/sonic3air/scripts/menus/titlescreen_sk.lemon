@@ -253,6 +253,7 @@ function void TitleScreen_SK()
 
 	#if STANDALONE
 		// In S3AIR, always go to the main menu
+		global.game_mode = 0x04
 		FadeOutScreenBlocking()
 		Game.returnToMainMenu()
 		Audio.fadeOutChannel(0, 0.25f)	// Do the rest of music fade out relatively quickly
@@ -676,6 +677,13 @@ function void fn0058f0()
 	}
 
 	objA0.position.y.u16 = 0x0118 - s16[A0 + 0x30]
+#if STANDALONE
+	objA0.position.y.u16 -= 8
+	u16 px = getScreenWidth() / 2
+	u16 py = objA0.position.y.u16 - 80
+	Renderer.drawCustomSprite("title_screen_air", px, py, 0x00, SPRITE_FLAG_PRIO, 0xa000)
+#endif
+
 	DrawObject()
 }
 
@@ -684,6 +692,11 @@ function void fn0058f0()
 function void fn00596c()
 {
 	DrawObject()
+#if STANDALONE
+	u16 px = getScreenWidth() / 2
+	u16 py = objA0.position.y.u16 - 80
+	Renderer.drawCustomSprite("title_screen_air", px, py, 0x00, SPRITE_FLAG_PRIO, 0xa000)
+#endif
 }
 
 
@@ -816,6 +829,9 @@ function void fn005ae4()
 //# address-hook(0x005b42) end(0x005c0a)
 function void fn005b42()
 {
+#if STANDALONE
+	Renderer.drawText("sonic3_fontA", getScreenWidth() / 2, 208, System.hasPlatformFlag(PlatformFlags.MOBILE) ? Standalone.getTranslatedString("misc_strings", 1) : Standalone.getTranslatedString("misc_strings", 0), 0xffffffff, 5, 0, 0x9f7e, false, true)
+#else
 	D2 = titlescreen.selection
 	D0.u8 = objA0.value26 & 0x7f
 	if (D0.u8 == 0)
@@ -892,6 +908,7 @@ function void fn005b42()
 	u8[A2+11] = D5.u8
 
 	DrawObject()
+#endif
 }
 
 
@@ -921,7 +938,9 @@ function void fn005c42()
 	objA0.state = titlescreen.selection
 
 	Object.animationUpdate(0x005c5a)
+#if !STANDALONE
 	DrawObject()
+#endif
 }
 
 
