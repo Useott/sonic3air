@@ -484,6 +484,18 @@ function void fn02e802()
 		u16[A1 + 0x46] = u16[A2+4] + getScreenExtend()
 		u16[A1 + 0x48] = A0.u16
 
+		#if STANDALONE
+		{
+			// Position elements similar to Sonic Mania
+			if ((objA1.animation.sprite >= 0x12 && objA1.animation.sprite <= 0x16) || (objA1.animation.sprite >= 0x22 && objA1.animation.sprite <= 0x30))
+			{
+				u16[A1 + 0x42] = 128
+				objA1.position.y.u16 += 48
+			}
+			else objA1.position.x.u16 += 1156
+		}
+		#endif
+
 		A1 += 0x4a
 		A2 += 12
 		--D1.s16
@@ -620,6 +632,14 @@ function void fn02ea50()
 
 	if (!fn02de04())
 	{
+	#if STANDALONE
+		if (objA0.value42 > 0)
+		{
+			--objA0.value42
+			if (objA0.value42 <= 48)
+				--objA0.position.y.u16
+		}
+	#endif
 		DrawObject()
 	}
 }
