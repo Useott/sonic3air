@@ -4130,6 +4130,10 @@ function void releaseSpindash()
 		char.groundspeed = -char.groundspeed
 	}
 
+#if STANDALONE
+	char.velocity.x = char.groundspeed
+#endif
+
 	// Tell dust cloud object to disappear again
 	u8[A6 + 0x20] = 0
 
