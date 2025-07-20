@@ -427,9 +427,10 @@ void TouchControlsOverlay::updateControls()
 					}
 				}
 			}
-			const Vec2i gameScreenSize = VideoOut::instance().getScreenSize();
 			CodeExec::FunctionExecData execData;
-			const Vec2f gameTouchPosition = touch.mPosition * Vec2f(gameScreenSize);
+			Vec2f gameTouchPosition;
+			GameView& gameView = Application::instance().getGameView();
+			gameView.translatePositionIntoGameViewport(gameTouchPosition, touch.mPosition * Vec2f((float)FTX::screenWidth(), (float)FTX::screenHeight()));
 			execData.addParam(lemon::PredefinedDataTypes::INT_16, roundToInt(gameTouchPosition.x));
 			execData.addParam(lemon::PredefinedDataTypes::INT_16, roundToInt(gameTouchPosition.y));
 			execData.addParam(lemon::PredefinedDataTypes::INT_16, roundToInt(Vec2f(touch.mPosition).x));
