@@ -142,6 +142,10 @@ function void FireShield.Update()
 			objA1.update_address = 0x01e68e
 			objA1.position.x.u16 = objA0.position.x.u16
 			objA1.position.y.u16 = objA0.position.y.u16
+		#if STANDALONE
+			objA1.velocity.x = -s16[A2 + 0x18]
+			objA1.velocity.y = -Math.roundToInt(float(s16[A2 + 0x1a]) * 1.5f)
+		#endif
 		}
 		objA0.update_address = addressof(InstaShield.Init)		// Insta-Shield
 

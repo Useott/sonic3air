@@ -203,6 +203,11 @@ function bool Standalone.drawCharacterSprite(u8 character, u8 variant, s16 px, s
 							angle = 0
 						}
 
+						if (char.state == char.state.SONIC_DROPDASH)
+						{
+							angle = 0
+						}
+
 						if (angle != char.rotation)
 						{
 							s8 diff = angle - oldRotation

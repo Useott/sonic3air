@@ -261,7 +261,7 @@ function bool Standalone.onWriteToSpriteTable(s16 px, s16 py, u16 renderQueue)
 	{
 		if (!(objA0.flags38 & 0x01 || (Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) < 3)))
 			return true
-		Renderer.drawCustomSprite(stringformat("non_icz_snow_%d", objA0.animation.sprite == 0x0b), px, py, 0, prioFlag ? SPRITE_FLAG_PRIO : 0, renderQueue)
+		Renderer.drawCustomSprite(stringformat("non_icz_snow_%d", renderQueue < 0x9f00), px, py, 0, prioFlag ? SPRITE_FLAG_PRIO : 0, renderQueue)
 		return true
 	}
 
