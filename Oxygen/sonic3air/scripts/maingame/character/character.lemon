@@ -312,8 +312,8 @@ function void Character.UpdateNormalState.Sonic()
 	}
 	else if (char.spindash != 0x80)
 		sonic.fastrunanim.timer = 0
-
-	--sonic.instashield_countdown
+	if (sonic.instashield_countdown)
+		--sonic.instashield_countdown
 #endif
 
 	if (level.vertical_wrap == 0xff00)
