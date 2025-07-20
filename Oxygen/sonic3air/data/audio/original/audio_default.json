@@ -352,6 +352,7 @@
 	"dropdash_release":{ "Name": "Drop dash is released", "File": "s3air_dropdash_release.ogg", "Type": "Sound", "Channel": "AB" },	// Use spindash channel
 	"peelout_charge":  { "Name": "Super Peel-out is charged", "File": "scd_peelout_charge.ogg", "Type": "Sound", "Channel": "AB" },		// Use spindash channel
 	"peelout_release": { "Name": "Super Peel-out is released", "File": "scd_peelout_release.ogg", "Type": "Sound", "Channel": "AB" },		// Use spindash channel
+	"drowning": { "Name": "Thinking about air", "File": "scd_drown.ogg", "Type": "Sound" },
 
 	"shc_splash": { "Name": "SHC Splash", "File": "shc_splash.ogg", "Type": "Sound" }
 

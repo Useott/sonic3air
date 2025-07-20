@@ -215,7 +215,10 @@ function void fn018466()
 				{
 					if (D0.u16 == 0x0c && u8[A0 + 0x43] == 0)
 					{
-						playMusic(MUSIC_DROWNING)
+					#if STANDALONE
+						if (Game.getSetting(SETTING_DROWNING_MUSIC))
+					#endif
+							playMusic(MUSIC_DROWNING)
 					}
 
 					--u8[A0 + 0x36]
@@ -223,6 +226,10 @@ function void fn018466()
 					{
 						u8[A0 + 0x36] = u8[A0 + 0x37]
 						objA0.value3a |= 0x80
+					#if STANDALONE
+						if (A2 == 0xffffb000 && u8[A2 + 0x2c] > 0 && Game.getSetting(SETTING_DROWNING_MUSIC) != 1)
+							Audio.playAudio("drowning", AudioContext.CONTEXT_SOUND)
+					#endif
 					}
 				}
 			}

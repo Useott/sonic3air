@@ -93,7 +93,8 @@ namespace
 
 		ConditionalOption(option::SCREEN_SIZE,				 true),
 		ConditionalOption(option::CLASSIC_SHIELD_SPRITE,	 true),
-		ConditionalOption(option::ACT_SELECT_BIG_RINGS,		 true)
+		ConditionalOption(option::ACT_SELECT_BIG_RINGS,		 true),
+		ConditionalOption(option::DROWNING_MUSIC,			 true)
 	};
 }
 
@@ -211,6 +212,7 @@ OptionsMenu::OptionsMenu(MenuBackground& menuBackground) :
 		setupOptionEntry(option::WATERFALL_SFX,				SharedDatabase::Setting::SETTING_WATERFALL_SFX);
 		setupOptionEntry(option::ACT_SELECT_BIG_RINGS,		SharedDatabase::Setting::SETTING_ACT_SELECT_BIG_RINGS);
 		setupOptionEntry(option::LANGUAGE,					SharedDatabase::Setting::SETTING_LANGUAGE);
+		setupOptionEntry(option::DROWNING_MUSIC,			SharedDatabase::Setting::SETTING_DROWNING_MUSIC);
 
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ1,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ2,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
@@ -1834,6 +1836,10 @@ std::string OptionsMenu::checkForAvailableTranslation(std::string text)
 	"Note: You must leave this menu for translations to apply fully.",
 	"Note: Music changes don't affect already playing tracks.",
 	"Note: Some options are hidden while in-game.",
+	"When drowning:",
+	"Play sound effects",
+	"Play music",
+	"Play both",
 	};
 
 	uint8 id = 255;

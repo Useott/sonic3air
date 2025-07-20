@@ -3931,7 +3931,8 @@ function void UpdateMusicOnWaterTransition()
 	{
 	#if STANDALONE
 		playMusic(MUSIC_CTRL_FADEOUT)	// Make sure that drowning jingle is really stopped (needed in case the super theme is active and it's fast level music)
-		u8[A1 + 0x2c] = 30				// Needs to be done before chhosing the music
+		u8[A1 + 0x2c] = 30				// Needs to be done before choosing the music
+		if (Game.getSetting(SETTING_DROWNING_MUSIC))
 	#endif
 		chooseFittingMusic()
 	}
@@ -3945,7 +3946,7 @@ function void chooseFittingMusic()
 	// Reworked version for S3AIR
 
 	// If drowning music is playing, don't start something else
-	if (u8[0xffffb000 + 0x2c] <= 12)
+	if (u8[0xffffb000 + 0x2c] <= 12 && Game.getSetting(SETTING_DROWNING_MUSIC))
 		return
 
 	// Boss music needed?

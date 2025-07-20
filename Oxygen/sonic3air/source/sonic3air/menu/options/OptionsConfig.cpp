@@ -720,6 +720,11 @@ void OptionsConfig::buildTourOptions()
 		configBuilder.addSetting("Language:", option::LANGUAGE)
 			.addOption("English", 0)
 			.addOption("Portugues (sem acento)", 1);
+
+		configBuilder.addSetting("When drowning:", option::DROWNING_MUSIC)
+			.addOption("Play sound effects", 0)
+			.addOption("Play music", 1)
+			.addOption("Play both", 2);
 	}
 
 	CATEGORY("Experimental")
