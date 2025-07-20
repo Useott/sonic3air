@@ -106,8 +106,8 @@ void AudioOut::setMenuMusic(uint64 sfxId)
 	if (!isPlayingSfxId(sfxId))
 	{
 		playAudioDirect(sfxId, SoundRegType::MUSIC, CONTEXT_MENU + CONTEXT_MUSIC);
-		mMenuMusicId = sfxId;
 	}
+	mMenuMusicId = sfxId;
 }
 
 void AudioOut::restartMenuMusic()
