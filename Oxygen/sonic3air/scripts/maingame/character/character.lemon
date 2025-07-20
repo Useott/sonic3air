@@ -313,6 +313,7 @@ function void Character.UpdateNormalState.Sonic()
 	else if (char.spindash != 0x80)
 		sonic.fastrunanim.timer = 0
 
+	--sonic.instashield_countdown
 #endif
 
 	if (level.vertical_wrap == 0xff00)
@@ -3097,6 +3098,9 @@ function void SonicPressedJumpInMidAir()
 		{
 			u8[0xffffcce8 + 0x20] = 1
 			char.double_jump_state = 1
+		#if STANDALONE
+			sonic.instashield_countdown = 16
+		#endif
 			playSound(SFX_INSTASHIELD)
 		}
 	}
