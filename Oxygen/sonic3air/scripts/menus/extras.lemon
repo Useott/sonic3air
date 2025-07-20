@@ -328,6 +328,9 @@ function void Extras.Menu(u8 fadeInMethod)
 	constant u8 RESULT_START_GAME	= 1
 	constant u8 RESULT_GO_BACK		= 2
 
+	u16 screenTouchCounter = 0
+	u16 framesSinceLastTouch = 0
+
 	u8 result = RESULT_NONE
 	while (result == RESULT_NONE)
 	{
@@ -344,7 +347,13 @@ function void Extras.Menu(u8 fadeInMethod)
 		
 		ActSelect.HandleFadeIn(fadeInMethod, frameCounter)
 		AITourMenus.drawMenuBackground(1, frameCounter)
+
+		framesSinceLastTouch += 1
+		if (screenTouchX || screenTouchY)
+			framesSinceLastTouch = 0
 		
+		u16[0xffff0000] = screenTouchCounter
+		u16[0xffff0002] = framesSinceLastTouch
 		Extras.DrawMenu(selectedTab, selectedEntry)
 		
 		if (selectedEntry == 0)
@@ -402,7 +411,7 @@ function void Extras.Menu(u8 fadeInMethod)
 		
 		waitForNextFrame()
 		
-		if (Input.buttonPressed(BUTTON_B) || Input.buttonPressed(BUTTON_BACK) || (selectedEntry == entryList + 1 && (Input.buttonPressed(BUTTON_A) || (Input.buttonPressed(BUTTON_START) || Input.buttonPressed(BUTTON_X)))))
+		if (Input.buttonPressed(BUTTON_B) || Input.buttonPressed(BUTTON_BACK) || (selectedEntry == entryList + 1 && (Input.buttonPressed(BUTTON_A) || (Input.buttonPressed(BUTTON_START) || Input.buttonPressed(BUTTON_X)))) || checkMobileBackButtonPress(0xffff0000, 0xffff0002, 0xffff0004, false) == 2)
 		{
 			result = RESULT_GO_BACK
 		}
@@ -410,6 +419,11 @@ function void Extras.Menu(u8 fadeInMethod)
 		{
 			result = RESULT_START_GAME
 		}
+
+		if ((screenTouchX || screenTouchY))
+			screenTouchCounter += 1
+		else if (!(screenTouchX || screenTouchY) && framesSinceLastTouch > 20)
+			screenTouchCounter = 0
 	}
 
 	if (result == RESULT_START_GAME)
