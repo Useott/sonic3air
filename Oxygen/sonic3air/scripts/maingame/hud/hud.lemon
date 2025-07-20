@@ -190,7 +190,7 @@ function void RenderHUD()
 
 	if (debug_mode.state)
 	{
-		bool useMobilePosition = HUD.useMobileLivesDisplay()
+		bool useMobilePosition = HUD.useMobileLivesDisplay() && !Game.isTimeAttack() && !Game.getSetting(SETTING_INFINITE_LIVES)
 		u16 px = getScreenWidth() - baseX - 0x40
 		u16 py = useMobilePosition ? baseY + 24 : baseY
 		Renderer.drawText("sonic3_fontB", px, py, stringformat("%04x %04x\n%04x %04x", u16[0xffb010], u16[0xffb014], camera.position.x.u16, camera.position.y.u16), 0xffffffff, 1, 0, renderQueue, false, true)
