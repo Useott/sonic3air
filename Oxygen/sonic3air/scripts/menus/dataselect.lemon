@@ -631,6 +631,7 @@ function void fn00d1fa()
 		global.game_mode = 0x04
 
 	#if STANDALONE
+		Input.setTouchInputMode(TOUCH_INPUT_MODE_HIDDEN_CONTROLS)
 		playSound(0xad)
 		DataSelect.drawCustomPlanes()	// Required here, otherwise we can have one frame without custom plane setup if returning already during the fade-in
 

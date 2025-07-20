@@ -118,6 +118,8 @@ function void TitleScreen_SK()
 	lives_counter = 3
 	global.demo_countdown = (global.region_code & 0x40) ? 900 : 1080		// 15 seconds / 18 seconds
 
+	airHighlightAnimationTimer = 0
+
 	while (true)
 	{
 		global.frame_state = 0x1a
@@ -695,6 +697,13 @@ function void fn00596c()
 #if STANDALONE
 	u16 px = getScreenWidth() / 2
 	u16 py = objA0.position.y.u16 - 80
+	++airHighlightAnimationTimer
+	s16 time = airHighlightAnimationTimer
+	if (time < 65)
+	{
+		u8 alpha = (time < 20) ? (time * 255 / 20) : ((65 - time) * 255 / 45)
+		Renderer.drawCustomSprite("title_screen_air_h", px, py, 0x00, SPRITE_FLAG_PRIO, 0xa001, 0, alpha)
+	}
 	Renderer.drawCustomSprite("title_screen_air", px, py, 0x00, SPRITE_FLAG_PRIO, 0xa000)
 #endif
 }
@@ -830,7 +839,7 @@ function void fn005ae4()
 function void fn005b42()
 {
 #if STANDALONE
-	Renderer.drawText("sonic3_fontA", getScreenWidth() / 2, 208, System.hasPlatformFlag(PlatformFlags.MOBILE) ? Standalone.getTranslatedString("misc_strings", 1) : Standalone.getTranslatedString("misc_strings", 0), 0xffffffff, 5, 0, 0x9f7e, false, true)
+	Renderer.drawText("sonic3_fontA", getScreenWidth() / 2, 208 + max((10 - airHighlightAnimationTimer) * 2, 0), System.hasPlatformFlag(PlatformFlags.MOBILE) ? Standalone.getTranslatedString("misc_strings", 1) : Standalone.getTranslatedString("misc_strings", 0), 0xffffffff, 5, 0, 0x9f7e, false, true)
 #else
 	D2 = titlescreen.selection
 	D0.u8 = objA0.value26 & 0x7f
