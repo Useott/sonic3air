@@ -1056,6 +1056,22 @@ function bool Standalone.onWriteToSpriteTable(s16 px, s16 py, u16 renderQueue)
 		return true
 	}
 
+	// Water splashes
+	if (objA0.update_address == makeCallable(WaterSplash))
+	{
+		u8 alpha = Game.getSetting(SETTING_CLASSIC_TRANSPARENCY) < 3 && objA0.subtype2c >= 16 ? 0xc0 : 0xff
+		float scale = 1.0f / max(float(32 - objA0.subtype2c) / 4.0f - 0.125f, 1.125f)
+
+		if (scale < 0.1f)
+		{
+			UnloadObject()
+			return false
+		}
+
+		Renderer.drawSpriteTinted("watersplash", px, py, 0x00, 0, 0x9f01, 0, 0xffffff00 + u32(alpha), scale)
+		return true
+	}
+
 	return false
 }
 

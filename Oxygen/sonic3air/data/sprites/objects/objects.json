@@ -62,6 +62,9 @@
 	"waterwaves_01": { "File": "waterwaves.bmp", "Rect": "0,0,32,16" },
 	"waterwaves_02": { "File": "waterwaves.bmp", "Rect": "32,0,32,16" },
 	"waterwaves_03": { "File": "waterwaves.bmp", "Rect": "64,0,32,16" },
+
+	// Water splash
+	"watersplash": { "File": "splash.bmp", "Rect": "0,0,16,16", "Center": "8,8" },
 	
 	// MGZ chained spike ball
 	"mgz_chainspikeball": { "File": "mgz_chainspikeball.bmp", "Rect": "0,0,64,64", "Center": "32,32" },
