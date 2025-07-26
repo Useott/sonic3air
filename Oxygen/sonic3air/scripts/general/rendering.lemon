@@ -289,6 +289,13 @@ function void renderNextObject()
 	u16 renderQueue = 0xa000 - (A4 - 0xffffac00)
 
 	u32 objAddress = 0xffff0000 + u16[A4]
+#if STANDALONE
+	if (isObjInExtendedSlots)
+	{
+		objAddress = isObjInExtendedSlots
+		renderQueue = 0xa000 - ((objAddress % 0x10000) - 0xffffac00)
+	}
+#endif
 	A0 = objAddress
 	A4 += 2
 

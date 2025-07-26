@@ -175,6 +175,9 @@ function void TitleScreen()
 
 	zeroMemory(0xffffac00, 0x400)
 	zeroMemory(0xffffb000, 0x2000)
+#if STANDALONE
+	zeroMemory(0x81a000, 0x2000)
+#endif
 	zeroMemory(0xfffff700, 0x100)
 	zeroMemory(0xffffee00, 0x100)
 

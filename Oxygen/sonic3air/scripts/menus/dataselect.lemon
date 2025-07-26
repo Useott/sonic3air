@@ -273,10 +273,15 @@ function void DataSelect.setup()
 	VDP.Config.setVerticalScrolling(false, 0)	// Horizontal scrolling mode without scroll mask
 	VDP.Config.setRenderingModeConfiguration(false)
 	VDP.Config.setPlayfieldSizeInPixels(1024, 256)
-	//VDP.Config.setupWindowPlane(true, 0)
+#if !STANDALONE
+	VDP.Config.setupWindowPlane(true, 0)
+#endif
 
 	zeroMemory(0xffffac00, 0x400)
 	zeroMemory(0xffffb000, 0x2000)
+#if STANDALONE
+	zeroMemory(0x81a000, 0x2000)
+#endif
 
 	u16[0xfffffb00] = 0
 	u32[0xfffffbfc] = 0xfffffb00

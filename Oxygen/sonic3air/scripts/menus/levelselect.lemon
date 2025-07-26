@@ -71,6 +71,9 @@ function void LevelSelect.init()
 
 	zeroMemory(0xffffac00, 0x400)
 	zeroMemory(0xffffb000, 0x2000)
+#if STANDALONE
+	zeroMemory(0x81a000, 0x2000)
+#endif
 
 	u16[0xfffffb00] = 0
 	u32[0xfffffbfc] = 0xfffffb00

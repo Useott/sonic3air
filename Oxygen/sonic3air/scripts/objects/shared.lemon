@@ -12,9 +12,23 @@
 // Rendering                                             //
 //-------------------------------------------------------//
 
+global u32 isObjInExtendedSlots
+
 //# address-hook(0x01abc6) end(0x01abe6)
 function void DrawObject()
 {
+#if STANDALONE
+	isObjInExtendedSlots = A0
+	if (A0 < 0xffffb000)
+	{
+		A3 = addressof(camera.foreground.x)
+		u16[A4] = A0.u16
+		renderNextObject()
+		isObjInExtendedSlots = false
+		return
+	}
+	isObjInExtendedSlots = false
+#endif
 	// Add object RAM address to one of the lists of rendered objects
 	//  -> There are multiple lists of 0x80 bytes, to get a prioritization
 	u32 address = 0xffffac00 + objA0.sprite_priority

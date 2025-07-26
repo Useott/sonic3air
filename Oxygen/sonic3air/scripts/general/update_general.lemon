@@ -121,6 +121,9 @@ function void UpdateGameObjects()
 
 function void updateGameObjectLoop()
 {
+	s16 backupD7 = D7.s16
+	u32 backupA0 = A0
+
 	while (D7.s16 >= 0)
 	{
 		// Setting D1 to zero is not done in the original code
@@ -140,11 +143,39 @@ function void updateGameObjectLoop()
 		A0 += 0x4a
 		--D7.s16
 	}
+
+#if STANDALONE
+	u32 backupA0_2 = A0
+	A0 = backupA0 - 0xff7e1000
+
+	while (backupD7 >= 0)
+	{
+		// Setting D1 to zero is not done in the original code
+		//  -> If we don't, its value is basically "undefined", though it's used in some places like "fn034074" and "fn043604"
+		//  -> The emulator does this as well in this specific location (0x01aafc)
+		D1 = 0
+
+		if (u32[A0] != 0)
+		{
+			assert(isValidUpdateAddress(u32[A0]), "Invalid update routine address")
+			A1 = u32[A0]
+			call A1
+		}
+
+		// Go on to next object
+		A0 += 0x4a
+		--backupD7
+	}
+	A0 = backupA0_2
+#endif
 }
 
 //# address-hook(0x01ab1a) end(0x01ab30)
 function void updateGameObjectLoopRenderOnly()
 {
+	s32 backupD7 = D7.s32
+	u32 backupA0 = A0
+
 	while (D7.s32 >= 0)
 	{
 		D0 = u32[A0]
@@ -161,6 +192,27 @@ function void updateGameObjectLoopRenderOnly()
 		A0 += 0x4a
 		--D7.s32
 	}
+
+#if STANDALONE
+	u32 backupA0_2 = A0
+	A0 = backupA0 - 0xff7e1000
+	while (backupD7 >= 0)
+	{
+		if (u32[A0] != 0)
+		{
+			// Only objects that are visible on screen
+			if (objA0.render_flags & render_flag.VISIBLE)
+			{
+				DrawObject()
+			}
+		}
+
+		// Go on to next object
+		A0 += 0x4a
+		--backupD7
+	}
+	A0 = backupA0_2
+#endif
 }
 
 
@@ -192,6 +244,12 @@ function bool allocDynamicObjectStd()
 	return allocDynamicObject(0xffffb0de, 0x59)
 }
 
+#if STANDALONE
+function bool allocDynamicObjectStdExtended()
+{
+	return allocDynamicObject(0x81a0de, 0x59)
+}
+#endif
 
 //# address-hook(0x01bafa) end(0x01bb14)
 function void AllocDynamicObjectAfterA0()

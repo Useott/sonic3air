@@ -148,8 +148,11 @@ function void setupGameObjectsSidePanelEntry()
 		bool showUpdateRoutine = System.SidePanel.addOption("Show update routine", true)
 		bool showPosition      = System.SidePanel.addOption("Show position", false)
 		bool showSubType       = System.SidePanel.addOption("Show subtype", false)
+		bool useExtendedList   = System.SidePanel.addOption("Show extended object list", false)
 
-		for (u32 address = 0xffffb000; address < 0xffffcfcc; address += 0x4a)
+		u32 startaddress = useExtendedList ? 0x81a000 : 0xffffb000
+		u32 endaddress = useExtendedList ? 0x81bfcc : 0xffffcfcc
+		for (u32 address = startaddress; address < endaddress; address += 0x4a)
 		{
 			u32 updateRoutine = u32[address]
 			if (updateRoutine == 0)
@@ -157,7 +160,7 @@ function void setupGameObjectsSidePanelEntry()
 				if (showEmptySlots)
 				{
 					System.SidePanel.addEntry(address)
-					System.SidePanel.addLine(stringformat("0x%08x", address), 0, 0xc0c0c0c0)
+					System.SidePanel.addLine(stringformat(useExtendedList ? "0x%06x" : "0x%08x", address), 0, 0xc0c0c0c0)
 					if (showUpdateRoutine)
 						System.SidePanel.addLine(stringformat("---", updateRoutine), 8, 0xc0c0c0c0)
 					if (showPosition)
@@ -173,7 +176,7 @@ function void setupGameObjectsSidePanelEntry()
 
 			System.SidePanel.addEntry(address)
 			{
-				System.SidePanel.addLine(stringformat("0x%08x", address), 0)
+				System.SidePanel.addLine(stringformat(useExtendedList ? "0x%06x" : "0x%08x", address), 0)
 				if (showUpdateRoutine)
 					System.SidePanel.addLine(stringformat("- Update routine: 0x%06x", updateRoutine), 8)
 				if (showPosition)
