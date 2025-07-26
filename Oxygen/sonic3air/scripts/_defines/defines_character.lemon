@@ -136,7 +136,7 @@ define char.state.both			= u16[A0 + 0x20]
 	constant u8 char.state.TRANSFORMING		=  0x1f			// Super or hyper transformation
 
 	// Character specific state constants
-	constant u8 char.state.SONIC_WHISTLE	=  0x0a			// Actually unused
+	constant u8 char.state.SONIC_WHISTLE	=  0x0a			// Used before the MGZ2 boss and after the LBZ2 boss when playing as Sonic alone
 	constant u8 char.state.SONIC_DROPDASH	=  0x20			// Sonic with charged drop dash (only in standalone!)
 	constant u8 char.state.SONIC_HANGON		=  0x22			// Sonic hanging with Tails
 

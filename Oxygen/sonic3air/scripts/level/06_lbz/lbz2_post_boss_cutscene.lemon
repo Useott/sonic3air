@@ -433,6 +433,36 @@ function void fn072ef8()
 	{
 		u8[0xfffffa88] |= 0x02
 	}
+#if STANDALONE
+	else if (getNumPlayers() == 1 && isMainCharacter(CHARACTER_SONIC))
+	{
+		if (objA0.position.y.u16 >= 0x6c0)
+		{
+			A1 = 0xffffb000
+			if (objA1.flags2a & char.flag.IN_AIR)
+				return
+
+			objA1.flags2e = control_flag.DISABLE_UPDATE
+			objA1.groundspeed = 0
+			objA1.state = char.state.SONIC_WHISTLE
+			if (objA0.position.y.u16 >= 0x6e8)
+				objA1.state = char.state.STANDING
+		}
+		if (objA0.position.y.u16 == 0x6d0)
+		{
+			A1 = 0xffffb04a
+			objA1.position.x.u16 = u16[0xffffb000 + 0x10]
+			objA1.position.y.u16 = camera.position.y.u16 - 40
+			u32[0xffffb04a] = addressof(Character.BaseUpdate.Tails)
+
+			tails.respawn_counter = 60
+			tails.ai_routine = 0x02
+			objA1.state = char.state.TAILS_FLYDOWN
+			objA1.flags2e = (control_flag.DISABLE_UPDATE)
+			objA1.flags2a = char.flag.IN_AIR
+		}
+	}
+#endif
 	fn072f40()
 }
 

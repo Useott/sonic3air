@@ -1015,6 +1015,19 @@ function void fn05180a()
 	D3 = 0x40
 	D4.u16 = objA0.position.x.u16
 	CheckCharacterOnClimbableObject()
+
+#if STANDALONE
+	if (getNumPlayers() == 1 && isMainCharacter(CHARACTER_SONIC))
+	{
+		A1 = 0xffffb000
+		if (objA1.flags2a & char.flag.IN_AIR)
+			return
+
+		objA1.flags2e |= control_flag.DISABLE_UPDATE
+		objA1.groundspeed = 0
+		objA1.state = char.state.SONIC_WHISTLE
+	}
+#endif
 }
 
 

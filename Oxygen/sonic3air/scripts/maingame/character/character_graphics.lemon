@@ -217,6 +217,14 @@ function void updateSonicAnimation_shared()
 	D0.u8 = u8[A1 + char.animation.frame + 1]	// Load next animation frame byte
 	if (D0.u8 < 0xfc)
 	{
+	#if STANDALONE
+		if (char.animation.sprite != 0xc7 && D0.u8 == 0xc7)
+		{
+			playSound(0x46)
+			D0.u8 = 0xc7
+		}
+	#endif
+
 		// Advance to next frame
 		char.animation.sprite = D0.u8
 		++char.animation.frame
