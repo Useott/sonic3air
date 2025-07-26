@@ -28,7 +28,11 @@ function void fn08b660()
 			if (D0.u8 <= 0x3c)
 			{
 				u8[0xfffffaad] = D0.u8
+			#if STANDALONE
+				if (allocDynamicObjectStdExtended())
+			#else
 				if (allocDynamicObjectStd())
+			#endif
 				{
 					objA1.update_address = 0x08b6ae
 				}
