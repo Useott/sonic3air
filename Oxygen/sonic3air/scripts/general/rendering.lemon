@@ -293,7 +293,7 @@ function void renderNextObject()
 	if (isObjInExtendedSlots)
 	{
 		objAddress = isObjInExtendedSlots
-		renderQueue = 0xa000 - ((objAddress % 0x10000) - 0xffffac00)
+		renderQueue = 0xa000 - (objAddress - 0x819c00)
 	}
 #endif
 	A0 = objAddress
