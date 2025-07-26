@@ -150,14 +150,14 @@ function void updateGameObjectLoop()
 
 	while (backupD7 >= 0)
 	{
-		// Setting D1 to zero is not done in the original code
-		//  -> If we don't, its value is basically "undefined", though it's used in some places like "fn034074" and "fn043604"
-		//  -> The emulator does this as well in this specific location (0x01aafc)
 		D1 = 0
 
 		if (u32[A0] != 0)
 		{
-			assert(isValidUpdateAddress(u32[A0]), "Invalid update routine address")
+			u32 backupD0
+			D0 = u32[A0]
+			assert(isValidUpdateAddress(D0), "Invalid update routine address")
+			D0 = backupD0
 			A1 = u32[A0]
 			call A1
 		}
