@@ -22,6 +22,7 @@ global u8 GamePause.dialogEntry = 0
 global bool GamePause.isDialogOpen = false
 global bool GamePause.hasRestart = false
 global bool GamePause.hasOptions = false
+global bool GamePause.useTouchInput = false
 
 constant u16 GamePause.NUM_ENTRIES = 4
 
@@ -126,6 +127,12 @@ function void GamePause.Menu()
 	float totalTime = 0.0f
 	bool screenshotModeActive = false
 
+	u16 screenTouchCounter = 0
+	u16 framesSinceLastTouch = 0
+	bool ignoreFramesSinceLastTouch
+
+	GamePause.useTouchInput = false
+
 	while (true)
 	{
 		// Inner loop will be exited once the player selected an entry in the menu
@@ -135,26 +142,21 @@ function void GamePause.Menu()
 			totalTime += deltaSeconds
 
 			// Fade-in
-			if (GamePause.visibility < 1.0f)
-				GamePause.visibility = min(GamePause.visibility + deltaSeconds * 12.0f, 1.0f)
+			if (GamePause.visibility < 1.0f && !screenshotModeActive)
+				GamePause.visibility = min(GamePause.visibility + deltaSeconds * 6.0f, 1.0f)
+			else if (GamePause.visibility > 0.0f && screenshotModeActive)
+				GamePause.visibility = max(GamePause.visibility - deltaSeconds * 6.0f, 0.0f)
 
 			// Dialog visibility
 			if (GamePause.isDialogOpen)
-				GamePause.dialogVisibility = min(GamePause.dialogVisibility + deltaSeconds * 20.0f, 1.0f)
+				GamePause.dialogVisibility = min(GamePause.dialogVisibility + deltaSeconds * 5.0f, 1.0f)
 			else
-				GamePause.dialogVisibility = max(GamePause.dialogVisibility - deltaSeconds * 20.0f, 0.0f)
+				GamePause.dialogVisibility = max(GamePause.dialogVisibility - deltaSeconds * 5.0f, 0.0f)
 
 			// Screenshot hint visibility
-			GamePause.screenshotHint = clamp((totalTime - 5.0f) * 3.0f, 0.0f, 1.0f)
+			GamePause.screenshotHint = clamp((totalTime - 5.0f) * 1.5f, 0.0f, 1.0f)
 
-			if (!screenshotModeActive)
-			{
-				GamePause.DrawMenu(totalTime)
-			}
-			else
-			{
-				Renderer.resetLifetimeContext(1)
-			}
+			GamePause.DrawMenu(totalTime)
 
 			enableCustomPlaneReset = false	// Maintain custom planes that were set before the pause
 			waitForNextFrame()
@@ -165,16 +167,30 @@ function void GamePause.Menu()
 
 			if (screenshotModeActive)
 			{
-				if (Input.buttonPressed(0, BUTTON_Y))
+				if (Input.buttonPressed(0, BUTTON_Y) || ((touchdebug.use_touch_controls && !(screenTouchX || screenTouchY) && framesSinceLastTouch > 0 && framesSinceLastTouch < 5) && screenTouchCounter < 20))
 					screenshotModeActive = false
+				if (GamePause.useTouchInput)
+				{
+					framesSinceLastTouch += 1
+					if (screenTouchX || screenTouchY)
+					{
+						GamePause.selectedEntry = 255
+						ignoreFramesSinceLastTouch = false
+						framesSinceLastTouch = 0
+					}
+				}
 			}
 			else
 			{
-				if (Input.buttonPressed(0, BUTTON_Y))
+				if (Input.buttonPressed(0, BUTTON_Y) || (GamePause.selectedEntry == 254 && ((touchdebug.use_touch_controls && !(screenTouchX || screenTouchY) && framesSinceLastTouch > 0 && framesSinceLastTouch < 5) && screenTouchCounter < 20)))
 					screenshotModeActive = true
 
+				if (GamePause.useTouchInput)
+					Input.setTouchInputMode(TOUCH_INPUT_MODE_HIDDEN_CONTROLS)
+				else Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
+
 				// Open selected entry
-				if (Input.buttonPressed(0, BUTTON_START) || Input.buttonPressed(0, BUTTON_A) || Input.buttonPressed(0, BUTTON_X))
+				if (Input.buttonPressed(0, BUTTON_START) || Input.buttonPressed(0, BUTTON_A) || Input.buttonPressed(0, BUTTON_X) || ((touchdebug.use_touch_controls && !(screenTouchX || screenTouchY) && framesSinceLastTouch > 0 && framesSinceLastTouch < 5) && screenTouchCounter < 20))
 					break
 
 				if (GamePause.isDialogOpen)
@@ -184,6 +200,41 @@ function void GamePause.Menu()
 					{
 						Audio.playAudio(0x5b)
 						GamePause.isDialogOpen = false
+					}
+				}
+
+				if (GamePause.useTouchInput)
+				{
+					framesSinceLastTouch += 1
+					if (screenTouchX || screenTouchY)
+					{
+						ignoreFramesSinceLastTouch = false
+						if (screenshotModeActive)
+						{
+							GamePause.selectedEntry = 255
+						}
+						else
+						{
+							if (GamePause.isDialogOpen)
+							{
+								if (GamePause.dialogEntry != GamePause.getButtonResultFromTouch() - 1)
+								{
+									GamePause.dialogEntry = GamePause.getButtonResultFromTouch() - 1
+									if (GamePause.dialogEntry < 255)
+										playSound(0x5b)
+								}
+							}
+							else
+							{
+								if (GamePause.selectedEntry != GamePause.getButtonResultFromTouch() - 1)
+								{
+									GamePause.selectedEntry = GamePause.getButtonResultFromTouch() - 1
+									if (GamePause.selectedEntry < 255 && framesSinceLastTouch <= 1)
+										playSound(0x5b)
+								}
+							}
+						}
+						framesSinceLastTouch = 0
 					}
 				}
 
@@ -241,7 +292,17 @@ function void GamePause.Menu()
 					}
 				}
 			}
+
+			if ((screenTouchX || screenTouchY))
+				screenTouchCounter += 1
+			else if (!(screenTouchX || screenTouchY) && (framesSinceLastTouch > 20 || ignoreFramesSinceLastTouch))
+				screenTouchCounter = 0
 		}
+
+		screenTouchX = 0
+		screenTouchY = 0
+		screenTouchCounter = 0
+		framesSinceLastTouch = 20
 
 		// Evaluate which entry was chosen
 		if (GamePause.isDialogOpen)
@@ -259,7 +320,7 @@ function void GamePause.Menu()
 					restartLevel()
 					break
 				}
-				else
+				else if (GamePause.dialogEntry < 255)
 				{
 					// Close dialog again
 					GamePause.isDialogOpen = false
@@ -276,7 +337,7 @@ function void GamePause.Menu()
 				#endif
 					break
 				}
-				else
+				else if (GamePause.dialogEntry < 255)
 				{
 					// Close dialog again
 					GamePause.isDialogOpen = false
@@ -289,6 +350,7 @@ function void GamePause.Menu()
 			if (GamePause.selectedEntry == 0)
 			{
 				// Leave this menu again and continue gameplay
+				Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
 				break
 			}
 			else if (GamePause.selectedEntry == 1)
@@ -299,6 +361,7 @@ function void GamePause.Menu()
 					Audio.resumeContext(AudioContext.CONTEXT_MUSIC)
 					Audio.resumeContext(AudioContext.CONTEXT_SOUND)
 					restartTimeAttack()
+					Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
 					break
 				}
 				else
@@ -312,8 +375,10 @@ function void GamePause.Menu()
 			{
 			#if GAMEAPP
 				// Open in-game options
-				// TODO: How about a quick fade-out here as well?
+				AITourMenus.handleFading(1)
+				Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
 				Game.openOptionsMenu()
+				AITourMenus.handleFading(0)
 			#endif
 			}
 			else if (GamePause.selectedEntry == 3)
@@ -350,8 +415,8 @@ function void GamePause.UpdateFadeOut()
 
 	// Fade-out
 	float deltaSeconds = 1.0f / 60.0f
-	GamePause.visibility = max(GamePause.visibility - deltaSeconds * 12.0f, 0.0f)
-	GamePause.dialogVisibility = max(GamePause.dialogVisibility - deltaSeconds * 12.0f, 0.0f)
+	GamePause.visibility = max(GamePause.visibility - deltaSeconds * 6.0f, 0.0f)
+	GamePause.dialogVisibility = max(GamePause.dialogVisibility - deltaSeconds * 6.0f, 0.0f)
 
 	// Draw menu unless it just got invisible
 	if (GamePause.visibility > 0.0f)
@@ -367,15 +432,6 @@ function void GamePause.UpdateFadeOut()
 
 function void GamePause.DrawMenu(float time)
 {
-	constant array<string> ENTRY_TEXTS = { "Continue", "Restart", "Options", "Exit Game" }
-	constant u16 LINE_HEIGHT = 26
-	constant u16 DIALOG_LINE_HEIGHT = 15
-
-	u8 numEntries = 2 + u8(GamePause.hasRestart) + u8(GamePause.hasOptions)
-
-	u16 rightAnchor = getScreenWidth() + Math.roundToInt((1.0f - GamePause.visibility) * 160)
-	u16 py = getScreenHeight() - numEntries * LINE_HEIGHT
-
 	// Use lifetime context 1 for everything rendered by the pause menu
 	//  -> This allows for selectively clearing these sprites, texts, etc. in each frame without touching the game's rendered content
 	Renderer.resetLifetimeContext(1)
@@ -384,68 +440,159 @@ function void GamePause.DrawMenu(float time)
 	// Ensure that the game pause menu always renders onto the full screen, #contributed by nabbup / Raine
 	Renderer.resetViewport(0xfeff)
 
-	Renderer.drawSprite("pause_screen_upper", rightAnchor - 210, 0, 0, SPRITE_FLAG_PRIO | SPRITE_FLAG_NO_GLOBAL_TINT, 0xff00)
-	Renderer.drawSprite("pause_screen_lower", rightAnchor - 190, py - 8, 0, SPRITE_FLAG_PRIO | SPRITE_FLAG_NO_GLOBAL_TINT, 0xff00)
+	if (System.hasPlatformFlag(PlatformFlags.MOBILE))
+		GamePause.useTouchInput = true
+	else GamePause.useTouchInput = false
 
-	for (u8 k = 0; k < GamePause.NUM_ENTRIES; ++k)
+	u16 renderQueue = 0xff00
+
+	Renderer.drawText("sonic3_fontC", getScreenCenterX(), 16 + Math.roundToInt((GamePause.visibility * 32.0f) - 32.0f), Standalone.getTranslatedString("pause", 0), 0xffffffff, 5, 0, renderQueue + 4, false)
+
+	u8 entriesAdded = 0
+	u8 i = 0
+	for (i = 0; i < GamePause.NUM_ENTRIES; ++i)
 	{
-		if (!GamePause.IsValidEntry(k))
+		if (!GamePause.IsValidEntry(i))
 			continue
 
-		u32 color = 0xb0b0b0e0
-		if (GamePause.selectedEntry == k)
-			color = ((time % 0.5f) < 0.25f) ? 0xffff00ff : 0xffffffff
+		++entriesAdded
+	}
+	s16 px = 0
+	s16 py = 0
+	bool removedEntry = false
+	for (i = 0; i < entriesAdded; ++i)
+	{
+		s16 py_ref = Math.lerp(37, getScreenHeight() - 37, float(i) / float(entriesAdded - 1))
+		if (!GamePause.IsValidEntry(i))
+		{
+			++i
+			++entriesAdded
+			removedEntry = true
+		}
+		else if (!GamePause.IsValidEntry(i - 1) && removedEntry)
+		{
+			--i
+			--entriesAdded
+			removedEntry = false
+		}
+		py = GamePause.selectedEntry == i ? Math.lerp(py_ref, 64, GamePause.dialogVisibility) : py_ref
+		s16 sprOffset = Math.roundToInt(96.0f * Math.sin(2.0f * 3.1415f * 76.0f * float(py)))
+		px = (GamePause.selectedEntry == i ? -16 : 0) + sprOffset + getScreenWidth() - 100 + Math.roundToInt(192.0f - (GamePause.visibility * 192.0f))
 
-		Renderer.drawText(GamePause.MENU_FONT, rightAnchor - 16, py + 11, ENTRY_TEXTS[k], color, 6, 0, 0xff01, false)
-
-		py += LINE_HEIGHT
+		Renderer.drawText("oxyfont_regular", px + 16, py, Standalone.getTranslatedString("pause", i + 1), GamePause.selectedEntry == i ? 0xffff00ff : 0xffffffff - Math.roundToInt(GamePause.dialogVisibility * 255.0f), 4, 0, renderQueue + 3, false)
+		Renderer.drawSpriteTinted("main_menu.text_bg", px, py, 0, SPRITE_FLAG_FLIP_X|SPRITE_FLAG_PRIO, renderQueue + 2, 0, GamePause.selectedEntry == i ? 0xffffffff : 0x000000ff - Math.roundToInt(GamePause.dialogVisibility * 255.0f), 1.0f)
+		py += 38
 	}
 
 	if (GamePause.dialogVisibility > 0.0f)
 	{
 		u8 numDialogEntries = (GamePause.selectedEntry == 1) ? 3 : (GamePause.selectedEntry == 3) ? 2 : 0
-		if (numDialogEntries > 0)
+		u8 firstText = (GamePause.selectedEntry == 1) ? 0 : 3
+		for (i = 0; i < numDialogEntries; ++i)
 		{
-			u16 px = rightAnchor - 191 + Math.roundToInt((1.0f - GamePause.dialogVisibility) * 50.0f) - GamePause.NUM_ENTRIES * 9
-			py = getScreenHeight() - 1 - numDialogEntries * DIALOG_LINE_HEIGHT
-
-			if (numDialogEntries <= 2)
-			{
-				Renderer.drawSprite("pause_screen_dialog", px - 66, py - 8, 0, SPRITE_FLAG_PRIO | SPRITE_FLAG_NO_GLOBAL_TINT, 0xff00, 0, Math.roundToInt(GamePause.dialogVisibility * 255.0f))
-			}
-			else
-			{
-				py -= 15
-				Renderer.drawSprite("pause_screen_dialog3", px - 68, py - 8, 0, SPRITE_FLAG_PRIO | SPRITE_FLAG_NO_GLOBAL_TINT, 0xff00, 0, Math.roundToInt(GamePause.dialogVisibility * 255.0f))
-				px += 5
-			}
-
-			constant array<string> DIALOG_TEXTS = { "Continue", "Last Checkpoint", "Restart Act",   "Continue", "Exit to Menu" }
-			u8 firstText = (GamePause.selectedEntry == 1) ? 0 : 3
-
-			for (u8 line = 0; line < numDialogEntries; ++line)
-			{
-				u32 color = 0xa0c0d0a0
-				if (line == GamePause.dialogEntry)
-					color = ((time % 0.5f) < 0.25f) ? 0xffff00ff : 0xffffffff
-				color = (color & 0xffffff00) + Math.roundToInt((color & 0xff) * GamePause.dialogVisibility)	// Multiply alpha with dialog visibility
-
-				Renderer.drawText(GamePause.DIALOG_FONT, px, py, DIALOG_TEXTS[firstText + line], color, 2, 0, 0xff01, false)
-				py += DIALOG_LINE_HEIGHT
-				px -= DIALOG_LINE_HEIGHT / 3
-			}
+			px = (GamePause.dialogEntry == i ? -16 : 0) + getScreenWidth() - 144 + Math.roundToInt(192.0f - (GamePause.visibility * 192.0f))
+			Renderer.drawText("oxyfont_small", px + 16, 104 + (32 * i), Standalone.getTranslatedString("pause", 5 + firstText + i), (GamePause.dialogEntry == i ? 0xffff0000 : 0xffffff00) + Math.roundToInt(GamePause.dialogVisibility * 255.0f), 4, 0, renderQueue + 3, false)
+			Renderer.drawSpriteTinted("main_menu.text_bg_small", px, 104 + (32 * i), 0, SPRITE_FLAG_FLIP_X|SPRITE_FLAG_PRIO, renderQueue + 2, 0, (GamePause.dialogEntry == i ? 0xffffff00 : 0x00000000) + Math.roundToInt(GamePause.dialogVisibility * 255.0f), 1.0f)
 		}
 	}
 
-	if (GamePause.screenshotHint > 0.0f)
+	if (GamePause.screenshotHint > 0.0f && !GamePause.useTouchInput)
 	{
 		float hintVisibility = GamePause.screenshotHint * GamePause.visibility
 		py = getScreenHeight() - 5 + Math.roundToInt(Math.lerp(20, -2, hintVisibility))
 
-		Renderer.drawRect(0, py - 9, 175, 20, 0x000000d0, 0xff00, false)
-		Renderer.drawSprite("@input_icon_button_Y", 12, py - 1, 0, SPRITE_FLAG_PRIO | SPRITE_FLAG_NO_GLOBAL_TINT, 0xff01)
-		Renderer.drawText(GamePause.TINY_FONT, 24, py, "Hide menu for clean screenshots", 0xa0d0ffff, 4, 0, 0xff01, false)
+		Renderer.drawSprite("@input_icon_button_Y", 12, py - 1, 0, SPRITE_FLAG_PRIO | SPRITE_FLAG_NO_GLOBAL_TINT, renderQueue + 1, 0, 0xdd)
+		Renderer.drawText("oxyfont_tiny_narrow", 20, py, stringformat(": %s", Standalone.getTranslatedString("pause", 11)), 0xffffff88, 4, 0, renderQueue + 1, false)
 	}
+
+	if (GamePause.useTouchInput)
+	{
+		px = 96 + (GamePause.selectedEntry == 254 ? 16 : 0) - Math.roundToInt(192.0f - (GamePause.visibility * 192.0f))
+		py = getScreenHeight() - 24
+
+		Renderer.drawText("oxyfont_small", px - 16, py, Standalone.getTranslatedString("pause", 10), GamePause.selectedEntry == 254 ? 0xffff00ff : 0xffffffff - Math.roundToInt(GamePause.dialogVisibility * 255.0f), 6, 0, renderQueue + 3, false)
+		Renderer.drawSpriteTinted("main_menu.text_bg_small", px, py, 0, SPRITE_FLAG_PRIO, renderQueue + 2, 0, (GamePause.selectedEntry == 254 ? 0xffffffff : 0x000000ff) - Math.roundToInt(GamePause.dialogVisibility * 255.0f), 1.0f)
+	}
+
+	Renderer.drawSprite("main_menu.circle", getScreenWidth() + 56 + Math.roundToInt(192.0f - (GamePause.visibility * 192.0f)), getScreenCenterY() + 5, 0, SPRITE_FLAG_PRIO, renderQueue + 1)
+
+	Renderer.drawSprite("main_menu.triangles", Math.roundToInt(time * 60.0f) % 256, Math.roundToInt((GamePause.visibility * 32.0f) - 32.0f), 0, SPRITE_FLAG_PRIO, renderQueue)
+	Renderer.drawSprite("main_menu.triangles", (Math.roundToInt(time * 60.0f) % 256) + 512, Math.roundToInt((GamePause.visibility * 32.0f) - 32.0f), 0, SPRITE_FLAG_PRIO, renderQueue)
+	Renderer.drawSprite("main_menu.triangles", -(Math.roundToInt(time * 60.0f) % 256), getScreenHeight() - Math.roundToInt((GamePause.visibility * 32.0f) - 32.0f), 0, SPRITE_FLAG_PRIO, renderQueue)
+	Renderer.drawSprite("main_menu.triangles", -(Math.roundToInt(time * 60.0f) % 256) + 512, getScreenHeight() - Math.roundToInt((GamePause.visibility * 32.0f) - 32.0f), 0, SPRITE_FLAG_PRIO, renderQueue)
+
+	Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), 0x0000ff00 + u32(Math.roundToInt(GamePause.visibility * 96.0f)), renderQueue - 1, false)
+}
+
+
+function u8 GamePause.getButtonResultFromTouch()
+{
+	Renderer.setLifetimeContext(1)
+
+	s16 px = 0
+	if (GamePause.isDialogOpen)
+	{
+		u8 numDialogEntries = (GamePause.selectedEntry == 1) ? 3 : (GamePause.selectedEntry == 3) ? 2 : 0
+		for (u8 i = 0; i < numDialogEntries; ++i)
+		{
+			px = getScreenWidth() - 144 + Math.roundToInt(192.0f - (GamePause.visibility * 192.0f))
+			//Renderer.drawRect(px, 104 + (32 * i) - 8, 400, 16, 0xeeffffff, 0xffff, false)
+			if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px, 104 + (32 * i) - 8, 400, 16))
+				return i + 1
+		}
+	}
+	else
+	{
+		u8 entriesAdded = 0
+		u8 i = 0
+		for (i = 0; i < GamePause.NUM_ENTRIES; ++i)
+		{
+			if (!GamePause.IsValidEntry(i))
+				continue
+
+			++entriesAdded
+		}
+		s16 py = 0
+		bool removedEntry = false
+		for (i = 0; i < entriesAdded + 1; ++i)
+		{
+			if (i == entriesAdded)
+			{
+				px = 0
+				py = getScreenHeight() - 24
+
+				//Renderer.drawRect(px, py - 8, 96, 16, 0xeeffffff, 0xffff, false)
+				if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px, py - 8, 96, 16))
+					return 255
+				return 0
+			}
+
+			s16 py_ref = Math.lerp(37, getScreenHeight() - 37, float(i) / float(entriesAdded - 1))
+			if (!GamePause.IsValidEntry(i))
+			{
+				++i
+				++entriesAdded
+				removedEntry = true
+			}
+			else if (!GamePause.IsValidEntry(i - 1) && removedEntry)
+			{
+				--i
+				--entriesAdded
+				removedEntry = false
+			}
+			py = GamePause.selectedEntry == i ? Math.lerp(py_ref, 64, GamePause.dialogVisibility) : py_ref
+			s16 sprOffset = Math.roundToInt(96.0f * Math.sin(2.0f * 3.1415f * 76.0f * float(py)))
+			px = sprOffset + getScreenWidth() - 100 + Math.roundToInt(192.0f - (GamePause.visibility * 192.0f))
+
+			//Renderer.drawRect(px, py - 12, 400, 24, 0xeeffffff, 0xffff, false)
+			if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px, py - 12, 400, 24))
+				return i + 1
+
+			py += 38
+		}
+	}
+
+	return 0
 }
 
 
