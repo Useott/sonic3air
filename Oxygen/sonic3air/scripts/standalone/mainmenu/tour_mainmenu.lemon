@@ -507,8 +507,8 @@ function void AITourMenus.drawMenu(u8 menu, u8 selectedEntry, u32 framecounter, 
 		string font = "oxyfont_regular"
 		for (u8 i; i < 6; ++i)
 		{
-			s16 sprOffset = Math.roundToInt(48.0f * Math.sin(2.0f * 3.1415f * 3380.0f * float(i)))
-			px = (selectedEntry == i ? -16 : 0) + sprOffset + getScreenWidth() - 132
+			s16 sprOffset = Math.roundToInt(96.0f * Math.sin(2.0f * 3.1415f * 76.0f * float(py)))
+			px = (selectedEntry == i ? -16 : 0) + sprOffset + getScreenWidth() - 100
 
 			Renderer.drawText(font, px + 16, py, AITourMenus.getMainMenuTexts(i), selectedEntry == i ? 0xffff00ff : 0xffffffff, 4, 0, renderQueue + 3, false)
 			Renderer.drawSpriteTinted(key, px, py, 0, SPRITE_FLAG_FLIP_X|SPRITE_FLAG_PRIO, renderQueue + 2, 0, selectedEntry == i ? 0xffffffff : 0x000000ff, 1.0f)
@@ -716,8 +716,8 @@ function u8 AITourMenus.getMainMenuButtonResultFromTouch()
 			return 0
 		}
 
-		s16 sprOffset = Math.roundToInt(48.0f * Math.sin(2.0f * 3.1415f * 3380.0f * float(i)))
-		px = sprOffset + getScreenWidth() - 132
+		s16 sprOffset = Math.roundToInt(96.0f * Math.sin(2.0f * 3.1415f * 76.0f * float(py)))
+		px = sprOffset + getScreenWidth() - 100
 
 		//Renderer.drawRect(px, py - (i > 2 ? 8 : 12), 400, i > 2 ? 16 : 24, 0xeeffffff, 0xffff, false)
 		if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px, py - (i > 2 ? 8 : 12), 400, i > 2 ? 16 : 24))
