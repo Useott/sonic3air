@@ -111,7 +111,10 @@ void GameView::updateGameViewport()
 
 			if (!config.mDevMode.mEnabled)	// If dev mode is enabled, integer scale is handled differently, see below
 			{
-				const int scale = mGameViewport.height / gameScreenRect.height;
+				int height = gameScreenRect.height;
+				if (gameScreenRect.height == 0)
+					height = 224;
+				const int scale = mGameViewport.height / height;
 				if (scale >= 1)
 				{
 					mGameViewport.width = roundToInt((float)gameScreenRect.width * scale);
