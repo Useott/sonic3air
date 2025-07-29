@@ -153,7 +153,10 @@ void GameView::updateGameViewport()
 		Vec2f scaledSize = Vec2f(mGameViewport.getSize()) * config.mDevMode.mGameViewScale;
 		if (config.mUpscaling == 1)
 		{
-			const int scale = std::max((int)((float)mGameViewport.height * config.mDevMode.mGameViewScale) / gameScreenRect.height, 1);
+			int height = gameScreenRect.height;
+			if (gameScreenRect.height == 0)
+				height = 224;
+			const int scale = std::max((int)((float)mGameViewport.height * config.mDevMode.mGameViewScale) / height, 1);
 			scaledSize = Vec2f(gameScreenRect.getSize() * scale);
 		}
 
