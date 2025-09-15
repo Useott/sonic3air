@@ -261,6 +261,10 @@ function void fn02fba8()
 	A1 = 0xffffb000
 	fn02fbb2()
 
+#if STANDALONE
+	if (u8[A1 + 0x2c] < 4)
+		return
+#endif
 	A1 = 0xffffb04a
 	fn02fbb2()
 }
