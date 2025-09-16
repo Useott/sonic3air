@@ -1844,12 +1844,16 @@ std::string OptionsMenu::checkForAvailableTranslation(std::string text)
 
 	uint8 id = 255;
 	std::string file = "options";
+	std::string translated_text = "";
 
 	for (int i = 0; i < 2; i++)
 	{
 		for (uint8 j = 0; j < 254; j++)
 		{
-			if (text == (i == 1 ? options2[j] : options[j]))
+			if (i == 1)
+				translated_text = options2[j];
+			else translated_text = options[j];
+			if (text == translated_text)
 			{
 				id = j;
 				break;

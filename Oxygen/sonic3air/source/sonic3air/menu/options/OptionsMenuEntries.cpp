@@ -74,7 +74,7 @@ void TitleMenuEntry::renderEntry(RenderContext& renderContext_)
 
 	Font& font = (VideoOut::instance().getScreenWidth() < 360) ? global::mOxyfontSmall : global::mSonicFontB;
 
-	if (mUntranslatedText == mText)
+	if (!renderContext.mIsModsTab && mUntranslatedText == mText)
 		mText = OptionsMenu::checkForAvailableTranslation(mText);
 
 	py += VideoOut::instance().getScreenWidth() < 360 ? 6: 15;
@@ -256,11 +256,13 @@ void OptionsMenuEntry::renderInternal(RenderContext& renderContext_, const Color
 		const AudioCollection::AudioDefinition* audioDefinitionMusic = nullptr;
 		const AudioCollection::AudioDefinition* audioDefinitionSFX = nullptr;
 		{
+		#if !defined(PLATFORM_WINDOWS)
 			if (!renderContext.mIsModsTab && mOptions[mSelectedIndex].mWasTranslated == false && mData != option::SOUND_TEST_MUSIC && mData != option::SOUND_TEST_SFX)
 			{
 				mOptions[mSelectedIndex].mText = OptionsMenu::checkForAvailableTranslation(mOptions[mSelectedIndex].mText);
 				mOptions[mSelectedIndex].mWasTranslated = true;
 			}
+		#endif
 			static const std::string TEXT_NOT_AVAILABLE = OptionsMenu::checkForAvailableTranslation("not available");
 			const std::string* text = (isDisabled && mData != option::RENDERER) ? &TEXT_NOT_AVAILABLE : &mOptions[mSelectedIndex].mText;
 
