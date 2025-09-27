@@ -72,6 +72,7 @@ public:
 	void resetAudioModifiers();
 	void enableAudioModifier(int channelId, int contextId, std::string_view postfix, float relativeSpeed);
 	void disableAudioModifier(int channelId, int contextId);
+	void swapAudio(uint64 sfxId, int channelId, int contextId);
 
 	inline size_t getNumPlayingSounds() const  { return mPlayingSounds.size(); }
 	size_t getMemoryUsage() const;

@@ -522,6 +522,88 @@ void AudioPlayer::disableAudioModifier(int channelId, int contextId)
 	}
 }
 
+void AudioPlayer::swapAudio(uint64 sfxId, int channelId, int contextId)
+{
+	SoundIterator iterator(mPlayingSounds);
+	iterator.filterChannel(channelId);
+	iterator.filterContext(contextId);
+
+	float position = 0.0f;
+
+	while (nullptr != iterator.getNext())
+	{
+		PlayingSound& oldSound = *iterator.getCurrent();
+		if (!oldSound.mAudioRef.valid())
+			break;
+
+		position = oldSound.mAudioSource->mapAudioRefPositionToTrackPosition(oldSound.mAudioRef.getPosition());
+	}
+
+	SourceRegistration* sourceReg = mAudioCollection.getSourceRegistration(sfxId);
+
+	if (nullptr == sourceReg)
+		return;
+
+	// Stop all old sounds of this channel
+	if (channelId != 0xff && sourceReg->mType != SourceRegistration::Type::EMULATION_CONTINUOUS)
+	{
+		stopAllSoundsByChannelAndContext(channelId, contextId);
+	}
+
+	// Check for channel overrides
+	const bool isOverridden = isChannelOverridden(channelId, contextId);
+	const float volume = isOverridden ? 0.0f : 1.0f;
+
+	// Start playing that sound
+	PlayingSound* playingSound = nullptr;
+	if (sourceReg->mType == SourceRegistration::Type::EMULATION_CONTINUOUS)
+	{
+		playingSound = startOrContinuePlayback(*sourceReg, volume, sourceReg->mEmulationSfxId, contextId, channelId);
+	}
+	else
+	{
+		playingSound = startPlayback(*sourceReg, position, volume, contextId, channelId);
+	}
+
+	if (nullptr == playingSound)
+	{
+		// Failed
+		return;
+	}
+
+	// Respect audio override
+	if (isOverridden)
+	{
+		playingSound->mState = PlayingSound::State::OVERRIDDEN;
+		playingSound->mRelativeVolume = 0.0f;
+		playingSound->mBaseVolume = 1.0f;
+	}
+
+	// Apply audio modifier if needed
+	AudioModifier* modifier = findAudioModifier(channelId, contextId);
+	if (nullptr != modifier)
+	{
+		SoundIterator iterator(mPlayingSounds);
+		while (PlayingSound* soundPtr = iterator.getNext())
+		{
+			if (soundPtr == playingSound)
+			{
+				applyAudioModifierSingle(iterator, modifier->mPostfix, modifier->mRelativeSpeed, modifier->mRelativeSpeed);
+				break;
+			}
+		}
+	}
+
+	// Success
+	playingSound->mBaseSourceReg = sourceReg;
+
+	// Now start actual playback (unless overridden)
+	if (!isOverridden)
+	{
+		playingSound->mAudioRef.setPause(false);
+	}
+}
+
 size_t AudioPlayer::getMemoryUsage() const
 {
 	return mAudioSourceManager.getMemoryUsage();

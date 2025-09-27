@@ -72,6 +72,7 @@ public:
 
 	void enableAudioModifier(uint8 channelId, uint8 contextId, std::string_view postfix, float relativeSpeed);
 	void disableAudioModifier(uint8 channelId, uint8 contextId);
+	void swapAudio(uint64 sfxId, uint8 channelId, uint8 contextId);
 
 	void handleGameLoaded();
 	void handleActiveModsChanged();

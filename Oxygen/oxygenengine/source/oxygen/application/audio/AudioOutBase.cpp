@@ -113,6 +113,11 @@ void AudioOutBase::enableAudioModifier(uint8 channelId, uint8 contextId, std::st
 	mAudioPlayer.enableAudioModifier(channelId, contextId, postfix, relativeSpeed);
 }
 
+void AudioOutBase::swapAudio(uint64 sfxId, uint8 channelId, uint8 contextId)
+{
+	mAudioPlayer.swapAudio(sfxId, channelId, contextId);
+}
+
 void AudioOutBase::disableAudioModifier(uint8 channelId, uint8 contextId)
 {
 	mAudioPlayer.disableAudioModifier(channelId, contextId);

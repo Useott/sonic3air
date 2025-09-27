@@ -920,6 +920,11 @@ namespace
 		EngineMain::instance().getAudioOut().disableAudioModifier(channel, contextId);
 	}
 
+	void Audio_swapAudio(uint64 sfxId, uint8 channel, uint8 contextId)
+	{
+		EngineMain::instance().getAudioOut().swapAudio(sfxId, channel, contextId);
+	}
+
 
 	const Mod* getActiveModByNameHash(lemon::StringRef modName)
 	{
@@ -1397,6 +1402,9 @@ void LemonScriptBindings::registerBindings(lemon::Module& module)
 
 		builder.addNativeFunction("Audio.disableAudioModifier", lemon::wrap(&Audio_disableAudioModifier), defaultFlags)
 			.setParameters("channel", "context");
+
+		builder.addNativeFunction("Audio.swapAudio", lemon::wrap(&Audio_swapAudio), defaultFlags)
+			.setParameters("sfxId", "channel", "context");
 
 
 		// Misc
