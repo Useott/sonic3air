@@ -567,7 +567,11 @@ void AudioPlayer::swapAudio(uint64 sfxId, int channelId, int contextId)
 
 	if (nullptr == playingSound)
 	{
-		// Failed
+		// Failed, in that case try some stuff before giving up and playing the sound from the beginning
+		position /= 100000;
+		playingSound = startPlayback(*sourceReg, position * 100000, volume, contextId, channelId);
+		if (nullptr == playingSound)
+			playAudio(sfxId, contextId);
 		return;
 	}
 
