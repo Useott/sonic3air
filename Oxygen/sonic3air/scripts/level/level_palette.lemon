@@ -189,6 +189,10 @@ function void LevelPaletteUpdate.HCZ2()
 //# address-hook(0x002384) end(0x00243e)
 function void LevelPaletteUpdate.CNZ()
 {
+#if STANDALONE
+	if (global.act == 1 && u8[0xfffffaa3] == 0xff)
+		return
+#endif
 	--level.palettefx.timer_1
 	if (s16(level.palettefx.timer_1) < 0)
 	{

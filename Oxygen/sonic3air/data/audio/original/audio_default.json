@@ -130,6 +130,10 @@
 	"32":		 { "Name": "Victory (S&K)", "Source": "EmulationDirect", "Type": "Jingle" },
 	"32_sonic3": { "Name": "Victory (S3)",  "Source": "EmulationDirect", "EmulatedID": "0x32", "Address": "0x2dfbfe", "Type": "Jingle" },
 
+	// CNZ 2 lights out
+	"08_dark": { "Name": "Carnival Night 2 (Lights out)", "File": "08_dark.ogg", "Type": "Music" },
+	"08_proto_dark": { "Name": "Carnival Night 2 (Proto, lights out)", "File": "08_proto_dark.ogg", "Type": "Music", "LoopStart": "44929" },
+
 
 
 	// CNZ (Sonic 3 Prototype)

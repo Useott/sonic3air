@@ -129,7 +129,7 @@ function void Standalone.playRumbleEffectForAudio(u8 sfxId)
 }
 
 
-function void Standalone.playAudio(u8 sfxId)
+function void Standalone.playAudio(u8 sfxId, bool swap)
 {
 	// Handle music control IDs
 	if (sfxId == MUSIC_CTRL_FADEOUT)
@@ -415,9 +415,12 @@ function void Standalone.playAudio(u8 sfxId)
 		{
 			soundKey = "07_proto"
 		}
-		else if (sfxId == MUSIC_CNZ2 && (Game.getSetting(SETTING_CNZ_PROTOTYPE_MUSIC) & 0x02))
+		else if (sfxId == MUSIC_CNZ2)
 		{
-			soundKey = "08_proto"
+			if ((Game.getSetting(SETTING_CNZ_PROTOTYPE_MUSIC) & 0x02))
+				soundKey = u8[0xfffffaa3] == 0xff ? "08_proto_dark" : "08_proto"
+			else if (u8[0xfffffaa3] == 0xff)
+				soundKey = "08_dark"
 		}
 		else if (sfxId == MUSIC_ICZ1 && (Game.getSetting(SETTING_ICZ_PROTOTYPE_MUSIC) & 0x01))
 		{
@@ -451,7 +454,14 @@ function void Standalone.playAudio(u8 sfxId)
 	Standalone.playRumbleEffectForAudio(sfxId)
 
 	u8 audioContext = (soundRegType != SoundRegType.TYPE_SOUND) ? AudioContext.CONTEXT_MUSIC : AudioContext.CONTEXT_SOUND
-	Audio.playAudio(soundKey, audioContext)
+	if (swap == true)
+		Audio.swapAudio(soundKey, 0, audioContext)
+	else Audio.playAudio(soundKey, audioContext)
+}
+
+function void Standalone.playAudio(u8 sfxId)
+{
+	Standalone.playAudio(sfxId, false)
 }
 
 
