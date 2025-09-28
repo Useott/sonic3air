@@ -131,8 +131,10 @@
 	"32_sonic3": { "Name": "Victory (S3)",  "Source": "EmulationDirect", "EmulatedID": "0x32", "Address": "0x2dfbfe", "Type": "Jingle" },
 
 	// CNZ 2 lights out
-	"08_dark": { "Name": "Carnival Night 2 (Lights out)", "File": "08_dark.ogg", "Type": "Music" },
-	"08_proto_dark": { "Name": "Carnival Night 2 (Proto, lights out)", "File": "08_proto_dark.ogg", "Type": "Music", "LoopStart": "44929" },
+	"08_dark": 				{ "Name": "Carnival Night 2 (Lights out)", 				"File": "08_dark.ogg", 		 		"Type": "Music" },
+	"08_dark_fast": 		{ "Name": "Carnival Night 2 (Lights out, fast)", 		"File": "08_dark_fast.ogg", 		"Type": "Music" },
+	"08_proto_dark": 		{ "Name": "Carnival Night 2 (Proto, lights out)", 		"File": "08_proto_dark.ogg", 		"Type": "Music", "LoopStart": "44929" },
+	"08_proto_dark_fast":	{ "Name": "Carnival Night 2 (Proto, lights out, fast)", "File": "08_proto_dark_fast.ogg", 	"Type": "Music", "LoopStart": "35943" },
 
 	// MHZ 2 Winter
 	"10_winter":		{ "Name": "Mushroom Hill 2 (winter)",       "File": "10_winter.ogg",		"Type": "Music", "LoopStart": "135196" },
