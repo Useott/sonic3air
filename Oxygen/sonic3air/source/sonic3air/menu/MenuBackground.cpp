@@ -206,6 +206,21 @@ void MenuBackground::render()
 
 			drawer.drawSprite(Vec2i(0, 0), rmx::getMurmur2_64("main_menu.foreground_december"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
 		}
+		else if (month == 10)
+		{
+			drawer.drawSprite(Vec2i(px, 0), rmx::getMurmur2_64("main_menu.background_october"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+			drawer.drawSprite(Vec2i(px + 512, 0), rmx::getMurmur2_64("main_menu.background_october"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+
+			for (int i = 0; i < 64; ++i)
+			{
+				float waveMul = 0.125f + (1.0f - 0.125f) * (float(i) / 64.0f);
+				px = -(mAnimationTimerAIT / 8) % 512 + std::round((10.0f * waveMul) * std::sin(2.0f * 3.1415f * 384 * float(i * 4) + float(mAnimationTimerAIT) / 41.0f));
+				drawer.pushScissor(Recti(0, 160 + i, VideoOut::instance().getScreenWidth(), i));
+				drawer.drawSprite(Vec2i(px % 512, 0), rmx::getMurmur2_64("main_menu.background_october"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+				drawer.drawSprite(Vec2i(px % 512 + 512, 0), rmx::getMurmur2_64("main_menu.background_october"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+				drawer.popScissor();
+			}
+		}
 		else
 		{
 			drawer.drawSprite(Vec2i(px, py), rmx::getMurmur2_64("main_menu.background"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
@@ -215,10 +230,13 @@ void MenuBackground::render()
 
 		int triangleScroll = mAnimationTimerAIT;
 		const int scrHeight = VideoOut::instance().getScreenHeight();
-		drawer.drawSprite(Vec2i(triangleScroll % 256, 0), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
-		drawer.drawSprite(Vec2i((triangleScroll % 256) + 512, 0), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
-		drawer.drawSprite(Vec2i(-(triangleScroll % 256), scrHeight), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
-		drawer.drawSprite(Vec2i(-(triangleScroll % 256) + 512, scrHeight), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+		std::string triangle_key = "main_menu.triangles";
+		if (month == 10)
+			triangle_key = "main_menu.triangles_october";
+		drawer.drawSprite(Vec2i(triangleScroll % 256, 0), rmx::getMurmur2_64(triangle_key), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+		drawer.drawSprite(Vec2i((triangleScroll % 256) + 512, 0), rmx::getMurmur2_64(triangle_key), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+		drawer.drawSprite(Vec2i(-(triangleScroll % 256), scrHeight), rmx::getMurmur2_64(triangle_key), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+		drawer.drawSprite(Vec2i(-(triangleScroll % 256) + 512, scrHeight), rmx::getMurmur2_64(triangle_key), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
 	}
 
 	if (mPreviewVisibility > 0.0f)

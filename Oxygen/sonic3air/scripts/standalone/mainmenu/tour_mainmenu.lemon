@@ -474,6 +474,21 @@ function void AITourMenus.drawMenuBackground(u8 menu, u32 framecounter, u16 rend
 
 			Renderer.drawSprite("main_menu.foreground_december", 0, 0, 0, 0, renderQueue2)
 		}
+		else if (System.getSystemClockData(DATE_MONTH) == 10)
+		{
+			Renderer.drawSprite("main_menu.background_october", px, 0, 0, 0, renderQueue1)
+			Renderer.drawSprite("main_menu.background_october", px + 512, 0, 0, 0, renderQueue1)
+
+			for (u16 i; i < 64; ++i)
+			{
+				float waveMul = Math.lerp(0.125f, 1.0f, float(i) / 64.0f)
+				px = -(framecounter / 8) % 512 + Math.roundToInt((10.0f * waveMul) * Math.sin(2.0f * 3.1415f * 384 * float(i * 4) + float(u16(framecounter) / 41.0f)))
+				Renderer.setViewport(0, 160 + i, getScreenWidth(), 1, renderQueue1 + 1 + (i * 3))
+				Renderer.drawSprite("main_menu.background_october", px % 512, 0, 0, 0, renderQueue1 + 2 + (i * 3))
+				Renderer.drawSprite("main_menu.background_october", px % 512 + 512, 0, 0, 0, renderQueue1 + 2 + (i * 3))
+				Renderer.resetViewport(renderQueue1 + 3 + (i * 3))
+			}
+		}
 		else
 		{
 			Renderer.drawSprite("main_menu.background", px, py, 0, 0, renderQueue1)
@@ -660,10 +675,13 @@ function void AITourMenus.drawMenu(u8 menu, u8 selectedEntry, u32 framecounter, 
 	}
 	else
 	{
-		Renderer.drawSprite("main_menu.triangles", framecounter % 256, 0, 0, SPRITE_FLAG_PRIO, renderQueue)
-		Renderer.drawSprite("main_menu.triangles", (framecounter % 256) + 512, 0, 0, SPRITE_FLAG_PRIO, renderQueue)
-		Renderer.drawSprite("main_menu.triangles", -(framecounter % 256), getScreenHeight(), 0, SPRITE_FLAG_PRIO, renderQueue)
-		Renderer.drawSprite("main_menu.triangles", -(framecounter % 256) + 512, getScreenHeight(), 0, SPRITE_FLAG_PRIO, renderQueue)
+		string triangle_key = "main_menu.triangles"
+		if (System.getSystemClockData(DATE_MONTH) == 10 && menu != 3)
+			triangle_key = "main_menu.triangles_october"
+		Renderer.drawSprite(triangle_key, framecounter % 256, 0, 0, SPRITE_FLAG_PRIO, renderQueue)
+		Renderer.drawSprite(triangle_key, (framecounter % 256) + 512, 0, 0, SPRITE_FLAG_PRIO, renderQueue)
+		Renderer.drawSprite(triangle_key, -(framecounter % 256), getScreenHeight(), 0, SPRITE_FLAG_PRIO, renderQueue)
+		Renderer.drawSprite(triangle_key, -(framecounter % 256) + 512, getScreenHeight(), 0, SPRITE_FLAG_PRIO, renderQueue)
 	}
 }
 

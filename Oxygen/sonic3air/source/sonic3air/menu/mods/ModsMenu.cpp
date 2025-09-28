@@ -26,6 +26,8 @@
 #include "oxygen/helper/DrawerHelper.h"
 #include "oxygen/helper/FileHelper.h"
 
+#include <chrono>
+
 
 namespace
 {
@@ -742,12 +744,21 @@ void ModsMenu::render()
 	// Draw separator line
 	drawer.drawRect(Recti(rightTabStart + globalOffsetX, 8, 1, 208), Color(0.0f, 0.0f, 0.0f, 0.2f));
 
+	const std::time_t current_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+	char time_text[64];
+	strftime(time_text, sizeof time_text, std::string("%m").c_str(), std::localtime(&current_time));
+	int month = rmx::parseInteger(time_text);
+
 	int triangleScroll = mMenuBackground->mAnimationTimerAIT;
 	const int scrHeight = VideoOut::instance().getScreenHeight();
-	drawer.drawSprite(Vec2i(triangleScroll % 256, 0), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
-	drawer.drawSprite(Vec2i((triangleScroll % 256) + 512, 0), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
-	drawer.drawSprite(Vec2i(-(triangleScroll % 256), scrHeight), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
-	drawer.drawSprite(Vec2i(-(triangleScroll % 256) + 512, scrHeight), rmx::getMurmur2_64("main_menu.triangles"), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+	std::string triangle_key = "main_menu.triangles";
+	if (month == 10)
+		triangle_key = "main_menu.triangles_october";
+
+	drawer.drawSprite(Vec2i(triangleScroll % 256, 0), rmx::getMurmur2_64(triangle_key), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+	drawer.drawSprite(Vec2i((triangleScroll % 256) + 512, 0), rmx::getMurmur2_64(triangle_key), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+	drawer.drawSprite(Vec2i(-(triangleScroll % 256), scrHeight), rmx::getMurmur2_64(triangle_key), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
+	drawer.drawSprite(Vec2i(-(triangleScroll % 256) + 512, scrHeight), rmx::getMurmur2_64(triangle_key), Color(1.0f, 1.0f, 1.0f, 1.0f), Vec2f(1.0f, 1.0f));
 
 	// So the active/inactive mods text appears on top
 	for (size_t tabIndex = minTabIndex; tabIndex <= maxTabIndex; ++tabIndex)
