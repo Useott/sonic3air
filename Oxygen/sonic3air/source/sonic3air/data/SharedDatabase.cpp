@@ -349,6 +349,8 @@ void SharedDatabase::setupSettings()
 	addSetting(IDPARAMS(Setting::SETTING_ACT_SELECT_BIG_RINGS), Setting::SerializationType::ALWAYS);
 	addSetting(IDPARAMS(Setting::SETTING_LANGUAGE), Setting::SerializationType::ALWAYS);
 	addSetting(IDPARAMS(Setting::SETTING_DROWNING_MUSIC), Setting::SerializationType::ALWAYS);
+	addSetting(IDPARAMS(Setting::SETTING_LIGHTS_OUT_AUDIO), Setting::SerializationType::ALWAYS);
+	addSetting(IDPARAMS(Setting::SETTING_WINTER_AUDIO), Setting::SerializationType::ALWAYS);
 
 	// Hidden settings
 	addSetting(IDPARAMS(Setting::SETTING_DROPDASH), Setting::SerializationType::HIDDEN);

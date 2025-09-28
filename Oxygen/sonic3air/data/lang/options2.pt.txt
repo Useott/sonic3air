@@ -63,3 +63,6 @@ Enquanto afogar:
 Tocar efeitos sonoros
 Tocar musica
 Tocar ambos
+Durante apagao da CNZ:
+Durante inverno da MHZ:
+Menos instrumentos

@@ -331,7 +331,8 @@ function void fn065d8c()
 		{
 			u8[0xfffffaa3] = 0
 		#if STANDALONE
-			Standalone.playAudio(level.default_music.u8, true)
+			if (Game.getSetting(SETTING_LIGHTS_OUT_AUDIO))
+				Standalone.playAudio(level.default_music.u8, true)
 		#endif
 			water.height.target = 0x0a58
 			playSound(0x57)

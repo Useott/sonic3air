@@ -66,6 +66,9 @@ namespace
 		ConditionalOption(option::OUTRO_MUSIC,				 true),
 		ConditionalOption(option::COMPETITION_MENU_MUSIC,	 true),
 
+		ConditionalOption(option::LIGHTS_OUT_AUDIO,	 		 true),
+		ConditionalOption(option::WINTER_AUDIO,	 			 true),
+
 		ConditionalOption(option::ANTI_FLICKER,				 true),
 		ConditionalOption(option::ICZ_NIGHTTIME,			 true),
 		ConditionalOption(option::MONITOR_STYLE,			 true),
@@ -213,6 +216,8 @@ OptionsMenu::OptionsMenu(MenuBackground& menuBackground) :
 		setupOptionEntry(option::ACT_SELECT_BIG_RINGS,		SharedDatabase::Setting::SETTING_ACT_SELECT_BIG_RINGS);
 		setupOptionEntry(option::LANGUAGE,					SharedDatabase::Setting::SETTING_LANGUAGE);
 		setupOptionEntry(option::DROWNING_MUSIC,			SharedDatabase::Setting::SETTING_DROWNING_MUSIC);
+		setupOptionEntry(option::LIGHTS_OUT_AUDIO,			SharedDatabase::Setting::SETTING_LIGHTS_OUT_AUDIO);
+		setupOptionEntry(option::WINTER_AUDIO,				SharedDatabase::Setting::SETTING_WINTER_AUDIO);
 
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ1,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ2,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
@@ -761,6 +766,16 @@ void OptionsMenu::update(float timeElapsed)
 	const bool isSoftware = (Configuration::instance().mRenderMethod == Configuration::RenderMethod::SOFTWARE);
 	mOptionEntries[option::SCANLINES].mGameMenuEntry->setInteractable(!isSoftware && Configuration::instance().mFiltering < 3);
 	mOptionEntries[option::FILTERING].mGameMenuEntry->setInteractable(!isSoftware);
+
+	const bool playingEmulatedMusic = (mOptionEntries[option::SOUNDTRACK].mGameMenuEntry->selected().mValue == 0);
+	mOptionEntries[option::LIGHTS_OUT_AUDIO].mGameMenuEntry->setInteractable(!playingEmulatedMusic);
+	mOptionEntries[option::WINTER_AUDIO].mGameMenuEntry->setInteractable(!playingEmulatedMusic);
+
+	if (playingEmulatedMusic)
+	{
+		Game::instance().setSetting(SharedDatabase::Setting::SETTING_LIGHTS_OUT_AUDIO, 0);
+		Game::instance().setSetting(SharedDatabase::Setting::SETTING_WINTER_AUDIO, 0);
+	}
 
 	// Scrolling
 	mScrolling.update(timeElapsed);
@@ -1840,6 +1855,9 @@ std::string OptionsMenu::checkForAvailableTranslation(std::string text)
 	"Play sound effects",
 	"Play music",
 	"Play both",
+	"CNZ Lights Out Music:",
+	"MHZ 2 Winter Music:",
+	"Less channels",
 	};
 
 	uint8 id = 255;

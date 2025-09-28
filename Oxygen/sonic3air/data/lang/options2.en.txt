@@ -63,3 +63,6 @@ When drowning:
 Play sound effects
 Play music
 Play both
+CNZ Lights Out Music:
+MHZ 2 Winter Music:
+Less channels

@@ -134,6 +134,10 @@
 	"08_dark": { "Name": "Carnival Night 2 (Lights out)", "File": "08_dark.ogg", "Type": "Music" },
 	"08_proto_dark": { "Name": "Carnival Night 2 (Proto, lights out)", "File": "08_proto_dark.ogg", "Type": "Music", "LoopStart": "44929" },
 
+	// MHZ 2 Winter
+	"10_winter":		{ "Name": "Mushroom Hill 2 (winter)",       "File": "10_winter.ogg",		"Type": "Music", "LoopStart": "135196" },
+	"10_winter_fast":	{ "Name": "Mushroom Hill 2 (winter, fast)", "File": "10_winter_fast.ogg",	"Type": "Music", "LoopStart": "108157" },
+
 
 
 	// CNZ (Sonic 3 Prototype)

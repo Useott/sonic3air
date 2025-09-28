@@ -345,6 +345,14 @@ void OptionsConfig::buildAudio()
 		configBuilder.addSetting("Underwater Sound:", option::UNDERWATER_AUDIO)
 			.addOption("Normal", 0)
 			.addOption("Muffled", 1);
+
+		configBuilder.addSetting("CNZ Lights Out Music:", option::LIGHTS_OUT_AUDIO)
+			.addOption("Normal", 0)
+			.addOption("Less channels", 1);
+
+		configBuilder.addSetting("MHZ 2 Winter Music:", option::WINTER_AUDIO)
+			.addOption("Normal", 0)
+			.addOption("Less channels", 1);
 	}
 }
 

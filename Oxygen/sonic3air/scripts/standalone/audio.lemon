@@ -409,6 +409,10 @@ function void Standalone.playAudio(u8 sfxId, bool swap)
 			soundKey = "1f_proto"
 			soundRegType = SoundRegType.TYPE_MUSIC
 		}
+		else if (sfxId == MUSIC_MHZ2 && u16[0xffffeed6] == 0 && u8[0xfffff7c1] == 0xff && Game.getSetting(SETTING_WINTER_AUDIO))
+		{
+			soundKey = "10_winter"
+		}
 
 		// Support for Sonic 3 prototype music
 		if (sfxId == MUSIC_CNZ1 && (Game.getSetting(SETTING_CNZ_PROTOTYPE_MUSIC) & 0x01))
@@ -417,10 +421,14 @@ function void Standalone.playAudio(u8 sfxId, bool swap)
 		}
 		else if (sfxId == MUSIC_CNZ2)
 		{
-			if ((Game.getSetting(SETTING_CNZ_PROTOTYPE_MUSIC) & 0x02))
-				soundKey = u8[0xfffffaa3] == 0xff ? "08_proto_dark" : "08_proto"
-			else if (u8[0xfffffaa3] == 0xff)
-				soundKey = "08_dark"
+			if (Game.getSetting(SETTING_LIGHTS_OUT_AUDIO))
+			{
+				if ((Game.getSetting(SETTING_CNZ_PROTOTYPE_MUSIC) & 0x02))
+					soundKey = u8[0xfffffaa3] == 0xff ? "08_proto_dark" : "08_proto"
+				else if (u8[0xfffffaa3] == 0xff)
+					soundKey = "08_dark"
+			}
+			else soundKey = "08_proto"
 		}
 		else if (sfxId == MUSIC_ICZ1 && (Game.getSetting(SETTING_ICZ_PROTOTYPE_MUSIC) & 0x01))
 		{

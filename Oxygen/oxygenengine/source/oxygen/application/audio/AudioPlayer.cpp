@@ -554,6 +554,11 @@ void AudioPlayer::swapAudio(uint64 sfxId, int channelId, int contextId)
 	const bool isOverridden = isChannelOverridden(channelId, contextId);
 	const float volume = isOverridden ? 0.0f : 1.0f;
 
+	// Apply modifier speed
+	AudioModifier* modifier = findAudioModifier(channelId, contextId);
+	if (nullptr != modifier)
+		position *= modifier->mRelativeSpeed;
+
 	// Start playing that sound
 	PlayingSound* playingSound = nullptr;
 	if (sourceReg->mType == SourceRegistration::Type::EMULATION_CONTINUOUS)
@@ -584,7 +589,6 @@ void AudioPlayer::swapAudio(uint64 sfxId, int channelId, int contextId)
 	}
 
 	// Apply audio modifier if needed
-	AudioModifier* modifier = findAudioModifier(channelId, contextId);
 	if (nullptr != modifier)
 	{
 		SoundIterator iterator(mPlayingSounds);
