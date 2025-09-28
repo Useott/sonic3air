@@ -28,6 +28,7 @@
 	"monitor_icon_knuckles":        { "File": "monitors.bmp", "Rect":"96,32,16,16", "Center": "8,8" },
 	"monitor_icon_static":          { "File": "monitors.bmp", "Rect":"64,48,16,16", "Center": "8,8" },
 	"monitor_icon_robotnik":        { "File": "monitors.bmp", "Rect":"80,48,16,16", "Center": "8,8" },
+	"monitor_icon_random":        	{ "File": "monitors.bmp", "Rect":"96,48,16,16", "Center": "8,8" },
 
 	// S1 Classic Shield
 	"shield_classic_01": { "File": "shield_classic.bmp", "Rect": "0,0,48,48",  "Center": "24,24" },

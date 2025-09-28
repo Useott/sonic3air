@@ -733,6 +733,10 @@ void OptionsConfig::buildTourOptions()
 			.addOption("Play sound effects", 0)
 			.addOption("Play music", 1)
 			.addOption("Play both", 2);
+
+		configBuilder.addSetting("Random Monitor Type:", option::RANDOM_MONITOR_TYPE)
+			.addOption("Sonic 3 A.I.R. Style", 0)
+			.addOption("Truly Random", 1);
 	}
 
 	CATEGORY("Experimental")

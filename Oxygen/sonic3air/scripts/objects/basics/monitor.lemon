@@ -212,6 +212,8 @@ function u64 Monitor.getIconSpriteKey(u8 type)
 {
 	if (type == 0)
 		return "monitor_icon_static"
+	else if (Game.getSetting(SETTING_RANDOM_MONITOR_TYPE) && objA0.update_address != 0x01d7ba)
+		return "monitor_icon_random"
 	else if (type == 0x01)
 		return isMainCharacter(CHARACTER_SONIC) ? "monitor_icon_sonic" : isMainCharacter(CHARACTER_TAILS) ? "monitor_icon_tails" : "monitor_icon_knuckles"
 	else if (type == 0x02)
@@ -270,7 +272,7 @@ function void MonitorIntact.Init()
 	if (Game.getSetting(SETTING_MONITOR_STYLE) == 1)
 	{
 		objA0.box_size.x = 0x11
-		objA0.box_size.y = 0x0e
+		objA0.box_size.y = 0x0f
 	}
 
 	objA0.subtype2c = Monitor.getRandomizedType(objA0.subtype2c, false)
@@ -310,6 +312,13 @@ function void MonitorIntact.UpdateDefault()
 #if STANDALONE
 	u16 width = objA0.box_size.x + 11
 	u16 height = objA0.box_size.y + 1	// Needed for Sonic 2 monitors
+
+	if (Game.getSetting(SETTING_RANDOM_MONITOR_TYPE))
+	{
+		objA0.subtype2c = (global.level_random_base ^ objA0.position.x.u16 ^ objA0.position.y.u16 ^ level.framecounter) % 10 + 1
+		if (objA0.subtype2c == 10)
+			objA0.subtype2c = 11
+	}
 #else
 	u16 width = 0x19
 	u16 height = 0x11

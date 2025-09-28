@@ -66,3 +66,5 @@ Tocar ambos
 Durante apagao da CNZ:
 Durante inverno da MHZ:
 Menos instrumentos
+Tipo de monitor aleatorio:
+Realmente aleatorio

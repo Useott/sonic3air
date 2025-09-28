@@ -250,6 +250,6 @@ Escudos elementais
 Classico + elementais
 Escudos atualizaveis
 Monitores:
-Monitors normais
+Monitores normais
 Escudos aleatorios
 Monitores aleatorios

@@ -173,6 +173,8 @@ function bool Standalone.onWriteToSpriteTable(s16 px, s16 py, u16 renderQueue)
 			else
 			{
 				u64 key = Monitor.getIconSpriteKey(objA0.subtype2c)
+				if (Game.getSetting(SETTING_RANDOM_MONITOR_TYPE))
+					key = "monitor_icon_random"
 				if (objA0.subtype2c >= 0x05 && objA0.subtype2c <= 0x07)
 				{
 					if (Monitor.enforceClassicShield())

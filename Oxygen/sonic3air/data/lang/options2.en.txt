@@ -66,3 +66,5 @@ Play both
 CNZ Lights Out Music:
 MHZ 2 Winter Music:
 Less channels
+Random Monitor Type:
+Truly Random

@@ -97,7 +97,8 @@ namespace
 		ConditionalOption(option::SCREEN_SIZE,				 true),
 		ConditionalOption(option::CLASSIC_SHIELD_SPRITE,	 true),
 		ConditionalOption(option::ACT_SELECT_BIG_RINGS,		 true),
-		ConditionalOption(option::DROWNING_MUSIC,			 true)
+		ConditionalOption(option::DROWNING_MUSIC,			 true),
+		ConditionalOption(option::RANDOM_MONITOR_TYPE,		 true)
 	};
 }
 
@@ -218,6 +219,7 @@ OptionsMenu::OptionsMenu(MenuBackground& menuBackground) :
 		setupOptionEntry(option::DROWNING_MUSIC,			SharedDatabase::Setting::SETTING_DROWNING_MUSIC);
 		setupOptionEntry(option::LIGHTS_OUT_AUDIO,			SharedDatabase::Setting::SETTING_LIGHTS_OUT_AUDIO);
 		setupOptionEntry(option::WINTER_AUDIO,				SharedDatabase::Setting::SETTING_WINTER_AUDIO);
+		setupOptionEntry(option::RANDOM_MONITOR_TYPE,		SharedDatabase::Setting::SETTING_RANDOM_MONITOR_TYPE);
 
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ1,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ2,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
@@ -776,6 +778,12 @@ void OptionsMenu::update(float timeElapsed)
 		Game::instance().setSetting(SharedDatabase::Setting::SETTING_LIGHTS_OUT_AUDIO, 0);
 		Game::instance().setSetting(SharedDatabase::Setting::SETTING_WINTER_AUDIO, 0);
 	}
+
+	const bool randomMonitorsEnabled = (mOptionEntries[option::RANDOM_MONITORS].mGameMenuEntry->selected().mValue > 1);
+	mOptionEntries[option::RANDOM_MONITOR_TYPE].mGameMenuEntry->setInteractable(randomMonitorsEnabled);
+
+	if (!randomMonitorsEnabled)
+		Game::instance().setSetting(SharedDatabase::Setting::SETTING_RANDOM_MONITOR_TYPE, 0);
 
 	// Scrolling
 	mScrolling.update(timeElapsed);
@@ -1858,6 +1866,8 @@ std::string OptionsMenu::checkForAvailableTranslation(std::string text)
 	"CNZ Lights Out Music:",
 	"MHZ 2 Winter Music:",
 	"Less channels",
+	"Random Monitor Type:",
+	"Truly Random",
 	};
 
 	uint8 id = 255;
