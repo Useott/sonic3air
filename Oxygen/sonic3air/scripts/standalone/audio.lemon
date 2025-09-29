@@ -446,6 +446,11 @@ function void Standalone.playAudio(u8 sfxId, bool swap)
 		{
 			soundKey = "0e_proto"
 		}
+		else if (sfxId == MUSIC_MHZ1)
+		{
+			(!isMainCharacter(CHARACTER_KNUCKLES) && checkpoint.number < 1)
+				soundKey = "0f_intro"
+		}
 	}
 
 	if (soundRegType == SoundRegType.TYPE_MUSIC)
@@ -513,3 +518,4 @@ function void Standalone.setFastMusicFlagWithSpeedup(u8 flag, float relativeSpee
 }
 
 #endif
+
