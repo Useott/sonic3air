@@ -68,3 +68,4 @@ Durante inverno da MHZ:
 Menos instrumentos
 Tipo de monitor aleatorio:
 Realmente aleatorio
+Durante intro da MHZ1:

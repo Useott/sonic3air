@@ -428,7 +428,8 @@ function void Standalone.playAudio(u8 sfxId, bool swap)
 				else if (u8[0xfffffaa3] == 0xff)
 					soundKey = "08_dark"
 			}
-			else soundKey = "08_proto"
+			else if ((Game.getSetting(SETTING_CNZ_PROTOTYPE_MUSIC) & 0x02))
+				soundKey = "08_proto"
 		}
 		else if (sfxId == MUSIC_ICZ1 && (Game.getSetting(SETTING_ICZ_PROTOTYPE_MUSIC) & 0x01))
 		{
@@ -446,7 +447,7 @@ function void Standalone.playAudio(u8 sfxId, bool swap)
 		{
 			soundKey = "0e_proto"
 		}
-		else if (sfxId == MUSIC_MHZ1)
+		else if (sfxId == MUSIC_MHZ1 && Game.getSetting(SETTING_MHZ_INTRO_AUDIO))
 		{
 			if (!isMainCharacter(CHARACTER_KNUCKLES) && checkpoint.number < 1)
 				soundKey = "0f_intro"

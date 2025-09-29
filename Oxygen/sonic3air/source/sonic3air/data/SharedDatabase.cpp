@@ -352,6 +352,7 @@ void SharedDatabase::setupSettings()
 	addSetting(IDPARAMS(Setting::SETTING_LIGHTS_OUT_AUDIO), Setting::SerializationType::ALWAYS);
 	addSetting(IDPARAMS(Setting::SETTING_WINTER_AUDIO), Setting::SerializationType::ALWAYS);
 	addSetting(IDPARAMS(Setting::SETTING_RANDOM_MONITOR_TYPE), Setting::SerializationType::ALWAYS);
+	addSetting(IDPARAMS(Setting::SETTING_MHZ_INTRO_AUDIO), Setting::SerializationType::ALWAYS);
 
 	// Hidden settings
 	addSetting(IDPARAMS(Setting::SETTING_DROPDASH), Setting::SerializationType::HIDDEN);

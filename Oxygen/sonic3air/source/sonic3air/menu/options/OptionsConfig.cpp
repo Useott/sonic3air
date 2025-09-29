@@ -350,6 +350,10 @@ void OptionsConfig::buildAudio()
 			.addOption("Normal", 0)
 			.addOption("Less channels", 1);
 
+		configBuilder.addSetting("MHZ 1 Intro Music:", option::MHZ_INTRO_AUDIO)
+			.addOption("Normal", 0)
+			.addOption("Less channels", 1);
+
 		configBuilder.addSetting("MHZ 2 Winter Music:", option::WINTER_AUDIO)
 			.addOption("Normal", 0)
 			.addOption("Less channels", 1);

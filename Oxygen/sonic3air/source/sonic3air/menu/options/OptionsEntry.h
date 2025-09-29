@@ -68,6 +68,7 @@ namespace option
 		UNDERWATER_AUDIO,
 		LIGHTS_OUT_AUDIO,
 		WINTER_AUDIO,
+		MHZ_INTRO_AUDIO,
 
 		// Visuals
 		ROTATION,

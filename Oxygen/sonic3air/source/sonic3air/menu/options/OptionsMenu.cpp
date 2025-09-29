@@ -68,6 +68,7 @@ namespace
 
 		ConditionalOption(option::LIGHTS_OUT_AUDIO,	 		 true),
 		ConditionalOption(option::WINTER_AUDIO,	 			 true),
+		ConditionalOption(option::MHZ_INTRO_AUDIO,	 		 true),
 
 		ConditionalOption(option::ANTI_FLICKER,				 true),
 		ConditionalOption(option::ICZ_NIGHTTIME,			 true),
@@ -219,6 +220,7 @@ OptionsMenu::OptionsMenu(MenuBackground& menuBackground) :
 		setupOptionEntry(option::DROWNING_MUSIC,			SharedDatabase::Setting::SETTING_DROWNING_MUSIC);
 		setupOptionEntry(option::LIGHTS_OUT_AUDIO,			SharedDatabase::Setting::SETTING_LIGHTS_OUT_AUDIO);
 		setupOptionEntry(option::WINTER_AUDIO,				SharedDatabase::Setting::SETTING_WINTER_AUDIO);
+		setupOptionEntry(option::MHZ_INTRO_AUDIO,			SharedDatabase::Setting::SETTING_MHZ_INTRO_AUDIO);
 		setupOptionEntry(option::RANDOM_MONITOR_TYPE,		SharedDatabase::Setting::SETTING_RANDOM_MONITOR_TYPE);
 
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ1,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
@@ -1877,6 +1879,7 @@ std::string OptionsMenu::checkForAvailableTranslation(std::string text)
 	"Less channels",
 	"Random Monitor Type:",
 	"Truly Random",
+	"MHZ 1 Intro Music:",
 	};
 
 	uint8 id = 255;
