@@ -448,7 +448,7 @@ function void Standalone.playAudio(u8 sfxId, bool swap)
 		}
 		else if (sfxId == MUSIC_MHZ1)
 		{
-			(!isMainCharacter(CHARACTER_KNUCKLES) && checkpoint.number < 1)
+			if (!isMainCharacter(CHARACTER_KNUCKLES) && checkpoint.number < 1)
 				soundKey = "0f_intro"
 		}
 	}
