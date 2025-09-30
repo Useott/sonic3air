@@ -80,11 +80,13 @@ void GameMenuControlsDisplay::render(Drawer& drawer, float visibility)
 void GameMenuControlsDisplay::drawControl(Control control, Drawer& drawer, Vec2i& pos)
 {
 	Font& font = global::mOxyfontTinyRect;
+#if !defined(PLATFORM_WINDOWS)
 	if (control.mWasTranslated == false)
 	{
 		control.mDisplayText = OptionsMenu::checkForAvailableTranslation(control.mDisplayText);
 		control.mWasTranslated = true;
 	}
+#endif
 	const int textWidth = font.getWidth(control.mDisplayText);
 
 	if (control.mAlignRight)
