@@ -294,12 +294,6 @@ function void Extras.DrawMenu(u8 selectedTab, u8 selectedEntry)
 
 function void Extras.Menu(u8 fadeInMethod)
 {
-	// Load palette for the background
-	{
-		copyMemory(0xfffffc00, 0x0a8adc, 0x20)
-		copyMemory(0xfffffc80, 0xfffffc00, 0x20)
-	}
-	
 	u8 selectedTab = 0
 	u8 selectedEntry = 0
 	u8 lastEntry = 0
@@ -343,9 +337,9 @@ function void Extras.Menu(u8 fadeInMethod)
 		else if (selectedTab == 2)
 			entryList = Extras.achievementsEntryList
 		else entryList = 4
+
 		++frameCounter
 		
-		ActSelect.HandleFadeIn(fadeInMethod, frameCounter)
 		AITourMenus.drawMenuBackground(1, frameCounter)
 
 		framesSinceLastTouch += 1
@@ -355,6 +349,16 @@ function void Extras.Menu(u8 fadeInMethod)
 		u16[0xffff0000] = screenTouchCounter
 		u16[0xffff0002] = framesSinceLastTouch
 		Extras.DrawMenu(selectedTab, selectedEntry)
+
+		if (frameCounter == 1)
+		{
+			Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), 255, 0xff80, false)
+			for (u8 i = 0; i < 6; ++i)
+				yieldExecution()
+		}
+
+		if (frameCounter == 2)
+			AITourMenus.handleFading(2)
 		
 		if (selectedEntry == 0)
 		{
@@ -408,7 +412,7 @@ function void Extras.Menu(u8 fadeInMethod)
 		
 		if (s16(selectedEntry - 1) * pixelsPerEntry < s16(camera.foreground.y.u16) && s16(camera.foreground.y.u16) > 0)
 			camera.foreground.y.u16 -= selectedEntry * pixelsPerEntry < s16(camera.foreground.y.u16) - (pixelsPerEntry * 2) ? 16 : 8
-		
+
 		waitForNextFrame()
 		
 		if (Input.buttonPressed(BUTTON_B) || Input.buttonPressed(BUTTON_BACK) || (selectedEntry == entryList + 1 && (Input.buttonPressed(BUTTON_A) || (Input.buttonPressed(BUTTON_START) || Input.buttonPressed(BUTTON_X)))) || checkMobileBackButtonPress(0xffff0000, 0xffff0002, 0xffff0004, false) == 2)
@@ -436,11 +440,12 @@ function void Extras.Menu(u8 fadeInMethod)
 	{
 		playSound(0xad)
 		
-		u32 backupA0 = A0
-		FadeOutScreenBlocking()
-		A0 = backupA0
+		AITourMenus.handleFading(3)
 
-		Game.returnToMainMenu()
+		u16[0xffffeee4] = 1
+		for (u8 i; i < 12; ++i)
+			yieldExecution()
+		EntryFunctions.AITourMenus()
 		yieldExecution()
 	}
 }

@@ -58,7 +58,7 @@ function void SpecialStage()
 	zeroMemory(0xffffac00, 0x400)
 	zeroMemory(0xffffb000, 0x2000)
 #if STANDALONE
-	zeroMemory(0x81a000, 0x2000)
+	zeroMemory(0x81b000, 0x2000)
 #endif
 	zeroMemory(0xfffffe6e, 0x4c)
 	zeroMemory(0xffffe400, 0x100)
@@ -2470,7 +2470,7 @@ function void fn02df64()
 	zeroMemory(0xffffac00, 0x400)
 	zeroMemory(0xffffb000, 0x2000)
 #if STANDALONE
-	zeroMemory(0x81a000, 0x2000)
+	zeroMemory(0x81b000, 0x2000)
 #endif
 
 	u16[0xfffffb00] = 0

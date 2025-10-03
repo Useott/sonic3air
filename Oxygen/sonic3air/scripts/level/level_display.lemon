@@ -245,6 +245,17 @@ function void UpdateLevelDisplay()
 
 #if STANDALONE
 	applyWaterRipple()
+	if (global.zone_act == 0x00 && !isSonicIntro())
+	{
+		for (u16 line = 0; line < 224; line++)
+		{
+			if ((line + camera.background.y.u16) < 386 || (line + camera.background.y.u16) > 400)
+				continue
+
+			offset = Math.roundToInt(4.0f * Math.sin(2.0f * 3.1415f * 3072 * float(255 - (line + camera.background.y.u16) % 256) + float(u16(u8[0x801010])) / 41.0f))
+			Renderer.setScrollOffsetH(0, line, (-u32[0xffffe000 + line * 4]) + offset + 1)
+		}
+	}
 #endif
 
 	if (checkForMultiReturn())

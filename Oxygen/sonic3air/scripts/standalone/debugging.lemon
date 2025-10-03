@@ -150,7 +150,7 @@ function void setupGameObjectsSidePanelEntry()
 		bool showSubType       = System.SidePanel.addOption("Show subtype", false)
 		bool useExtendedList   = System.SidePanel.addOption("Show extended object list", false)
 
-		u32 startaddress = useExtendedList ? 0x81a000 : 0xffffb000
+		u32 startaddress = useExtendedList ? 0x81b000 : 0xffffb000
 		u32 endaddress = useExtendedList ? 0x81bfcc : 0xffffcfcc
 		for (u32 address = startaddress; address < endaddress; address += 0x4a)
 		{

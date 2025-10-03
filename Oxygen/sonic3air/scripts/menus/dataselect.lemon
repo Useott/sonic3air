@@ -278,7 +278,7 @@ function void DataSelect.setup()
 	zeroMemory(0xffffac00, 0x400)
 	zeroMemory(0xffffb000, 0x2000)
 #if STANDALONE
-	zeroMemory(0x81a000, 0x2000)
+	zeroMemory(0x81b000, 0x2000)
 #endif
 
 	u16[0xfffffb00] = 0
@@ -381,6 +381,7 @@ function void DataSelect.setup()
 	waitForNextFrame()
 
 #if STANDALONE
+	Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), 255, 0xff80, false)
 	camera.foreground.x.u16 -= getScreenExtend()
 	u16[0xffffe002] += getScreenExtend()
 
@@ -429,6 +430,9 @@ function void DataSelect.update()
 
 	#if STANDALONE
 		DataSelect.drawCustomPlanes()
+
+		if (level.framecounter <= 2)
+			Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), 255, 0xff80, false)
 
 		// Quick scroll-in effect
 		//if (u8[0xffffffff] > 0)
@@ -480,6 +484,11 @@ function void DataSelect.update()
 		{
 			copyMemory(A0, 0x00ca9a, 0x1e)
 		}
+
+	#if STANDALONE
+		if (level.framecounter == 4)
+			AITourMenus.handleFading(2)
+	#endif
 
 		// Data Select
 		if (global.game_mode != 0x4c)
@@ -638,12 +647,14 @@ function void fn00d1fa()
 		playSound(0xad)
 		DataSelect.drawCustomPlanes()	// Required here, otherwise we can have one frame without custom plane setup if returning already during the fade-in
 
-		u32 backupA0 = A0
-		FadeOutScreenBlocking()
-		A0 = backupA0
+		Audio.fadeOutChannel(0, 0.2f)
+		AITourMenus.handleFading(3)
 
-		// Do not fade out music in this case, Data Select music is meant to keep playing
-		Game.returnToMainMenu()
+		u16[0xffffeee4] = 1
+		Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), 255, 0xff80, false)
+		for (u8 i; i < 6; ++i)
+			yieldExecution()
+		EntryFunctions.AITourMenus()
 		yieldExecution()
 	#endif
 	}

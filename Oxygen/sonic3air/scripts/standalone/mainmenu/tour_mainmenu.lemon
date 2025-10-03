@@ -6,6 +6,9 @@ function void AITourMenus.beforeMainMenuOpens()
 
 function void AITourMenus.Menu()
 {
+	bool useTriangleFade = u16[0xffffeee4]
+	zeroMemory(0xff0000, 0xffff)
+	zeroMemory(0x800000, 0xfffff)
 	AITourMenus.beforeMainMenuOpens()
 
 	u16 screenTouchCounter = 0
@@ -61,7 +64,7 @@ function void AITourMenus.Menu()
 	Renderer.resetSprites()
 	AITourMenus.drawMenuBackground(0, framecounter)
 	AITourMenus.drawMenu(0, selectedEntry, framecounter, 0x4000)
-	AITourMenus.handleFading(0)
+	AITourMenus.handleFading(useTriangleFade ? 2 : 0)
 
 	while (result == MENU)
 	{
@@ -224,6 +227,23 @@ function void AITourMenus.Menu()
 					if (Input.buttonPressed(BUTTON_LEFT) || (AITourMenus.getActSelectButtonResultFromTouch2(selectedEntry) == 1 && framesSinceLastTouch == 0 && screenTouchCounter == 1))
 					{
 						entryValue -= 1
+						// MISC compatbility
+						{
+							levelselect.characters = entryValue
+							if (selectedEntry == 0)
+							{
+								if (ActSelect.GetCharacterCombinationName(entryValue) == 0)
+								{
+									for (u16 chr = 1 + u16(entryValueLimit); chr > 0; --chr)
+									{
+										entryValue -= 1
+										levelselect.characters = entryValue
+										if (ActSelect.GetCharacterCombinationName(entryValue) != 0)
+											break
+									}
+								}
+							}
+						}
 						if (entryValue >= entryValueLimit)
 						{
 							entryValue = entryValueLimit - 1
@@ -238,6 +258,23 @@ function void AITourMenus.Menu()
 					else if (Input.buttonPressed(BUTTON_RIGHT) || (AITourMenus.getActSelectButtonResultFromTouch2(selectedEntry) == 2 && framesSinceLastTouch == 0 && screenTouchCounter == 1))
 					{
 						entryValue += 1
+						// MISC compatbility
+						{
+							levelselect.characters = entryValue
+							if (selectedEntry == 0)
+							{
+								if (ActSelect.GetCharacterCombinationName(entryValue) == 0)
+								{
+									for (u16 chr = 0; chr < 1 + u16(entryValueLimit); ++chr)
+									{
+										entryValue += 1
+										levelselect.characters = entryValue
+										if (ActSelect.GetCharacterCombinationName(entryValue) != 0)
+											break
+									}
+								}
+							}
+						}
 						if (entryValue >= entryValueLimit)
 						{
 							entryValue = 0
@@ -310,8 +347,10 @@ function void AITourMenus.Menu()
 		{
 			Audio.playAudio(0x63)
 			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
-			AITourMenus.handleFading(1)
+			Audio.fadeOutChannel(0, 0.2f)
+			AITourMenus.handleFading(3)
 			EntryFunctions.dataSelect()
+			return
 		}
 		if (result == ACT_SELECT)
 		{
@@ -411,8 +450,9 @@ function void AITourMenus.Menu()
 		{
 			Audio.playAudio(0x63)
 			Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
-			AITourMenus.handleFading(1)
+			AITourMenus.handleFading(3)
 			EntryFunctions.extrasMenu()
+			return
 		}
 		if (result == MODS)
 		{
@@ -430,6 +470,7 @@ function void AITourMenus.Menu()
 			global.game_mode = 0x04
 			AITourMenus.handleFading(1)
 			GameModeControlLoop()
+			return
 		}
 		if (result == EXIT)
 		{
@@ -561,7 +602,7 @@ function void AITourMenus.drawMenu(u8 menu, u8 selectedEntry, u32 framecounter, 
 
 		Renderer.drawSprite("main_menu.circle", getScreenWidth() + 56, getScreenCenterY() + 5, 0, SPRITE_FLAG_PRIO, renderQueue + 1)
 
-		Renderer.drawSprite(System.getSystemClockData(DATE_MONTH) == 12 ? "main_menu.sonic_art_december" : "main_menu.sonic_art", 32, 56 + Math.roundToInt(4.0f * Math.sin(2 * 3.1415 * 256 * float(u8(framecounter)))), 0, SPRITE_FLAG_PRIO, renderQueue)
+		Renderer.drawSprite(System.getSystemClockData(DATE_MONTH) == 12 ? "main_menu.sonic_art_december" : System.getSystemClockData(DATE_MONTH) == 10 ? "main_menu.sonic_art_october" : "main_menu.sonic_art", 32, 56 + Math.roundToInt(4.0f * Math.sin(2 * 3.1415 * 256 * float(u8(framecounter)))), 0, SPRITE_FLAG_PRIO, renderQueue)
 
 		u8 build.yr = Game.getBuildNumber() >> 24
 		u8 build.dy = Game.getBuildNumber() >> 16
@@ -692,6 +733,7 @@ function void AITourMenus.handleFading(u8 type)
 		u16 fadeProgress = 240
 		while (fadeProgress > 0)
 		{
+			enableCustomPlaneReset = false
 			Renderer.resetLifetimeContext(2)
 			Renderer.setLifetimeContext(2)
 			Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), clamp(fadeProgress, 0, 255), 0xff80, false)
@@ -705,9 +747,40 @@ function void AITourMenus.handleFading(u8 type)
 		u16 fadeProgress = 0
 		while (fadeProgress <= 260)
 		{
+			enableCustomPlaneReset = false
 			Renderer.resetLifetimeContext(2)
 			Renderer.setLifetimeContext(2)
 			Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), clamp(fadeProgress, 0, 255), 0xff80, false)
+			fadeProgress += 20
+			Renderer.setLifetimeContext(0)
+			yieldExecution()
+		}
+	}
+	else if (type == 2)
+	{
+		u16 fadeProgress = 320
+		while (fadeProgress > 0)
+		{
+			enableCustomPlaneReset = false
+			Renderer.resetLifetimeContext(2)
+			Renderer.setLifetimeContext(2)
+			Renderer.drawSprite("main_menu.fade_triangles", s16(fadeProgress) - 360, 0, 0, SPRITE_FLAG_PRIO, 0xff80)
+			Renderer.drawSprite("main_menu.fade_triangles", getScreenWidth() + 360 - fadeProgress, 256, 0, SPRITE_FLAG_PRIO | SPRITE_FLAG_FLIP_X | SPRITE_FLAG_FLIP_Y, 0xff80)
+			fadeProgress -= 20
+			Renderer.setLifetimeContext(0)
+			yieldExecution()
+		}
+	}
+	else if (type == 3)
+	{
+		u16 fadeProgress = 0
+		while (fadeProgress <= 260)
+		{
+			enableCustomPlaneReset = false
+			Renderer.resetLifetimeContext(2)
+			Renderer.setLifetimeContext(2)
+			Renderer.drawSprite("main_menu.fade_triangles", s16(fadeProgress) - 260, 0, 0, SPRITE_FLAG_PRIO, 0xff80)
+			Renderer.drawSprite("main_menu.fade_triangles", getScreenWidth() + 260 - fadeProgress, 256, 0, SPRITE_FLAG_PRIO | SPRITE_FLAG_FLIP_X | SPRITE_FLAG_FLIP_Y, 0xff80)
 			fadeProgress += 20
 			Renderer.setLifetimeContext(0)
 			yieldExecution()

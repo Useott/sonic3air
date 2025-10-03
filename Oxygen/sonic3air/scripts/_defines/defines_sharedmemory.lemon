@@ -70,4 +70,4 @@ define global.started_from_act_select = u8[0x801008]
 
 // 0x819000				-> Buffer for translations used by Standalone.getTranslatedString
 
-// 0x81a000 .. 0x81bf82	-> Additional game object slots (continuation of 0xffffcfcb)
+// 0x81b000 .. 0x81cf82	-> Additional game object slots (continuation of 0xffffcfcb)

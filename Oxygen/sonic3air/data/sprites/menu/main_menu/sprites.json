@@ -12,6 +12,8 @@
 	"main_menu.triangles": { "File": "triangles.png", "Center": "256,24" },
 	"main_menu.triangles_october": { "File": "triangles_october.png", "Center": "256,24" },
 	"main_menu.transition_separator": { "File": "transition_separator.png" },
+	"main_menu.fade_triangles": { "File": "fade_triangles.png" },
 	"main_menu.sonic_art": { "File": "sonic.png" },
+	"main_menu.sonic_art_october": { "File": "sonic_october.png" },
 	"main_menu.sonic_art_december": { "File": "sonic_december.png" }
 }

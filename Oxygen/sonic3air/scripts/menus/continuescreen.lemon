@@ -183,7 +183,7 @@ function void fn05c2e0()
 
 	zeroMemory(0xffffb000, 0x2000)
 #if STANDALONE
-	zeroMemory(0x81a000, 0x2000)
+	zeroMemory(0x81b000, 0x2000)
 #endif
 
 	u32[0xfffffe66] = 0

@@ -37,8 +37,8 @@ function void loadupDataSelect()
 	// Go to Data Select
 	global.game_mode = 0x4c
 	DataSelect.setup()
-	Menu.FadeInAfterInit()
-	//Menu.fadeInImmediatelyAfterInit()
+	//Menu.FadeInAfterInit()
+	Menu.fadeInImmediatelyAfterInit()
 	DataSelect.update()
 }
 
