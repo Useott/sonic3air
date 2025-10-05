@@ -26,6 +26,8 @@
 #include "oxygen/simulation/EmulatorInterface.h"
 #include "oxygen/simulation/LogDisplay.h"
 #include "oxygen/simulation/Simulation.h"
+#include "oxygen/file/FilePackage.h"
+#include "sonic3air/version.inc"
 
 
 namespace
@@ -329,6 +331,13 @@ void GameView::keyboard(const rmx::KeyboardEvent& ev)
 							RenderResources::instance().loadSprites();
 							ResourcesCache::instance().loadAllResources();
 							FontCollection::instance().reloadAll();
+							Configuration& config = Configuration::instance();
+							if (EngineMain::getDelegate().useDeveloperFeatures())
+							{
+								std::vector<std::wstring> includedPaths = { L"data/shader/" };
+								std::vector<std::wstring> excludedPaths = { };
+								FilePackage::createFilePackage(config.mAppDataPath + L"data/shaders.bin", includedPaths, excludedPaths, L"", BUILD_NUMBER);
+							}
 							setLogDisplay(String(0, "Reloaded resources in %0.2f sec", timer.getSecondsSinceStart()));
 							break;
 						}

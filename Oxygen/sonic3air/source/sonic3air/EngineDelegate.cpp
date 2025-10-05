@@ -24,6 +24,9 @@
 #include "oxygen/simulation/CodeExec.h"
 #include "oxygen/simulation/EmulatorInterface.h"
 
+#include "oxygen/helper/JsonHelper.h"
+#include "oxygen/helper/JsonSerializer.h"
+
 #include <lemon/program/Program.h>
 #include <lemon/runtime/provider/NativizedOpcodeProvider.h>
 
@@ -90,6 +93,7 @@ bool EngineDelegate::onEnginePreStartup()
 bool EngineDelegate::setupCustomGameProfile()
 {
 	GameProfile& gameProfile = GameProfile::instance();
+	Configuration& config = Configuration::instance();
 
 	if (FTX::FileSystem->exists(L"./oxygenproject.json"))
 	{
@@ -105,10 +109,30 @@ bool EngineDelegate::setupCustomGameProfile()
 		gameProfile.mAsmStackRange.second = 0xfffffe00;
 
 		gameProfile.mDataPackages.clear();
+		if (FTX::FileSystem->exists(config.mGameDataPath + L"/compile_shaders") == false)
 		gameProfile.mDataPackages.emplace_back(L"enginedata.bin",    true);
 		gameProfile.mDataPackages.emplace_back(L"gamedata.bin",      true);
 		gameProfile.mDataPackages.emplace_back(L"audiodata.bin",     true);
 		gameProfile.mDataPackages.emplace_back(L"audioremaster.bin", false);	// Optional package
+	}
+
+	//gameProfile.mDataPackages.emplace_back(L"shaders/*", false);	// Optional packages (with an s)
+	if (FTX::FileSystem->exists(config.mAppDataPath + L"data/shaders.json"))
+	{
+		Json::Value shader_file = JsonHelper::loadFile(config.mAppDataPath + L"data/shaders.json");
+		JsonSerializer serializer(true, shader_file);
+
+		Json::Value activeShaders = shader_file["activeShaders"];
+		const int numShaders = activeShaders.isArray() ? (int)activeShaders.size() : 0;
+		for (int i = 0; i < numShaders; ++i)
+		{
+			if (!activeShaders[i].isString())
+				continue;
+
+			const std::wstring localPath = String(activeShaders[i].asString()).toStdWString();
+			gameProfile.mDataPackages.emplace_back(L"shaders/" + localPath, false);
+		}
+		RMX_LOG_INFO(WString(config.mAppDataPath + L"data/shaders.json").toStdString());
 	}
 
 	// Return true, so the engine won't load the oxygenprofile.json by itself
