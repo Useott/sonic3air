@@ -741,6 +741,10 @@ void OptionsConfig::buildTourOptions()
 		configBuilder.addSetting("Random Monitor Type:", option::RANDOM_MONITOR_TYPE)
 			.addOption("Sonic 3 A.I.R. Style", 0)
 			.addOption("Truly Random", 1);
+
+		configBuilder.addSetting("Extra Life Sound Mode:", option::EXTRA_LIFE_SOUND_MODE)
+			.addOption("Jingle", 0)
+			.addOption("Sound Effect", 1);
 	}
 
 	CATEGORY("Experimental")

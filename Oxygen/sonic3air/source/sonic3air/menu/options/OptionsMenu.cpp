@@ -222,6 +222,7 @@ OptionsMenu::OptionsMenu(MenuBackground& menuBackground) :
 		setupOptionEntry(option::WINTER_AUDIO,				SharedDatabase::Setting::SETTING_WINTER_AUDIO);
 		setupOptionEntry(option::MHZ_INTRO_AUDIO,			SharedDatabase::Setting::SETTING_MHZ_INTRO_AUDIO);
 		setupOptionEntry(option::RANDOM_MONITOR_TYPE,		SharedDatabase::Setting::SETTING_RANDOM_MONITOR_TYPE);
+		setupOptionEntry(option::EXTRA_LIFE_SOUND_MODE,		SharedDatabase::Setting::SETTING_EXTRA_LIFE_SOUND_MODE);
 
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ1,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ2,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
@@ -1880,6 +1881,9 @@ std::string OptionsMenu::checkForAvailableTranslation(std::string text)
 	"Random Monitor Type:",
 	"Truly Random",
 	"MHZ 1 Intro Music:",
+	"Extra Life Sound Mode:",
+	"Jingle",
+	"Sound Effect",
 	};
 
 	uint8 id = 255;

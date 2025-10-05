@@ -168,7 +168,7 @@ function void Standalone.playAudio(u8 sfxId, bool swap)
 	{
 		soundRegType = SoundRegType.TYPE_JINGLE
 	}
-	else if (sfxId <= 0xdb)
+	else if (sfxId <= 0xdb || (sfxId == MUSIC_EXTRALIFE && Game.getSetting(SETTING_EXTRA_LIFE_SOUND_MODE) == 1))
 	{
 		soundRegType = SoundRegType.TYPE_SOUND
 	}
@@ -250,20 +250,27 @@ function void Standalone.playAudio(u8 sfxId, bool swap)
 		}
 		else if (sfxId == MUSIC_EXTRALIFE)
 		{
-			// Extra life jingle
-			if (Game.getSetting(SETTING_AUDIO_EXTRALIFE_JINGLE) == 0)
+			if (Game.getSetting(SETTING_EXTRA_LIFE_SOUND_MODE))
 			{
-				soundKey = "2a_sonic3"
+				soundKey = "2a_sound"
 			}
-			else if (Game.getSetting(SETTING_AUDIO_EXTRALIFE_JINGLE) == 0x10)
+			else
 			{
-				if (!isSonicAndKnucklesZone())
+				// Extra life jingle
+				if (Game.getSetting(SETTING_AUDIO_EXTRALIFE_JINGLE) == 0)
+				{
 					soundKey = "2a_sonic3"
-			}
+				}
+				else if (Game.getSetting(SETTING_AUDIO_EXTRALIFE_JINGLE) == 0x10)
+				{
+					if (!isSonicAndKnucklesZone())
+						soundKey = "2a_sonic3"
+				}
 
-			// Special handling for this jingle: Play in channel 1, but mark as override for channel 0 (= music)
-			Audio.playOverride(soundKey, AudioContext.CONTEXT_MUSIC, 1, 0)
-			return
+				// Special handling for this jingle: Play in channel 1, but mark as override for channel 0 (= music)
+				Audio.playOverride(soundKey, AudioContext.CONTEXT_MUSIC, 1, 0)
+				return
+			}
 		}
 		else if (sfxId == MUSIC_INVINCIBLE)
 		{

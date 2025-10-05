@@ -144,6 +144,8 @@
 	"10_winter":		{ "Name": "Mushroom Hill 2 (winter)",       "File": "10_winter.ogg",		"Type": "Music", "LoopStart": "135196" },
 	"10_winter_fast":	{ "Name": "Mushroom Hill 2 (winter, fast)", "File": "10_winter_fast.ogg",	"Type": "Music", "LoopStart": "108157" },
 
+	// Life SFX
+	"2A_sound":		 { "Name": "Extra Life (Sound Effect)", "File": "2a_sound.ogg", "Type": "Sound" },
 	
 
 

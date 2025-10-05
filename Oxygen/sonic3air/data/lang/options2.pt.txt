@@ -69,3 +69,6 @@ Menos instrumentos
 Tipo de monitor aleatorio:
 Realmente aleatorio
 Durante intro da MHZ1:
+Ao pegar uma vida extra:
+Tocar jingle
+Tocar efeito sonoro
