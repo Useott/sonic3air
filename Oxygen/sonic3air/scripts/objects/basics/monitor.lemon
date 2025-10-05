@@ -316,7 +316,7 @@ function void MonitorIntact.UpdateDefault()
 	if (Game.getSetting(SETTING_RANDOM_MONITOR_TYPE))
 	{
 		objA0.subtype2c = (global.level_random_base ^ objA0.position.x.u16 ^ objA0.position.y.u16 ^ level.framecounter) % 10 + 1
-		if (objA0.subtype2c == 10)
+		if (objA0.subtype2c == 9 || objA0.subtype2c == 10)
 			objA0.subtype2c = 11
 	}
 #else
