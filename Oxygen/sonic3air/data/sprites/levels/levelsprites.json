@@ -12,6 +12,15 @@
 	"bg_dez1": { "File": "dez1_background.bmp", "Center": "24,0" },
 	"bg_dez2": { "File": "dez2_background.bmp", "Center": "24,0" },
 
+	// FBZ 2 background layers
+	"bg_fbz2_l1": { "File": "fbz2_background.bmp", "Rect": "0,0,512,80", 	"Center": "512,0" },
+	"bg_fbz2_l2": { "File": "fbz2_background.bmp", "Rect": "0,80,512,48", 	"Center": "512,-80" },
+	"bg_fbz2_l3": { "File": "fbz2_background.bmp", "Rect": "0,128,512,384", "Center": "512,-128" },
+	"bg_fbz2_l4": { "File": "fbz2_background.bmp", "Rect": "0,512,512,8", 	"Center": "512,0" },
+	"bg_fbz2_l5": { "File": "fbz2_background.bmp", "Rect": "0,520,512,8", 	"Center": "512,-8" },
+	"bg_fbz2_l6": { "File": "fbz2_background.bmp", "Rect": "0,528,512,96", 	"Center": "512,-16" },
+	"bg_fbz2_l7": { "File": "fbz2_background.bmp", "Rect": "0,624,512,48", 	"Center": "512,0" },
+
 	// Falling snow outside ICZ (for a neat easter egg)
 	"non_icz_snow_0": { "File": "non_icz_snow.png", "Rect": "0,0,4,4" },
 	"non_icz_snow_1": { "File": "non_icz_snow.png", "Rect": "4,0,4,4" },

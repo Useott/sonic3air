@@ -1724,6 +1724,68 @@ function void UpdateLevelScrolling.FBZ2()
 {
 	D0.u16 = level.scrolling_routine
 	call 0x053024 + D0.u16
+
+#if STANDALONE
+	// Not in the inital area
+	if (Mods.isModActive("thorn-d.a.-garden-edition") || Mods.isModActive("sonic 3 D.A. garden edition port"))
+	{
+		if (!(camera.foreground.x.u16 >= 0x680 || (camera.foreground.x.u16 >= 0x580 && camera.foreground.y.u16 <= 0x320) || camera.foreground.y.u16 <= 0x220))
+		{
+			if (u8[0x800fbf] == true)
+				Level.loadPaletteData(0x13)
+			u8[0x800fbf] = false
+			return
+		}
+	}
+	else if (camera.foreground.x.u16 < 0x580 && camera.foreground.y.u16 > 0x280)
+	{
+		u8[0x800fbf] = false
+		return
+	}
+
+	if (u8[0x800fbf] == false)
+	{
+		u16 backupD1 = D1.u16
+		D1.u16 = 0xb00
+		fn053248()
+		D1.u16 = backupD1
+		fn053248()
+	}
+
+	u8[0x800fbf] = true
+
+	// Not when outside
+	if (u16[0xffffeed6] || camera.position.x.u16 + getScreenWidth() > 0x2c80)
+		return
+
+	Renderer.enableDefaultPlane(0, false)
+	u16 px = 0
+	s16 py = -(camera.foreground.y.u16 / 3)
+	for (u16 i; i < 6; ++i)
+	{
+		py += 560 * (i / 2)
+		u16 offset = 512 * (i % 2)
+
+		px = -Math.roundToInt(float(camera.foreground.x.u16) / 2.0f)
+		Renderer.drawSprite("bg_fbz2_l1", px % 512 + offset, py, 0x30, 0, 0x1101)
+		px = -Math.roundToInt(float(camera.foreground.x.u16) / 1.85f)
+		Renderer.drawSprite("bg_fbz2_l2", px % 512 + offset, py, 0x30, 0, 0x1101)
+		px = -Math.roundToInt(float(camera.foreground.x.u16) / 2.5f)
+		Renderer.drawSprite("bg_fbz2_l3", px % 512 + offset, py, 0x30, 0, 0x1101)
+		px = -Math.roundToInt(float(camera.foreground.x.u16) / 3.0f)
+		Renderer.drawSprite("bg_fbz2_l4", px % 512 + offset, 176 + py, 0x30, 0, 0x1100)
+		px = -Math.roundToInt(float(camera.foreground.x.u16) / 3.25f)
+		Renderer.drawSprite("bg_fbz2_l5", px % 512 + offset, 176 + py, 0x30, 0, 0x1100)
+		px = -Math.roundToInt(float(camera.foreground.x.u16) / 3.5f) - s16(global.framecounter / 2)
+		Renderer.drawSprite("bg_fbz2_l6", px % 512 + offset, 176 + py, 0x30, 0, 0x1100)
+		px = -Math.roundToInt(float(camera.foreground.x.u16) / 8.0f) - s16(global.framecounter / 3)
+		s16 y_offset = Math.roundToInt(2.0f * Math.sin(2 * 3.1415 * 256 * float(u8[0x801010]) / 2.0f))
+		Renderer.drawSprite("bg_fbz2_l7", px % 512 + offset, 400 + py + y_offset, 0x30, 0, 0x1100)
+		px = -Math.roundToInt(float(camera.foreground.x.u16) / 1.85f)
+		Renderer.drawSprite("bg_fbz2_l2", px % 512 + offset, py + 432, 0x30, 0, 0x1101)
+		py = -(camera.foreground.y.u16 / 3)
+	}
+#endif
 }
 
 //# address-hook(0x053024) end(0x053024)
@@ -2046,8 +2108,19 @@ function void fn05326a()
 //# address-hook(0x05327a) end(0x05327a)
 function void fn05327a()
 {
+#if STANDALONE
+	u16 white = u16[0xfffffc70]
+	u16 light_blue = u16[0xfffffc6a]
+	u16 blue = u16[0xfffffc6e]
+#endif
 	A1 = 0x052dc0
 	fn05327e()
+#if STANDALONE
+	Level.loadPaletteData(0x13)
+	u16[0xfffffc68] = white
+	u16[0xfffffc74] = light_blue
+	u16[0xfffffc7e] = blue
+#endif
 }
 
 
