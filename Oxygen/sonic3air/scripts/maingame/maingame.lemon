@@ -1525,6 +1525,19 @@ function void fn01c2b0()
 	Level.loadNonfadingPaletteData(u8[A2+8])
 
 #if STANDALONE
+	if (u8[A2+8] == 0x13 && checkpoint.number != 0) // FBZ 2 level palette
+	{
+		u16 backupD1 = D1.u16
+		D1.u16 = 0xb00
+		fn053248()
+		D1.u16 = 0
+		fn053248()
+		D1.u16 = backupD1
+
+		copyMemory(0xfffffce0, 0xfffffc60, 0x20)
+		zeroMemory(0xfffffc60, 0x20)
+	}
+
 	//// Copy 16 palette entries from 0x10 to 0x90, primarily for the rings
 	//// TODO: Here is not a good place to do this, as
 	////  - 1.) the primary palette has to be updated when fully underwater

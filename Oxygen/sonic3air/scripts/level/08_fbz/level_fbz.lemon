@@ -1739,6 +1739,8 @@ function void UpdateLevelScrolling.FBZ2()
 	}
 	else if (camera.foreground.x.u16 < 0x580 && camera.foreground.y.u16 > 0x280)
 	{
+		if (u8[0x800fbf] == true)
+			Level.loadPaletteData(0x13)
 		u8[0x800fbf] = false
 		return
 	}
