@@ -73,6 +73,8 @@ function void fn07b2dc()
 	{
 		u16[0xfffffa9a] = 0
 	}
+
+	level.boss_encounter = 1
 #endif
 
 	if (SetupObjectAttributesSlotted(0x07d3ea))
@@ -1010,4 +1012,7 @@ function void fn07d39e()
 	move_area.right = camera.position.x.u16 + getScreenExtend() * 2
 
 	loadPaletteLine1(0x07d850)
+#if STANDALONE
+	level.boss_encounter = 0
+#endif
 }
