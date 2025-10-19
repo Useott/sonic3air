@@ -1020,6 +1020,27 @@ function void fn06a872()
 	objA1.position.x.u16 = objA0.position.x.u16
 	D0.u16 = objA0.position.y.u16
 	objA1.position.y.u16 = D0.u16
+#if STANDALONE
+	for (u8 i = 0; i < u8[0x807307]; ++i)
+	{
+		u32 address = 0xffff0000 + u32(u16[0x807308 + u32(i * 2)])
+		if (u32[address] == addressof(MonitorIntact.BaseUpdate) && u8[address + 0x05] <= 0x02)
+		{
+			u16[address + 0x14] += 1
+			if (D0.u16 >= 0x0828)
+				u8[address + 0x3c] = 1
+		}
+		else
+		{
+			u16[0x807308 + u32(i * 2)] = 0
+			continue
+		}
+	}
+
+	if (u8[0xffb020] != char.state.LIFTED)
+		u8[0x807307] = 0
+#endif
+
 	if (D0.u16 < 0x0828)
 		return
 

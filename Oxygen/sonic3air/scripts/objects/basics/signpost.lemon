@@ -28,6 +28,8 @@ function void fn0836e0()
 	}
 
 	u8[A0 + 0x49] = 0
+	if (global.act == 0)
+		u8[0x807307] = 0
 #endif
 
 	objA0.update_address = 0x083708
@@ -67,6 +69,12 @@ function void fn083708()
 					u8[A0 + 0x3c] = 0x04
 					objA0.velocity.y = -0x500
 				#if STANDALONE
+					// Have monitors move down with the player once HCZ 2 starts by storing their addresses for future use
+					if (global.zone == 1)
+					{
+						u8[0x807307] += 1
+						u16[0x807308 + u16((u8[0x807307] - 1) * 2)] = A0.u16		// Add this to the hidden monitor list
+					}
 					if (objA0.state == 0x0b)	// Classic Shield's state is not completely supported
 						objA0.state = 0x05
 				#endif
