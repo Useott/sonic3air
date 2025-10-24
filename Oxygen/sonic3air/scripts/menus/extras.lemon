@@ -382,7 +382,10 @@ function void Extras.Menu(u8 fadeInMethod)
 		}
 
 		if (frameCounter == 2)
+		{
 			AITourMenus.handleFading(2)
+			Menu.fadeInImmediatelyAfterInit()
+		}
 		
 		if (selectedEntry == 0)
 		{
