@@ -142,7 +142,44 @@ function void AIZ1.ChangeBackgroundForKnuckles()
 	if (isMainCharacter(CHARACTER_KNUCKLES))
 	{
 		fn04fa4c()
+	#if STANDALONE
+		// Poke holes in the sky for the clouds
+		fillMemory_u16(0xffff3400, 0x20, 0)
+		fillMemory_u16(0xffff368a, 0x06, 0)
+		fillMemory_u16(0xffff3f80, 0x20, 0)
+		fillMemory_u16(0xffff5800, 0x20, 0)
+	#endif
 	}
+#if STANDALONE
+	else
+	{
+		// Custom horizon rendering
+		fillMemory_u16(0xffff3400, 0x30, 0)
+
+		u16[0xffff3430] = 0x0402
+		fillMemory_u16(0xffff3432, 0x0c, 0)
+
+		fillMemory_u16(0xffff368a, 0x06, 0)
+
+		u16[0xffff343e] = 0x0002
+		fillMemory_u16(0xffff3f80, 0x30, 0)
+
+		u16[0xffff3fb4] = 0x000c
+		u16[0xffff3fb6] = 0x0406
+		u16[0xffff3fb8] = 0
+		u16[0xffff3fba] = 0
+
+		fillMemory_u16(0xffff5800, 0x20, 0)
+
+		u16[0xffff3fbe] = 0x040a
+		u16[0xffff5820] = 0x040b
+		fillMemory_u16(0xffff5822, 0x0c, 0)
+
+		u16[0xffff5834] = 0x000c
+		u16[0xffff5836] = 0x0406
+		fillMemory_u16(0xffff5838, 0x04, 0)
+	}
+#endif
 }
 
 
@@ -2234,3 +2271,93 @@ function void fn23b680()
 		}
 	}
 }
+
+#if STANDALONE
+function void RenderAIZ1HorizonDuringFireBreath(s16 px, s16 py)
+{
+	s16 offset
+	for (u16 i; i < 0x10; ++i)
+	{
+		Renderer.drawVdpSprite(px, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0264, 0x1001)
+		Renderer.drawVdpSprite(px, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x0265, 0x1001)
+		Renderer.drawVdpSprite(px + 8, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0264, 0x1001)
+		Renderer.drawVdpSprite(px + 8, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x0265, 0x1001)
+		Renderer.drawVdpSprite(px + 16, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0264, 0x1001)
+		Renderer.drawVdpSprite(px + 16, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x0265, 0x1001)
+		Renderer.drawVdpSprite(px + 24, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0264, 0x1001)
+		Renderer.drawVdpSprite(px + 24, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x0265, 0x1001)
+
+		offset = Math.roundToInt(4.0f * Math.sin(2.0f * 3.1415f * 3072 + float(global.framecounter.u16) / 82.0f))
+		Renderer.drawVdpSprite(px + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x01ee, 0x1001)
+		Renderer.drawVdpSprite(px + 8 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x01ef, 0x1001)
+		Renderer.drawVdpSprite(px + 16 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x01ef, 0x1001)
+		Renderer.drawVdpSprite(px + 24 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x01f1, 0x1001)
+
+		offset = Math.roundToInt(4.0f * Math.sin(2.0f * 3.1415f * 3072 + float(global.framecounter.u16) / 41.0f))
+		Renderer.drawVdpSprite(px + offset, py + 24, 0, sprite_attribute.PALETTE.LINE3 | 0x01f0, 0x1001)
+		Renderer.drawVdpSprite(px + 8 + offset, py + 24, 0, sprite_attribute.PALETTE.LINE3 | 0x01f2, 0x1001)
+		Renderer.drawVdpSprite(px + 16 + offset, py + 24, 0, sprite_attribute.PALETTE.LINE3 | 0x01f0, 0x1001)
+		Renderer.drawVdpSprite(px + 24 + offset, py + 24, 0, sprite_attribute.PALETTE.LINE3 | 0x01f2, 0x1001)
+
+		px += 32
+	}
+}
+
+function void RenderAIZ1CloudsDuringFireBreath(s16 px, s16 py)
+{
+	u16 i
+	s16 originalpx = px
+	s16 offset = -(level.framecounter / 3) % 0xa0
+
+	for (i = 0; i < 10; ++i)
+	{
+		if (i % 2 == 0)
+		{
+			Renderer.drawVdpSprite(px + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0260, 0x1001)
+			Renderer.drawVdpSprite(px + 8 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001)
+			Renderer.drawVdpSprite(px + 16 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001)
+			Renderer.drawVdpSprite(px + 24 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0260, 0x1001)
+
+			Renderer.drawVdpSprite(px + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001)
+			Renderer.drawVdpSprite(px + 8 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0218, 0x1001)
+			Renderer.drawVdpSprite(px + 16 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001)
+			Renderer.drawVdpSprite(px + 24 + offset, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x0261, 0x1001)
+		}
+		else Renderer.drawVdpSprite(px + offset, py + 8, 4, sprite_attribute.PALETTE.LINE3 | 0x025b, 0x1001)
+		px += 0x50
+	}
+
+	px = originalpx
+	py += 16
+	offset = -(level.framecounter / 6) % (0x80 * 3)
+	for (i = 0; i < 10; ++i)
+	{
+		if (i % 3 == 1)
+		{
+			Renderer.drawVdpSprite(px + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0260, 0x1001)
+			Renderer.drawVdpSprite(px + 8 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001)
+			Renderer.drawVdpSprite(px + 16 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001)
+			Renderer.drawVdpSprite(px + 24 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0260, 0x1001)
+
+			Renderer.drawVdpSprite(px + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001)
+			Renderer.drawVdpSprite(px + 8 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0218, 0x1001)
+			Renderer.drawVdpSprite(px + 16 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001)
+			Renderer.drawVdpSprite(px + 24 + offset, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x0261, 0x1001)
+		}
+		else Renderer.drawVdpSprite(px + offset, py, 4, sprite_attribute.PALETTE.LINE3 | 0x025b, 0x1001)
+		px += 0x80
+	}
+
+	u32 color
+	{
+		color += u32(((u8[0xfffffc77] & 0x0f) / 2 * 2) * 18)
+		color = color << 8
+		color += u32(((u8[0xfffffc77] / 0x10) / 2 * 2) * 18)
+		color = color << 8
+		color += u32(((u8[0xfffffc76]) / 2 * 2) * 18)
+		color = color << 8
+		color += 0xff
+	}
+	Renderer.drawRect(0x2ec8, 0, 0x260, 0x360, color, 0x1000, true, true)
+}
+#endif

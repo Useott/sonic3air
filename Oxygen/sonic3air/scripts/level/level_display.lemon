@@ -255,6 +255,20 @@ function void UpdateLevelDisplay()
 			offset = Math.roundToInt(4.0f * Math.sin(2.0f * 3.1415f * 3072 * float(255 - (line + camera.background.y.u16) % 256) + float(u16(u8[0x801010])) / 41.0f))
 			Renderer.setScrollOffsetH(0, line, (-u32[0xffffe000 + line * 4]) + offset + 1)
 		}
+
+		if (camera.foreground.x.u16 >= 0x2d00)
+		{
+			s16 px = -((s16(camera.foreground.x.u16) - 0x2f10) / 3)
+			s16 py = 0x0320 - camera.foreground.y.u16
+			RenderAIZ1HorizonDuringFireBreath(px, py)
+
+			px = -((s16(camera.foreground.x.u16) - 0x2f10) / 2)
+			py = 0x0300 - camera.foreground.y.u16
+			RenderAIZ1CloudsDuringFireBreath(px, py)
+
+			if (camera.foreground.x.u16 < 0x2f10)
+				zeroMemory(0xffff9258, 8)
+		}
 	}
 #endif
 
