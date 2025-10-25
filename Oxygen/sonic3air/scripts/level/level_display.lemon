@@ -266,7 +266,7 @@ function void UpdateLevelDisplay()
 			py = 0x0300 - camera.foreground.y.u16
 			RenderAIZ1CloudsDuringFireBreath(px, py)
 
-			if (camera.foreground.x.u16 < 0x2f10)
+			if (camera.foreground.x.u16 > 0x2d80 && camera.foreground.x.u16 < 0x2f10)
 				zeroMemory(0xffff9258, 8)
 		}
 	}
