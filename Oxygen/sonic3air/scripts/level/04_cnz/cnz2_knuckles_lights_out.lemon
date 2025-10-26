@@ -278,7 +278,17 @@ function void fn031d74()
 			objA0.update_address = 0x031d8a
 			Audio.playAudio("glass_break")
 			playSound(0x6e)
+
 			CNZ.LightBulbPieces.Spawn()
+			if (allocDynamicObjectStd())
+			{
+				// Spawn floating points display
+				objA1.update_address = addressof(FloatingPoints.Init)
+				objA1.position.x.u16 = objA0.position.x.u16
+				objA1.position.y.u16 = objA0.position.y.u16
+				objA1.animation.sprite = 0x04
+			}
+
 			u8[0xffff0000 + objA0.respawn_entry] |= 0x10
 			break
 		}
@@ -433,6 +443,7 @@ function void CNZ.LightBulbPieces.Update()
 	if ((objA0.render_flags & render_flag.VISIBLE) == 0)
 		UnloadObject()
 
-	DrawObject()
+	if (level.framecounter % 2)
+		DrawObject()
 }
 #endif
