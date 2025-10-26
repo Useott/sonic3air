@@ -575,6 +575,7 @@ function void MonitorIntact.Opening()
 	DrawObject()
 
 #if STANDALONE
+	Audio.playAudio("glass_break")
 	Standalone.onMonitorOpened()
 #endif
 }

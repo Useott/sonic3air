@@ -346,6 +346,10 @@ void OptionsConfig::buildAudio()
 			.addOption("Normal", 0)
 			.addOption("Muffled", 1);
 
+		configBuilder.addSetting("AIZ 1 Post-fire Music:", option::AIZ1_FIRE_AUDIO)
+			.addOption("Normal", 0)
+			.addOption("Act 2 DAC channel", 1);
+
 		configBuilder.addSetting("CNZ Lights Out Music:", option::LIGHTS_OUT_AUDIO)
 			.addOption("Normal", 0)
 			.addOption("Less channels", 1);

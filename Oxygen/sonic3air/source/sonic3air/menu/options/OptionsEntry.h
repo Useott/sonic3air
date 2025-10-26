@@ -69,6 +69,7 @@ namespace option
 		LIGHTS_OUT_AUDIO,
 		WINTER_AUDIO,
 		MHZ_INTRO_AUDIO,
+		AIZ1_FIRE_AUDIO,
 
 		// Visuals
 		ROTATION,

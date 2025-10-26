@@ -416,6 +416,11 @@ function void Standalone.playAudio(u8 sfxId, bool swap)
 			soundKey = "1f_proto"
 			soundRegType = SoundRegType.TYPE_MUSIC
 		}
+		else if (sfxId == MUSIC_AIZ1 && global.act == 1 && Game.getSetting(SETTING_AIZ1_FIRE_AUDIO))
+		{
+			// Alternate version with AIZ 2's DAC channel (Mostly used for drums - that's the main difference)
+			soundKey = "01_fire"
+		}
 		else if (sfxId == MUSIC_MHZ2 && u16[0xffffeed6] == 0 && u8[0xfffff7c1] == 0xff && Game.getSetting(SETTING_WINTER_AUDIO))
 		{
 			soundKey = "10_winter"

@@ -72,3 +72,5 @@ Durante intro da MHZ1:
 Ao pegar uma vida extra:
 Tocar jingle
 Tocar efeito sonoro
+Apos queimada da AIZ1:
+Canal DAC do Ato 2

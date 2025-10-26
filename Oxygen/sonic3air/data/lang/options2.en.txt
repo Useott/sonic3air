@@ -72,3 +72,5 @@ MHZ 1 Intro Music:
 Extra Life Sound Mode:
 Jingle
 Sound Effect
+AIZ 1 Post-fire Music:
+Act 2 DAC channel

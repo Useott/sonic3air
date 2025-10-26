@@ -130,6 +130,9 @@
 	"32":		 { "Name": "Victory (S&K)", "Source": "EmulationDirect", "Type": "Jingle" },
 	"32_sonic3": { "Name": "Victory (S3)",  "Source": "EmulationDirect", "EmulatedID": "0x32", "Address": "0x2dfbfe", "Type": "Jingle" },
 
+	// AIZ1 on fire
+	"01_fire": { "Name": "Angel Island 1 (post-fire)", "File": "01_fire.smps", "ContentOffset": "0x0000", "Source": "EmulationDirect", "EmulatedID": "0x01", "Type": "Music" },
+
 	// CNZ 2 lights out
 	"08_dark": 				{ "Name": "Carnival Night 2 (Lights out)", 				"File": "08_dark.ogg", 		 		"Type": "Music" },
 	"08_dark_fast": 		{ "Name": "Carnival Night 2 (Lights out, fast)", 		"File": "08_dark_fast.ogg", 		"Type": "Music" },
@@ -370,6 +373,8 @@
 	"peelout_charge":  { "Name": "Super Peel-out is charged", "File": "scd_peelout_charge.ogg", "Type": "Sound", "Channel": "AB" },		// Use spindash channel
 	"peelout_release": { "Name": "Super Peel-out is released", "File": "scd_peelout_release.ogg", "Type": "Sound", "Channel": "AB" },		// Use spindash channel
 	"drowning": { "Name": "Thinking about air", "File": "scd_drown.ogg", "Type": "Sound" },
+
+	"glass_break": { "Name": "Glass Shatter", "File": "glass_break.ogg", "Type": "Sound", "Channel": "AC" },
 
 	"shc_splash": { "Name": "SHC Splash", "File": "shc_splash.ogg", "Type": "Sound" }
 

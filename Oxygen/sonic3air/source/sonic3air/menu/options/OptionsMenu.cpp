@@ -66,6 +66,7 @@ namespace
 		ConditionalOption(option::OUTRO_MUSIC,				 true),
 		ConditionalOption(option::COMPETITION_MENU_MUSIC,	 true),
 
+		ConditionalOption(option::AIZ1_FIRE_AUDIO,	 		 true),
 		ConditionalOption(option::LIGHTS_OUT_AUDIO,	 		 true),
 		ConditionalOption(option::WINTER_AUDIO,	 			 true),
 		ConditionalOption(option::MHZ_INTRO_AUDIO,	 		 true),
@@ -223,6 +224,7 @@ OptionsMenu::OptionsMenu(MenuBackground& menuBackground) :
 		setupOptionEntry(option::MHZ_INTRO_AUDIO,			SharedDatabase::Setting::SETTING_MHZ_INTRO_AUDIO);
 		setupOptionEntry(option::RANDOM_MONITOR_TYPE,		SharedDatabase::Setting::SETTING_RANDOM_MONITOR_TYPE);
 		setupOptionEntry(option::EXTRA_LIFE_SOUND_MODE,		SharedDatabase::Setting::SETTING_EXTRA_LIFE_SOUND_MODE);
+		setupOptionEntry(option::AIZ1_FIRE_AUDIO,			SharedDatabase::Setting::SETTING_AIZ1_FIRE_AUDIO);
 
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ1,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
 		setupOptionEntryBitmask(option::LEVELMUSIC_CNZ2,	SharedDatabase::Setting::SETTING_CNZ_PROTOTYPE_MUSIC);
@@ -1884,6 +1886,8 @@ std::string OptionsMenu::checkForAvailableTranslation(std::string text)
 	"Extra Life Sound Mode:",
 	"Jingle",
 	"Sound Effect",
+	"AIZ 1 Post-fire Music:",
+	"Act 2 DAC channel",
 	};
 
 	uint8 id = 255;

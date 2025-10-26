@@ -572,6 +572,11 @@ function void fn04fd62()
 			u16[0xffffb000 + 0x14] = 0x02fc
 			u16[0xffffb000 + 0x1a] = 0
 		}
+
+		if (Game.isTimeAttack())
+		{
+			playMusic(level.default_music.u8)
+		}
 	#endif
 	}
 
