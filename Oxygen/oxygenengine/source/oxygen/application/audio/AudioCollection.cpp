@@ -138,6 +138,7 @@ bool AudioCollection::loadFromJson(const std::wstring& basepath, const std::wstr
 		uint8 emulationSfxId = (numericKey <= 0xff) ? (uint8)numericKey : 0;
 		SourceRegistration::Type sourceType = SourceRegistration::Type::FILE;
 		int loopStart = 0;
+		uint8 UseCaching = 0xff;
 		float volume = 1.0f;
 		uint8 channel = (numericKey < 0xff) ? (uint8)numericKey : 0xff;
 		AudioDefinition::Visibility soundTestVisibility = AudioDefinition::Visibility::AUTO;
@@ -217,6 +218,11 @@ bool AudioCollection::loadFromJson(const std::wstring& basepath, const std::wstr
 									: (value == "hidden")  ? AudioDefinition::Visibility::ALWAYS_HIDDEN
 									: (value == "devmode") ? AudioDefinition::Visibility::DEV_MODE_ONLY : AudioDefinition::Visibility::AUTO;
 			}
+			else if (key == "UseCaching" && !value.empty())
+			{
+				UseCaching = (value == "true")  ? 1
+							: (value == "false") ? 2 : 0xff;
+			}
 		}
 
 		AudioDefinition* audioDefinition = mapFind(mAudioDefinitions, numericKey);
@@ -271,6 +277,7 @@ bool AudioCollection::loadFromJson(const std::wstring& basepath, const std::wstr
 			sourceRegistration.mSourceFile = *audioFilename;	// Can be empty to use ROM's original SMPS data, or the name of a file containing that data
 			sourceRegistration.mSourceAddress = sourceAddress;	// Can be zero to use original address in ROM, or the address where the SMPS data is located
 			sourceRegistration.mContentOffset = contentOffset;
+			sourceRegistration.mUseCaching = UseCaching;
 		}
 	}
 

@@ -541,6 +541,10 @@ void AudioPlayer::swapAudio(uint64 sfxId, int channelId, int contextId)
 
 	SourceRegistration* sourceReg = mAudioCollection.getSourceRegistration(sfxId);
 
+	// Should hopefully avoid audio issues
+	uint8 cachingBackup = sourceReg->mUseCaching;
+	sourceReg->mUseCaching = 0;
+
 	if (nullptr == sourceReg)
 		return;
 
@@ -577,8 +581,11 @@ void AudioPlayer::swapAudio(uint64 sfxId, int channelId, int contextId)
 		playingSound = startPlayback(*sourceReg, position * 100000, volume, contextId, channelId);
 		if (nullptr == playingSound)
 			playAudio(sfxId, contextId);
+		sourceReg->mUseCaching = cachingBackup;
 		return;
 	}
+
+	sourceReg->mUseCaching = cachingBackup;
 
 	// Respect audio override
 	if (isOverridden)

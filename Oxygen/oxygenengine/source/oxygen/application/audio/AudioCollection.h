@@ -45,6 +45,7 @@ public:
 		uint32 mSourceAddress = 0;
 		uint32 mContentOffset = 0;
 		bool mIsLooping = false;
+		uint8 mUseCaching = 0xff;
 		uint32 mLoopStart = 0;
 		float mVolume = 1.0f;
 
