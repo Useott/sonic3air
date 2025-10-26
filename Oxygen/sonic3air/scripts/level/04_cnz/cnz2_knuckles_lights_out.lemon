@@ -246,11 +246,45 @@ function void fn031d3a()
 function void fn031d74()
 {
 	D0.u16 = water.height.current
+#if STANDALONE
+	bool spawnAsBroken = u8[0xffff0000 + objA0.respawn_entry] & 0x10
+	if (D0.u16 < objA0.position.y.u16 || spawnAsBroken)
+#else
 	if (D0.u16 < objA0.position.y.u16)
+#endif
 	{
 		objA0.animation.sprite = 1
 		objA0.update_address = 0x031d8a
 	}
+
+#if STANDALONE
+	s16 px1 = objA0.position.x.u16 - 8
+	s16 py1 = objA0.position.y.u16 - 24
+	s16 sx1 = 16
+	s16 sy1 = 16
+	for (u8 i = 0; i < 2; ++i)
+	{
+		A1 = i == 0 ? 0xffffb000 : 0xffffb04a
+		s16 px2 = objA1.position.x.u16
+		s16 py2 = objA1.position.y.u16
+
+		if (objA1.state != char.state.ROLLING)
+			continue
+
+		if (checkBoxOverlap(px1, py1, sx1, sy1, px2, py2, 16, 16) && objA1.velocity.y > 0)
+		{
+			objA1.velocity.y = -objA1.velocity.y
+			objA0.animation.sprite = 1
+			objA0.update_address = 0x031d8a
+			Audio.playAudio("glass_break")
+			playSound(0x6e)
+			CNZ.LightBulbPieces.Spawn()
+			u8[0xffff0000 + objA0.respawn_entry] |= 0x10
+			break
+		}
+	}
+#endif
+
 	DrawOrUnloadObject()
 }
 
@@ -362,3 +396,43 @@ function void fn065d8c()
 
 	DrawOrUnloadObject()
 }
+
+#if STANDALONE
+function void CNZ.LightBulbPieces.Spawn()
+{
+	for (u8 i = 0; i < 4; ++i)
+	{
+		s16 x_offset = i / 2 == 0 ? 8 : -8
+		s16 y_offset = i % 2 == 0 ? 8 : -8
+
+		s16 flip_x = i / 2 == 0 ? 1 : -1
+		s16 flip_y = i % 2 == 1 ? 3 : 2
+
+		if (allocDynamicObjectStd())
+		{
+			objA1.update_address = makeCallable(CNZ.LightBulbPieces.Update)
+			objA1.position.x.u16 = objA0.position.x.u16 + x_offset
+			objA1.position.y.u16 = objA0.position.y.u16 + y_offset
+			objA1.render_flags = (render_flag.VISIBLE | render_flag.WORLD)
+
+			objA1.velocity.x = flip_y == 2 ? 0x100 : 0x80
+			objA1.velocity.x *= flip_x
+
+			objA1.velocity.y = -0x100 * flip_y
+
+			objA1.subtype2c = i
+		}
+	}
+}
+
+function void CNZ.LightBulbPieces.Update()
+{
+	objA0.velocity.y += 0x38
+	UpdateMovementStraightSimple()
+
+	if ((objA0.render_flags & render_flag.VISIBLE) == 0)
+		UnloadObject()
+
+	DrawObject()
+}
+#endif

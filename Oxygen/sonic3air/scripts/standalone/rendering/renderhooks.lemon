@@ -1074,6 +1074,28 @@ function bool Standalone.onWriteToSpriteTable(s16 px, s16 py, u16 renderQueue)
 		return true
 	}
 
+	// CNZ 2 light bulb shard
+	if (objA0.update_address == makeCallable(CNZ.LightBulbPieces.Update))
+	{
+		u16 patternIndex = (objA0.subtype2c % 2 == 0) ? (sprite_attribute.PALETTE.LINE2 | 0x40c) : (sprite_attribute.PALETTE.LINE2 | 0x404)
+		if (objA0.subtype2c / 2 == 0)
+			patternIndex = (sprite_attribute.FLIP_X | patternIndex)
+
+		if (objA0.subtype2c / 2)
+		{
+			Renderer.drawVdpSprite(px - 8, py - 8, 1, patternIndex, renderQueue)
+			if (objA0.subtype2c % 2)
+				Renderer.drawVdpSprite(px, py - 8, 1, patternIndex + 4, renderQueue)
+		}
+		else
+		{
+			Renderer.drawVdpSprite(px, py - 8, 1, patternIndex, renderQueue)
+			if (objA0.subtype2c % 2)
+				Renderer.drawVdpSprite(px - 8, py - 8, 1, patternIndex + 4, renderQueue)
+		}
+		return true
+	}
+
 	return false
 }
 
