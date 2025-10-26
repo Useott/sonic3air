@@ -140,8 +140,8 @@
 	"08_proto_dark_fast":	{ "Name": "Carnival Night 2 (Proto, lights out, fast)", "File": "08_proto_dark_fast.ogg", 	"Type": "Music", "LoopStart": "35943" },
 
 	// MHZ 1 Intro
-	"0f_intro":	{ "File": "0f_intro.ogg",  "Type": "Music",  "LoopStart": "191280" },
-	"0f_intro_fast": { "File": "0f_intro_fast.ogg",  "Type": "Music",  "LoopStart": "153024" },
+	"0f_intro":			{ "Name": "Mushroom Hill 1 (intro)", 		"File": "0f_intro.ogg",  		"Type": "Music",  "LoopStart": "191280" },
+	"0f_intro_fast": 	{ "Name": "Mushroom Hill 2 (intro, fast)", 	"File": "0f_intro_fast.ogg",  "Type": "Music",  "LoopStart": "153024" },
 
 	// MHZ 2 Winter
 	"10_winter":		{ "Name": "Mushroom Hill 2 (winter)",       "File": "10_winter.ogg",		"Type": "Music", "LoopStart": "135196" },
