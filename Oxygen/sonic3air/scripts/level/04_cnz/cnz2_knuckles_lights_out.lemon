@@ -418,7 +418,7 @@ function void CNZ.LightBulbPieces.Spawn()
 		s16 flip_x = i / 2 == 0 ? 1 : -1
 		s16 flip_y = i % 2 == 1 ? 3 : 2
 
-		if (allocDynamicObjectStd())
+		if (allocDynamicObjectStdExtended())
 		{
 			objA1.update_address = makeCallable(CNZ.LightBulbPieces.Update)
 			objA1.position.x.u16 = objA0.position.x.u16 + x_offset
@@ -431,6 +431,9 @@ function void CNZ.LightBulbPieces.Spawn()
 			objA1.velocity.y = -0x100 * flip_y
 
 			objA1.subtype2c = i
+
+			objA1.box_size.x = 0x20
+			objA1.box_size.y = 0x20
 		}
 	}
 }
