@@ -98,11 +98,11 @@ function void EntryFunctions.mainMenuBG()
 }
 
 
-function void EntryFunctions.AITourMenus()
+function void EntryFunctions.TourMenus()
 {
 	EntryFunctions.sharedInit()
 	Input.setTouchInputMode(TOUCH_INPUT_MODE_HIDDEN_CONTROLS)
-	System.setupCallFrame("AITourMenus.Menu")
+	System.setupCallFrame("TourMenus.Menu")
 }
 
 

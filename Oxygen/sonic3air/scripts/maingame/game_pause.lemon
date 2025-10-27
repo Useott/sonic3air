@@ -375,10 +375,10 @@ function void GamePause.Menu()
 			{
 			#if GAMEAPP
 				// Open in-game options
-				AITourMenus.handleFading(1)
+				TourMenus.handleFading(1)
 				Input.setTouchInputMode(TOUCH_INPUT_MODE_NORMAL_CONTROLS)
 				Game.openOptionsMenu()
-				AITourMenus.handleFading(0)
+				TourMenus.handleFading(0)
 			#endif
 			}
 			else if (GamePause.selectedEntry == 3)

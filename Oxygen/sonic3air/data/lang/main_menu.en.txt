@@ -23,3 +23,4 @@ Sonic
 Sonic - Max Control
 Tails
 Knuckles
+Encore Game

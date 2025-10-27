@@ -116,7 +116,7 @@ function void Extras.DrawMenu(u8 selectedTab, u8 selectedEntry)
 	
 	s16 widescreenOffset = getScreenExtend() - 40
 	
-	AITourMenus.drawMenu(2, selectedEntry, global.framecounter, 0x7000)
+	TourMenus.drawMenu(2, selectedEntry, global.framecounter, 0x7000)
 	//Renderer.drawSprite("options_topbar_bg", s16(getScreenWidth() - 512) / 2, -6, 0, 0x00, 0x7001)
 	
 	Renderer.drawText(TAB_TEXT, s16(getScreenWidth() / 2 - camera.foreground.x.u16), 16, Extras.translatedString55, (selectedTab == 0 && !selectedEntry) ? SELECTED_HIGHLIGHTED : (selectedTab == 0) ? SELECTED : NOT_SELECTED, 5, 0, 0xf000, false, true)
@@ -364,7 +364,7 @@ function void Extras.Menu(u8 fadeInMethod)
 
 		++frameCounter
 		
-		AITourMenus.drawMenuBackground(1, frameCounter)
+		TourMenus.drawMenuBackground(1, frameCounter)
 
 		framesSinceLastTouch += 1
 		if (screenTouchX || screenTouchY)
@@ -383,7 +383,7 @@ function void Extras.Menu(u8 fadeInMethod)
 
 		if (frameCounter == 2)
 		{
-			AITourMenus.handleFading(2)
+			TourMenus.handleFading(2)
 			Menu.fadeInImmediatelyAfterInit()
 		}
 		
@@ -467,12 +467,12 @@ function void Extras.Menu(u8 fadeInMethod)
 	{
 		playSound(0xad)
 		
-		AITourMenus.handleFading(3)
+		TourMenus.handleFading(3)
 
 		u16[0xffffeee4] = 1
 		for (u8 i; i < 12; ++i)
 			yieldExecution()
-		EntryFunctions.AITourMenus()
+		EntryFunctions.TourMenus()
 		yieldExecution()
 	}
 }

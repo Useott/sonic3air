@@ -487,7 +487,7 @@ function void DataSelect.update()
 
 	#if STANDALONE
 		if (level.framecounter == 4)
-			AITourMenus.handleFading(2)
+			TourMenus.handleFading(2)
 	#endif
 
 		// Data Select
@@ -648,13 +648,13 @@ function void fn00d1fa()
 		DataSelect.drawCustomPlanes()	// Required here, otherwise we can have one frame without custom plane setup if returning already during the fade-in
 
 		Audio.fadeOutChannel(0, 0.2f)
-		AITourMenus.handleFading(3)
+		TourMenus.handleFading(3)
 
 		u16[0xffffeee4] = 1
 		Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), 255, 0xff80, false)
 		for (u8 i; i < 6; ++i)
 			yieldExecution()
-		EntryFunctions.AITourMenus()
+		EntryFunctions.TourMenus()
 		yieldExecution()
 	#endif
 	}
@@ -1670,15 +1670,15 @@ function void DataSelect.drawCustomPlanes()
 	//Renderer.drawCustomSprite("bg_dataselect", s16(getScreenWidth() - 512) / 2, 0, 0x00, 0, 0x2000)
 	Renderer.enableDefaultPlane(1, false)
 	Renderer.enableDefaultPlane(3, false)
-	AITourMenus.drawMenuBackground(2, global.framecounter, 0x200a, 0x200b)
-	AITourMenus.drawMenu(3, 0, global.framecounter, 0x2010)
+	TourMenus.drawMenuBackground(2, global.framecounter, 0x200a, 0x200b)
+	TourMenus.drawMenu(3, 0, global.framecounter, 0x2010)
 
 	if (System.hasPlatformFlag(PlatformFlags.MOBILE))
 	{
 		bool isSelected = checkMobileBackButtonPress(0xb04a + 0x34, 0xb04a + 0x36, 0xb04a + 0x39, true)
 		s16 px = 64 + (isSelected ? 16 : 0)
 		s16 py = 24
-		Renderer.drawText("oxyfont_small", px - 16, py, AITourMenus.getMainMenuTexts(6), isSelected ? 0xffff00ff : 0xffffffff, 6, 0, 0xe001, false, true)
+		Renderer.drawText("oxyfont_small", px - 16, py, TourMenus.getMainMenuTexts(6), isSelected ? 0xffff00ff : 0xffffffff, 6, 0, 0xe001, false, true)
 		Renderer.drawSpriteTinted("main_menu.text_bg_small", px, py, 0, SPRITE_FLAG_PRIO, 0xe000, 0, isSelected ? 0xffffffff : 0x000000ff, 1.0f)
 	}
 
