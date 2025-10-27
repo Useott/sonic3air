@@ -1096,6 +1096,16 @@ function bool Standalone.onWriteToSpriteTable(s16 px, s16 py, u16 renderQueue)
 		return true
 	}
 
+	// FBZ magnet decorative tube
+	if (objA0.update_address == makeCallable(FBZMagnetTube))
+	{
+		Renderer.drawVdpSprite(px - 0x48, py - 0x10, 3, 0xa443, 0x3fff)
+		Renderer.drawVdpSprite(px - 0x48, py - 0x20, 1, sprite_attribute.FLIP_Y | 0xa445, 0x3fff)
+		Renderer.drawVdpSprite(px + 0x40, py - 0x10, 3, sprite_attribute.FLIP_X | 0xa443, 0x3fff)
+		Renderer.drawVdpSprite(px + 0x40, py - 0x20, 1, sprite_attribute.FLIP_X | sprite_attribute.FLIP_Y | 0xa445, 0x3fff)
+		return true
+	}
+
 	return false
 }
 

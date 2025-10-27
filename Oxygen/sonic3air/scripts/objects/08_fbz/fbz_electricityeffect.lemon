@@ -62,3 +62,15 @@ function void fn03b238()
 		CheckForUnloadObject()
 	}
 }
+
+
+
+#if STANDALONE
+// Decorative magnet tube
+
+function void FBZMagnetTube()
+{
+	DrawOrUnloadObject()
+}
+
+#endif

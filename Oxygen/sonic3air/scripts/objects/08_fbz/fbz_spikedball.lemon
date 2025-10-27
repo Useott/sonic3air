@@ -43,6 +43,21 @@ function void fn03b0e2()
 
 		objA0.update_address = 0x03b1fc
 		fn03b1fc()
+
+	#if STANDALONE
+		// There's already a object for these tubes
+		// However, I can't get them to spawn no matter what
+		if (allocDynamicObjectStdExtended())
+		{
+			objA1.update_address = makeCallable(FBZMagnetTube)
+			objA1.position.x.u16 = objA0.position.x.u16
+			objA1.position.y.u16 = objA0.position.y.u16
+			objA1.render_flags = (render_flag.VISIBLE | render_flag.WORLD)
+
+			objA1.box_size.x = 0x60
+			objA1.box_size.y = 0x30
+		}
+	#endif
 	}
 	else
 	{
