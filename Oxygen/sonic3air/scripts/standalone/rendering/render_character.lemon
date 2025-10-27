@@ -125,25 +125,46 @@ function bool Standalone.drawCharacterSprite(u8 character, u8 variant, s16 px, s
 
 	if (variant < 2)
 	{
-		if (character == CHARACTER_SONIC && animationSpriteEx == animationSprite)	// Last check is only false if modded scripts made their own changes
+		if (animationSpriteEx == animationSprite)	// This check is only false if modded scripts made their own changes
 		{
-			// Special handling for Drop Dash & Super Peel-Out
-			if (char.state == char.state.SONIC_DROPDASH)
+			if (character == CHARACTER_SONIC)
 			{
-				animationSpriteEx = CHAR_ANIMSPRITE_SONIC_DROPDASH + ((level.framecounter >> 1) & 0x01)
-			}
-			else if (animationSprite >= 0x21 && animationSprite <= 0x30)
-			{
-				if (sonic.fastrunanim.timer > 0)
+				// Special handling for Drop Dash & Super Peel-Out
+				if (char.state == char.state.SONIC_DROPDASH)
 				{
-					animationSpriteEx = CHAR_ANIMSPRITE_SONIC_PEELOUT + (level.framecounter & 0x03)
-
-					if (!Game.getSetting(SETTING_SMOOTH_ROTATION))
+					animationSpriteEx = CHAR_ANIMSPRITE_SONIC_DROPDASH + ((level.framecounter >> 1) & 0x01)
+				}
+				else if (animationSprite >= 0x21 && animationSprite <= 0x30)
+				{
+					if (sonic.fastrunanim.timer > 0)
 					{
-						angle = (animationSprite - 0x21) / 4 * 0xe0
-						if ((char.flags & char.flag.FACING_LEFT) == (global.inv_gravity == 0))
-							angle = -angle
-						animationSprite = 0x21 + (animationSprite - 0x21) % 4
+						animationSpriteEx = CHAR_ANIMSPRITE_SONIC_PEELOUT + (level.framecounter & 0x03)
+
+						if (!Game.getSetting(SETTING_SMOOTH_ROTATION))
+						{
+							angle = (animationSprite - 0x21) / 4 * 0xe0
+							if ((char.flags & char.flag.FACING_LEFT) == (global.inv_gravity == 0))
+								angle = -angle
+							animationSprite = 0x21 + (animationSprite - 0x21) % 4
+						}
+					}
+				}
+			}
+			else if (character == CHARACTER_TAILS)
+			{
+				if (animationSprite >= 0xc3 && animationSprite <= 0xca)
+				{
+					if (tails.fastrunanim.timer > 0)
+					{
+						animationSpriteEx = CHAR_ANIMSPRITE_SONIC_PEELOUT + (level.framecounter & 0x01)
+
+						if (!Game.getSetting(SETTING_SMOOTH_ROTATION))
+						{
+							angle = (animationSprite - 0x21) / 4 * 0xe0
+							if ((char.flags & char.flag.FACING_LEFT) == (global.inv_gravity == 0))
+								angle = -angle
+							animationSprite = 0x21 + (animationSprite - 0x21) % 2
+						}
 					}
 				}
 			}
@@ -266,14 +287,21 @@ function bool Standalone.drawCharacterSprite(u8 character, u8 variant, s16 px, s
 
 		if (key == 0 && animationSpriteEx >= 0x100)
 		{
-			// Special handling for Drop Dash & Super Peel-Out
-			if (animationSpriteEx >= CHAR_ANIMSPRITE_SONIC_PEELOUT)
+			if (character == CHARACTER_SONIC)
 			{
-				key = stringformat("%ssonic_peelout_%d", super.active ? "super" : "", animationSpriteEx - CHAR_ANIMSPRITE_SONIC_PEELOUT)
+				// Special handling for Drop Dash & Super Peel-Out
+				if (animationSpriteEx >= CHAR_ANIMSPRITE_SONIC_PEELOUT)
+				{
+					key = stringformat("%ssonic_peelout_%d", super.active ? "super" : "", animationSpriteEx - CHAR_ANIMSPRITE_SONIC_PEELOUT)
+				}
+				else
+				{
+					key = stringformat("sonic_dropdash_%d", animationSpriteEx - CHAR_ANIMSPRITE_SONIC_DROPDASH)
+				}
 			}
-			else
+			else if (character == CHARACTER_TAILS)
 			{
-				key = stringformat("sonic_dropdash_%d", animationSpriteEx - CHAR_ANIMSPRITE_SONIC_DROPDASH)
+				key = stringformat("character_tails_fastrun_%d", animationSpriteEx - CHAR_ANIMSPRITE_SONIC_PEELOUT)
 			}
 		}
 		if (isPlayer1)
