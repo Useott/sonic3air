@@ -189,7 +189,13 @@ function void fn065bd4()
 	objA0.position.y.u16 += 4
 
 #if STANDALONE
-	if (global.zone == 0x03)
+	if (global.zone == 0x01)
+	{
+		objA0.mapping_offset = 0x22bd1a
+		objA0.sprite_attributes = (sprite_attribute.PALETTE.LINE1 | 0x0426)
+		objA0.position.y.u16 -= 4
+	}
+	else if (global.zone == 0x03)
 	{
 		objA0.mapping_offset = 0x22bd4a
 		objA0.sprite_attributes = (sprite_attribute.PALETTE.LINE2 | 0x041a)

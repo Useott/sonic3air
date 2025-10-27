@@ -117,7 +117,9 @@ function void fn0621d6()
 	objA0.countdown_callback = 0x062216
 	level.vertical_wrap = 0x05c0
 
-#if !STANDALONE
+#if STANDALONE
+	objA0.countdown_value -= 1	// Needed so Knuckles jumps on the button properly (we replaced the generic one with the HCZ1 one!)
+#else
 	// Don't load palette for Knuckles
 	//  -> It's not needed in S3AIR, and would mess with the color of some blocks that are only visible in widescreen
 	CutsceneKnuckles.loadPalette()
