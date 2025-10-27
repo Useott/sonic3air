@@ -11,6 +11,8 @@
 #if STANDALONE
 	// Positive if Sonic's fast run animation is active
 	global u8 sonic.fastrunanim.timer
+	global u8 tails.fastrunanim.timer
+	// Knuckles shares Sonic's timer
 
 	// Countdown to zero; while positive, AI Tails will keep holding the jump buttons to gain more jump height
 	global u8 tails_assist.trigger_countdown
@@ -410,6 +412,21 @@ function void Character.UpdateNormalState.Tails()
 		call tableLookupAddress(0x0138f6, char.flags & (char.flag.IN_AIR | char.flag.ROLLING))
 		popA456()
 	}
+
+#if STANDALONE
+	if (Game.getSetting(SETTING_SUPERFAST_RUNANIM))
+	{
+		if (abs(char.groundspeed) >= 0x0d00)
+			tails.fastrunanim.timer = 30
+		else if (tails.fastrunanim.timer > 0)
+		{
+			if (abs(char.groundspeed) >= 0x0800)
+				--tails.fastrunanim.timer
+			else
+				tails.fastrunanim.timer = 0
+		}
+	}
+#endif
 
 	if (level.vertical_wrap == 0xff00)
 	{

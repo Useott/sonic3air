@@ -1,0 +1,4 @@
+{
+	"character_tails_fastrun_0": { "File": "tails_fastrun.bmp", "Rect": "0,0,36,32",  "Center": "19,16" },
+	"character_tails_fastrun_1": { "File": "tails_fastrun.bmp", "Rect": "36,0,36,32", "Center": "19,16" },
+}
