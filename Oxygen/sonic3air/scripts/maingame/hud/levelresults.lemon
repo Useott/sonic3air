@@ -300,6 +300,8 @@ function void LevelResults.AdvanceToNextAct()
 
 #if STANDALONE
 	Standalone.onLevelFinished()
+	if (level.water_present)
+		u32[0xffffcf82] = 0x01f202	// Waves effect
 #endif
 
 	// Sky Sanctuary, Lava Reef Boss, Hidden Palace, or any Act 2?

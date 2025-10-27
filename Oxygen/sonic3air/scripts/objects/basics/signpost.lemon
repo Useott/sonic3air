@@ -299,8 +299,6 @@ function void fn083912()
 
 	#if STANDALONE
 		Game.onZoneActCompleted(global.zone_act.apparent)
-		if (level.water_present)
-			u32[0xffffcf82] = 0x01f202	// Waves effect
 	#endif
 	}
 }
