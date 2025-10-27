@@ -353,6 +353,9 @@ function void fn08c456()
 	if (D0.u16 >= 0x0100)
 	{
 		objA0.velocity.y = -(D0.s16 >> 2)
+	#if STANDALONE
+		playSound(0x96)
+	#endif
 	}
 	else
 	{

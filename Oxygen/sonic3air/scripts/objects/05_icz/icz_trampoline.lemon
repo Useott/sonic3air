@@ -127,6 +127,7 @@ function void fn08b9fa()
 	u8[A1 + 0x40] = 0
 #if STANDALONE
 	u8[A1 + 0x3d] = 0	// Stop spindash
+	playSound(0xae)
 #endif
 }
 

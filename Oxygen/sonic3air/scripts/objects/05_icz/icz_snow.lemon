@@ -155,6 +155,10 @@ function void fn08b616()
 			{
 				TriggerNextZone(0x0600)		// Launch Base Act 1
 			}
+
+		#if STANDALONE
+			playSound(0x95)
+		#endif
 		}
 		Object.TriggerUnloading()
 	}

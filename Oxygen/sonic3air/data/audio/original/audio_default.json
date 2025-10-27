@@ -320,7 +320,7 @@
 	"B2": { "Name": "Error", "Source": "Emulation", "Type": "Sound" },
 	"B3": { "Name": "Special Ring warp", "Source": "Emulation", "Type": "Sound" },
 	"B4": { "Name": "Boss explosion", "Source": "Emulation", "Type": "Sound" },
-	"B5": { "Name": "S1 Special Stage Diamond", "Source": "Emulation", "Type": "Sound" },
+	"B5": { "Name": "Crystal-like interaction", "Source": "Emulation", "Type": "Sound" },
 	"B6": { "Name": "Spin dash is released", "Source": "Emulation", "Type": "Sound", "Channel": "AB" },	// Spindash release
 	"B7": { "Name": "Gambling addiction", "Source": "Emulation", "Type": "Sound" },
 	"B8": { "Name": "Sparkle", "Source": "Emulation", "Type": "Sound" },

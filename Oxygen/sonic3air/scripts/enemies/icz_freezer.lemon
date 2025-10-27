@@ -413,6 +413,11 @@ function void fn08a84c()
 	spawnChildObject(0x08a8dc, 0x14, 4, 8)
 	spawnChildObject(0x08a8dc, 0x16, 12, 8)
 
+#if STANDALONE
+	Audio.playAudio("glass_break")
+	playSound(0x6e)
+#endif
+
 	UnloadObject()
 }
 

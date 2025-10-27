@@ -105,6 +105,9 @@ function void fn08b3aa()
 	spawnChildObject(0x08b432, 0x14, 0, 0)
 	spawnChildObject(0x08b432, 0x16, 0, 0)
 
+#if STANDALONE
+	Audio.playAudio("glass_break")
+#endif
 	playSound(0x6e)
 	Object.TriggerUnloading()
 }
