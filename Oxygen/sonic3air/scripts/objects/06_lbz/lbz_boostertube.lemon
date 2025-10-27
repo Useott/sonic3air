@@ -319,6 +319,32 @@ function void fn029896()
 	{
 		objA0.update_address = 0x029a54
 		fn029a54()
+
+	#if STANDALONE
+		for (u8 i; i < 32; ++i)
+		{
+			if (allocDynamicObjectStdExtended())
+			{
+				objA1.update_address = makeCallable(WaterSplash)
+				objA1.position.x.u16 = objA0.position.x.u16
+				objA1.position.y.u16 = objA0.position.y.u16
+				objA1.velocity.x = 0xc0 + (System.rand() % 0x140)
+				if (i % 2)
+					objA1.velocity.x = -objA1.velocity.x
+				objA1.velocity.y = 0x200 - (System.rand() % 0x200)
+				if (i > 28)
+				{
+					objA1.velocity.y = Math.roundToInt(float(objA1.velocity.y) * 1.5f)
+					objA1.velocity.x /= 8
+				}
+
+				objA1.velocity.x += s16[0xffffb000 + 0x18] / 3
+
+				objA1.render_flags = (render_flag.VISIBLE|render_flag.WORLD)
+				objA1.subtype2c = i
+			}
+		}
+	#endif
 		return
 	}
 
@@ -378,6 +404,29 @@ function void fn02990a()
 				fn0299aa()
 			}
 		}
+	#if STANDALONE
+		for (u8 i; i < 32; ++i)
+		{
+			if (allocDynamicObjectStdExtended())
+			{
+				objA1.update_address = makeCallable(WaterSplash)
+				objA1.position.x.u16 = objA0.position.x.u16
+				objA1.position.y.u16 = objA0.position.y.u16
+				objA1.velocity.x = 0xc0 + (System.rand() % 0x140)
+				if (i % 2)
+					objA1.velocity.x = -objA1.velocity.x
+				objA1.velocity.y = 0x800 - (System.rand() % 0x200)
+				if (i > 28)
+				{
+					objA1.velocity.y = Math.roundToInt(float(objA1.velocity.y) * 1.5f)
+					objA1.velocity.x /= 8
+				}
+
+				objA1.render_flags = (render_flag.VISIBLE|render_flag.WORLD)
+				objA1.subtype2c = i
+			}
+		}
+	#endif
 	}
 
 	--u16[A0 + 0x30]
