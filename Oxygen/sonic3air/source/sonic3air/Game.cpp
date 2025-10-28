@@ -483,7 +483,7 @@ void Game::startIntoAITMainMenu()
 	mMode = Mode::NORMAL_GAME;
 
 	Simulation& simulation = Application::instance().getSimulation();
-	simulation.resetIntoGame("EntryFunctions.AITourMenus");
+	simulation.resetIntoGame("EntryFunctions.TourMenus");
 
 	startIntoGameInternal();
 }
