@@ -72,7 +72,8 @@ function void fn03b3c0()
 		objA0.hitbox_extends.y = 0x10
 		objA0.update_address = 0x03b3ec
 	#if STANDALONE
-		playSound(0x7a)
+		if (objA0.render_flags & render_flag.VISIBLE)
+			playSound(0x5f)
 	#endif
 	}
 	fn03b3ec()
@@ -112,6 +113,10 @@ function void fn03b3fa()
 			objA0.position.y.u16 -= D1.u16
 			objA0.velocity.y = 0
 			objA0.update_address = 0x03b450
+		#if STANDALONE
+			if (objA0.render_flags & render_flag.VISIBLE)
+				playSound(0x5f)
+		#endif
 		}
 	}
 
@@ -126,6 +131,10 @@ function void fn03b450()
 	{
 		objA0.hitbox_extends.y = 0x0f
 		objA0.update_address = 0x03b3c0
+	#if STANDALONE
+		if (objA0.render_flags & render_flag.VISIBLE)
+			playSound(0x51)
+	#endif
 	}
 	fn03b462()
 }

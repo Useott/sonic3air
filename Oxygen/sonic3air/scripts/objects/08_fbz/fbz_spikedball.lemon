@@ -84,6 +84,9 @@ function void fn03b18c()
 		objA0.position.y.u16 += D1.u16
 		objA0.velocity.y = 0
 		objA0.update_address = 0x03b1b2
+	#if STANDALONE
+		playSound(0x7a)
+	#endif
 	}
 	fn03b1b2()
 }
@@ -111,6 +114,9 @@ function void fn03b1c4()
 		objA0.position.y.u16 -= D1.u16
 		objA0.velocity.y = 0
 		objA0.update_address = 0x03b1ea
+	#if STANDALONE
+		playSound(0x5d)
+	#endif
 	}
 	fn03b1ea()
 }

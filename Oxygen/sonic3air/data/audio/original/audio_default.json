@@ -257,7 +257,7 @@
 	"77": { "Name": "Balloon pop", "Source": "Emulation", "Type": "Sound" },
 	"78": { "Name": "Electric barrier", "Source": "Emulation", "Type": "Sound" },
 	"79": { "Name": "Electric sparks", "Source": "Emulation", "Type": "Sound" },
-	"7A": { "Name": "Something hits the ground?", "Source": "Emulation", "Type": "Sound" },
+	"7A": { "Name": "Something hits the ground", "Source": "Emulation", "Type": "Sound" },
 	"7B": { "Name": "Bounce", "Source": "Emulation", "Type": "Sound" },
 	"7C": { "Name": "Bullet is fired", "Source": "Emulation", "Type": "Sound" },
 	"7D": { "Name": "Machine noises?", "Source": "Emulation", "Type": "Sound" },
