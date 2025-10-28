@@ -266,7 +266,7 @@
 
 	"80": { "Name": "Something is frozen", "Source": "Emulation", "Type": "Sound" },
 	"81": { "Name": "Something was shot", "Source": "Emulation", "Type": "Sound" },
-	"82": { "Name": "Chained platform reaches limit", "Source": "Emulation", "Type": "Sound" },
+	"82": { "Name": "Snow gets launched up", "Source": "Emulation", "Type": "Sound" },
 	"83": { "Name": "Bridge breaks", "Source": "Emulation", "Type": "Sound" },
 	"84": { "Name": "Powering up", "Source": "Emulation", "Type": "Sound" },		// I wonder where this is ever used?
 	"85": { "Name": "Powering down", "Source": "Emulation", "Type": "Sound" },		// I wonder where this is ever used?

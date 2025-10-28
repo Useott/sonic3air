@@ -71,6 +71,9 @@ function void fn03b3c0()
 		objA0.velocity.y = 0
 		objA0.hitbox_extends.y = 0x10
 		objA0.update_address = 0x03b3ec
+	#if STANDALONE
+		playSound(0x7a)
+	#endif
 	}
 	fn03b3ec()
 }
