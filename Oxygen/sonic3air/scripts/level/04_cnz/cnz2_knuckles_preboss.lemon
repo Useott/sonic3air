@@ -16,6 +16,8 @@ function void fn0624de()
 	if (Game.isTimeAttack())
 	{
 		UnloadObject()
+		if (allocDynamicObjectStdExtended())
+			objA1.update_address = makeCallable(CNZ.fadeToEarlyDawn)
 		return
 	}
 #endif
@@ -23,6 +25,10 @@ function void fn0624de()
 	if (isMainCharacter(CHARACTER_KNUCKLES))
 	{
 		UnloadObject()
+	#if STANDALONE
+		if (allocDynamicObjectStdExtended())
+			objA1.update_address = makeCallable(CNZ.fadeToEarlyDawn)
+	#endif
 		return
 	}
 
@@ -145,6 +151,10 @@ function void fn0625e2()
 	{
 		objA0.base_state = 0x0e
 		fn0625fa()
+	#if STANDALONE
+		if (allocDynamicObjectStdExtended())
+			objA1.update_address = makeCallable(CNZ.fadeToEarlyDawn)
+	#endif
 	}
 }
 
@@ -183,3 +193,19 @@ function void fn06261a()
 	fn0851e4()
 	Object.TriggerUnloading()
 }
+
+#if STANDALONE
+
+function void CNZ.fadeToEarlyDawn()
+{
+	u16[0xfffffc78] = blendColorsPacked(u16[0xfffffcf8], 0x206, objA0.countdown_value)
+	u16[0xfffffc7a] = blendColorsPacked(u16[0xfffffcfa], 0x204, objA0.countdown_value)
+	u16[0xfffffc7e] = blendColorsPacked(u16[0xfffffcfe], 0x202, objA0.countdown_value)
+
+	objA0.countdown_value += 1
+
+	if (objA0.countdown_value >= 0x100)
+		UnloadObject()
+}
+
+#endif
