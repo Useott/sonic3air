@@ -106,6 +106,13 @@ function void fn00c890()
 
 		if (s8[A0] >= 0)
 		{
+		#if STANDALONE
+			VDP.setupVRAMWrite(D7.u16 + 6)
+			VDP.writeData16(0)
+
+			VDP.setupVRAMWrite(D7.u16 + 10)
+			VDP.writeData16(0)
+		#endif
 			if (u8[A3 + 0x3a] == u8[A3 + 0x37] && u8[A3 + 0x3b] != 0)
 			{
 				// Render "CLEAR" label
@@ -133,10 +140,17 @@ function void fn00c890()
 				{
 					D1.u16 += (sprite_attribute.PRIORITY | sprite_attribute.PALETTE.LINE1 | (DataSelect.TextTiles.targetInVRAM >> 5))
 				}
+			#if STANDALONE
+				D1.u16 &= ~sprite_attribute.PALETTE.LINE1
+				VDP.setupVRAMWrite(D7.u16 + 8)
+			#endif
 				VDP.writeData16(D1.u16)
 
 				// First digit (1, 2, etc)
 				D1 = (sprite_attribute.PRIORITY | sprite_attribute.PALETTE.LINE1 | (DataSelect.TextTiles.targetInVRAM >> 5)) + u8[0x00c95f + D0.s16]
+			#if STANDALONE
+				D1.u16 &= ~sprite_attribute.PALETTE.LINE1
+			#endif
 				VDP.writeData16(D1.u16)
 			}
 		}
@@ -445,6 +459,9 @@ function void DataSelect.update()
 		++level.framecounter
 		UpdateGameObjects()
 		u16[0xffffe002] = -camera.foreground.x.u16
+	#if STANDALONE
+		u16[0xffffe002] -= 4
+	#endif
 		RenderSprites()
 
 		A0 = 0xfffffc42
@@ -453,6 +470,40 @@ function void DataSelect.update()
 			emerald.animframe = 0
 
 	#if STANDALONE
+		// For whatever reason, we gotta draw the slots here
+		{
+			// tweak the palette so the text doesn't look ugly
+			u16[0xfffffc02] = 0x422
+			u32[0xfffffc0c] = 0xeee0a88
+
+			s16 px = u16[0xffffe002] + 4
+			u32 tint = (dataselect.slot_selected == 0) ? 0xffffffff : 0x000000ff
+			Renderer.drawSpriteTinted("tour_data_select_slot_2", px, 4, 0, 0, 0x4000, 0, tint, 1.0f)
+			px += 96
+
+			for (u8 slot = 0; slot < 8; ++slot)
+			{
+				tint = (dataselect.slot_selected == slot + 1) ? 0xffffffff : 0x000000ff
+				u8 flags = 0
+				u64 key = "tour_data_select_new"
+				if (s8[0xffffe6ac * slot] >= 0)
+				{
+					key = "tour_data_select_static"
+					if (level.framecounter / 4 % 2)
+						flags |= SPRITE_FLAG_FLIP_X
+					if (level.framecounter / 2 % 2)
+						flags |= SPRITE_FLAG_FLIP_Y
+				}
+				Renderer.drawSprite(key, px + 48, 44, 0, flags, 0x4002)
+				Renderer.drawSpriteTinted("tour_data_select_slot", px, 8, 0, 0, 0x4001, 0, tint, 1.0f)
+				px += 104
+			}
+
+			px -= 8
+			tint = (dataselect.slot_selected == 9) ? 0xffffffff : 0x000000ff
+			Renderer.drawSpriteTinted("tour_data_select_slot_2", px, 4, 0, 0, 0x4000, 0, tint, 1.0f)
+		}
+
 		if (Game.getSetting(SETTING_GFX_ANTIFLICKER) >= 1)
 		{
 			// This version is a bit less flickery
@@ -488,6 +539,13 @@ function void DataSelect.update()
 	#if STANDALONE
 		if (level.framecounter == 4)
 			TourMenus.handleFading(2)
+
+		for (u16 j = 0; j < 0x840; j += 0x20)
+		{
+			VDP.fillVRAMbyDMA(0, 0x53e0 + j, 0x20)
+			if (j <= 0x400)
+			VDP.fillVRAMbyDMA(0, 0x7300 + j, 0x20)
+		}
 	#endif
 
 		// Data Select
@@ -1604,6 +1662,9 @@ function void fn00d9f4()
 		}
 		else
 		{
+		#if STANDALONE
+			D5.u16 &= ~sprite_attribute.PALETTE.LINE1
+		#endif
 			VDP.writeData16(D5.u16 + D6.u16)
 		}
 	}

@@ -15,5 +15,10 @@
 	"main_menu.fade_triangles": { "File": "fade_triangles.png" },
 	"main_menu.sonic_art": { "File": "sonic.png" },
 	"main_menu.sonic_art_october": { "File": "sonic_october.png" },
-	"main_menu.sonic_art_december": { "File": "sonic_december.png" }
+	"main_menu.sonic_art_december": { "File": "sonic_december.png" },
+
+	"tour_data_select_slot": { "File": "data_select_slot.png" },
+	"tour_data_select_slot_2": { "File": "data_select_slot_2.png" },
+	"tour_data_select_static": { "File": "slot_graphics.png", "Rect": "0,0,80,56", "Center": "40,28" },
+	"tour_data_select_new": { "File": "slot_graphics.png", "Rect": "80,0,80,56", "Center": "40,28" },
 }
