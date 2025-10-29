@@ -1,7 +1,7 @@
 // Functions for Angel Island Tour's new menus.
 
 global u8 TourMenus.MaxEntries
-constant bool TourMenus.allowEncore = false
+global bool TourMenus.allowEncore = false
 
 function void TourMenus.beforeMainMenuOpens()
 {
