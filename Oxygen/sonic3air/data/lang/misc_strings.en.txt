@@ -1,3 +1,7 @@
 Press Start
 Tap anywhere to start
 Choose a save slot
+No save
+* Clear *
+Zone %d
+Delete

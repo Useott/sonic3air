@@ -481,7 +481,7 @@ function void DataSelect.update()
 			s16 px = u16[0xffffe002] + 4
 			u32 tint = (dataselect.slot_selected == 0) ? 0xffffffff : 0x000000ff
 			Renderer.drawSpriteTinted("tour_data_select_slot_2", px, 4, 0, 0, 0x4000, 0, tint, 1.0f)
-			Renderer.drawText("sonic3_fontA", px + 48, 96, "No save", 0xffffffff, 2, 0, 0x9fff, false, true)
+			Renderer.drawText("sonic3_fontA", px + 48, 96, Standalone.getTranslatedString("misc_strings", 3), 0xffffffff, 2, 0, 0x9fff, false, true)
 			px += 96
 
 			for (u8 slot = 0; slot < 8; ++slot)
@@ -497,9 +497,9 @@ function void DataSelect.update()
 					if (level.framecounter / 2 % 2)
 						flags |= SPRITE_FLAG_FLIP_Y
 
-					string slot_text = stringformat("Zone %d", DataSelect.getSlotDisplayZoneNumber(u16[0xffffb128 + (slot * 0x4a) + 0x36] + 1))
+					string slot_text = stringformat(Standalone.getTranslatedString("misc_strings", 5), DataSelect.getSlotDisplayZoneNumber(u16[0xffffb128 + (slot * 0x4a) + 0x36] + 1))
 					if (u8[0xffffb128 + (slot * 0x4a) + 0x3a] == u8[0xffffb128 + (slot * 0x4a) + 0x37] && u8[0xffffb128 + (slot * 0x4a) + 0x3b] != 0)
-						slot_text = "* Clear *"
+						slot_text = Standalone.getTranslatedString("misc_strings", 4)
 
 					Renderer.drawText("sonic3_fontA", px + 48, 76, slot_text, 0xffffffff, 2, 0, 0x9fff, false, true)
 				}
@@ -511,7 +511,7 @@ function void DataSelect.update()
 			px -= 8
 			tint = (dataselect.slot_selected == 9) ? 0xffffffff : 0x000000ff
 			Renderer.drawSpriteTinted("tour_data_select_slot_2", px, 4, 0, 0, 0x4000, 0, tint, 1.0f)
-			Renderer.drawText("sonic3_fontA", px + 48, 96, "Delete", 0xffffffff, 2, 0, 0x9fff, false, true)
+			Renderer.drawText("sonic3_fontA", px + 48, 96, Standalone.getTranslatedString("misc_strings", 6), 0xffffffff, 2, 0, 0x9fff, false, true)
 		}
 
 		if (Game.getSetting(SETTING_GFX_ANTIFLICKER) >= 1)
