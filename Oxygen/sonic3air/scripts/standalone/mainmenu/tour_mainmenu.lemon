@@ -209,7 +209,8 @@ function void TourMenus.Menu()
 						result = EXIT
 					else if (selectedEntry == 254)
 						result = TITLE_SCREEN
-					else result = CUSTOM
+					else if (selectedEntry != 255)
+						result = CUSTOM
 
 					if (!TourMenus.allowEncore && result >= ENCORE_GAME && result <= MODS)
 						result += 1
@@ -609,7 +610,6 @@ function void TourMenus.drawMenu(u8 menu, u8 selectedEntry, u32 framecounter, u1
 		s16 py = 37
 		string key = "main_menu.text_bg"
 		string font = "oxyfont_regular"
-		u8 i_tracker = 0
 		for (u8 i; i < TourMenus.MaxEntries; ++i)
 		{
 			s16 sprOffset = Math.roundToInt(96.0f * Math.sin(2.0f * 3.1415f * 76.0f * float(py)))
@@ -866,28 +866,78 @@ function u8 TourMenus.getMainMenuButtonResultFromTouch()
 	//Renderer.drawRect(screenTouchX - 2, screenTouchY - 2, 4, 4, 0xffffffff, 0xffff, false)
 	s16 px = 0
 	s16 py = 37
-	for (u8 i; i < 7; i++)
+	for (u8 i; i < TourMenus.MaxEntries + 1; i++)
 	{
-		if (i == 6)
+		/*s16 sprOffset = Math.roundToInt(96.0f * Math.sin(2.0f * 3.1415f * 76.0f * float(py)))
+
+		if (TourMenus.MaxEntries > 6 + TourMenus.allowEncore)
+		{
+			key = "main_menu.text_bg_small"
+			font = "oxyfont_small"
+			py = Math.lerp(32, getScreenHeight() - 32, float(i) / float(TourMenus.MaxEntries - 1))
+			sprOffset = Math.roundToInt(96.0f * Math.sin(2.0f * 3.1415f * 76.0f * float(py)))
+		}
+
+		px = (selectedEntry == i ? -16 : 0) + sprOffset + getScreenWidth() - 100
+
+		string text = TourMenus.getMainMenuTexts(i)
+
+		if (i == 1 && TourMenus.allowEncore)
+			text = TourMenus.getMainMenuTexts(24)
+		if (i > 1 && TourMenus.allowEncore)
+			text = TourMenus.getMainMenuTexts(i - 1)
+		if (i >= 6 + TourMenus.allowEncore)
+			text = TourMenus.GetCustomMenuName(i)
+
+		Renderer.drawText(font, px + 16, py, text, selectedEntry == i ? 0xffff00ff : 0xffffffff, 4, 0, renderQueue + 3, false)
+		Renderer.drawSpriteTinted(key, px, py, 0, SPRITE_FLAG_FLIP_X|SPRITE_FLAG_PRIO, renderQueue + 2, 0, selectedEntry == i ? 0xffffffff : 0x000000ff, 1.0f)
+
+		if (TourMenus.MaxEntries <= 7)
+		{
+			if (i >= 2 + TourMenus.allowEncore)
+			{
+				key = "main_menu.text_bg_small"
+				font = "oxyfont_small"
+				if (i > 2 + TourMenus.allowEncore)
+					py -= 12
+			}
+			py += 38 - (TourMenus.allowEncore * 5)
+		}*/
+
+
+		if (i == TourMenus.MaxEntries)
 		{
 			px = 0
 			py = 24
 
-			if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px, py - 8, 64, 16) && i == 6)
+			if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px, py - 8, 64, 16))
 				return 255
 			return 0
 		}
 
 		s16 sprOffset = Math.roundToInt(96.0f * Math.sin(2.0f * 3.1415f * 76.0f * float(py)))
+
+		if (TourMenus.MaxEntries > 6 + TourMenus.allowEncore)
+		{
+			py = Math.lerp(32, getScreenHeight() - 32, float(i) / float(TourMenus.MaxEntries - 1))
+			sprOffset = Math.roundToInt(96.0f * Math.sin(2.0f * 3.1415f * 76.0f * float(py)))
+		}
+
 		px = sprOffset + getScreenWidth() - 100
 
 		//Renderer.drawRect(px, py - (i > 2 ? 8 : 12), 400, i > 2 ? 16 : 24, 0xeeffffff, 0xffff, false)
 		if (checkBoxOverlap(screenTouchX - 2, screenTouchY - 2, 4, 4, px, py - (i > 2 ? 8 : 12), 400, i > 2 ? 16 : 24))
 			return i + 1
 
-		if (i > 2)
-			py -= 12
-		py += 38
+		if (TourMenus.MaxEntries <= 7)
+		{
+			if (i >= 2 + TourMenus.allowEncore)
+			{
+				if (i > 2 + TourMenus.allowEncore)
+					py -= 12
+			}
+			py += 38 - (TourMenus.allowEncore * 5)
+		}
 	}
 
 	return 0
