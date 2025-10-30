@@ -15,6 +15,9 @@
 //# address-hook(0x04f906) end(0x04f90e)
 function void InitLevelTiles.AIZ1()
 {
+#if STANDALONE
+	renderAIZ1BackgroundHorizon = true
+#endif
 	AIZ1.ChangeBackgroundForKnuckles()
 
 	Level.GetCameraPosition()
@@ -214,6 +217,10 @@ function void fn04fa4c()
 	u16[0xffff5834] = 0x000c
 	u16[0xffff5836] = 0x0406
 	fillMemory_u16(0xffff5838, 0x04, 0x004b)
+
+#if STANDALONE
+	renderAIZ1BackgroundHorizon = false
+#endif
 }
 
 
@@ -2278,8 +2285,13 @@ function void fn23b680()
 }
 
 #if STANDALONE
+global bool renderAIZ1BackgroundHorizon
+
 function void RenderAIZ1HorizonDuringFireBreath(s16 px, s16 py)
 {
+	if (renderAIZ1BackgroundHorizon == false)
+		return
+
 	s16 offset
 	for (u16 i; i < 0x10; ++i)
 	{
