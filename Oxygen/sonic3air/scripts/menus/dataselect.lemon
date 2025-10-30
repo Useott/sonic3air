@@ -311,6 +311,7 @@ function void DataSelect.setup()
 
 	Nemesis.loadDataToVRAM(0x0ca5e0, DataSelect.TextTiles.targetInVRAM)		// Font used for the red labels
 
+#if !STANDALONE
 	// Render "NO" label
 	A1 = 0x00db1c
 	D0.u16 = 0xcc06
@@ -325,6 +326,7 @@ function void DataSelect.setup()
 	// A1 = 0x00db24
 	D0.u16 = 0xccec
 	fn00d9f4()
+#endif
 
 	A0 = 0x39d4a4
 	A1 = 0xffff0000
@@ -486,13 +488,19 @@ function void DataSelect.update()
 				tint = (dataselect.slot_selected == slot + 1) ? 0xffffffff : 0x000000ff
 				u8 flags = 0
 				u64 key = "tour_data_select_new"
-				if (s8[0xffffe6ac * slot] >= 0)
+				if (s8[0xffffe6ac + (slot * 10)] >= 0)
 				{
 					key = "tour_data_select_static"
 					if (level.framecounter / 4 % 2)
 						flags |= SPRITE_FLAG_FLIP_X
 					if (level.framecounter / 2 % 2)
 						flags |= SPRITE_FLAG_FLIP_Y
+
+					string slot_text = stringformat("Zone %d", DataSelect.getSlotDisplayZoneNumber(u16[0xffffb128 + (slot * 0x4a) + 0x36] + 1))
+					if (u8[0xffffb128 + (slot * 0x4a) + 0x3a] == u8[0xffffb128 + (slot * 0x4a) + 0x37] && u8[0xffffb128 + (slot * 0x4a) + 0x3b] != 0)
+						slot_text = "* Clear *"
+
+					Renderer.drawText("sonic3_fontA", px + 48, 76, slot_text, 0xffffffff, 2, 0, 0x9fff, false, true)
 				}
 				Renderer.drawSprite(key, px + 48, 44, 0, flags, 0x4002)
 				Renderer.drawSpriteTinted("tour_data_select_slot", px, 8, 0, 0, 0x4001, 0, tint, 1.0f)
@@ -637,6 +645,13 @@ function void fn000c3e()
 	//  - 0x00c890		-> Used in Data Select screen
 	//  - 0x02df62		-> Empty function, used in Blue Spheres special stage
 	A0 = vint.update_subroutine
+#if STANDALONE
+	if (A0 == 0x00c890)
+	{
+		fn00c97a()
+	}
+	else
+#endif
 	call A0
 
 	fn0017f4()
@@ -1791,5 +1806,10 @@ function u8 checkMobileBackButtonPress(u16 screenTouchCounterAddress, u16 frames
 	}
 
 	return touched
+}
+
+function u8 DataSelect.getSlotDisplayZoneNumber(u8 zone)
+{
+	return zone
 }
 #endif
