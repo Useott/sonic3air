@@ -37,6 +37,7 @@ function void fn072b46()
 		if ((u8[A1 + 0x2a] & 0x80) == 0 && (u8[A1 + 0x2a] & char.flag.IN_AIR) == 0 && u8[A1 + 0x05] < base_state.DIED)
 		{
 			objA0.update_address = 0x072b96
+		#if !STANDALONE
 			StartCharacterWinPose()
 			level.results_done = 0
 
@@ -51,6 +52,7 @@ function void fn072b46()
 				// Win pose for Tails
 				objA1.update_address = 0x072cfa
 			}
+		#endif
 
 		#if STANDALONE
 			objA0.flags38 |= 0x20	// Stop explosions (and especially the sound effects) now already
@@ -64,15 +66,19 @@ function void fn072b46()
 //# address-hook(0x072b96) end(0x072bb6)
 function void fn072b96()
 {
+#if !STANDALONE
 	if (!level.results_done)
 		return
+#endif
 
 #if STANDALONE
 	Game.startSkippableCutscene()
 #endif
 
 	objA0.update_address = 0x072bbc
+#if !STANDALONE
 	PlayMusicAfterLevelResults()
+#endif
 	objA0.countdown_value = 0x1f
 
 	addPatternLoadingCue(0x083d64)		// Boss explosion sprites
@@ -152,6 +158,15 @@ function void fn072c68()
 		u8[A1 + 0x2e] = (control_flag.DISABLE_INTERACTION | control_flag.DISABLE_ANIMATION | control_flag.DISABLE_UPDATE)
 		u8[A1 + 0x24] = 0
 		u8[A1 + 0x23] = 0
+
+	#if STANDALONE
+		level.results_done = 0
+		if (allocDynamicObjectStd())
+		{
+			// Level results
+			objA1.update_address = addressof(LevelResults.Update)
+		}
+	#endif
 	}
 }
 

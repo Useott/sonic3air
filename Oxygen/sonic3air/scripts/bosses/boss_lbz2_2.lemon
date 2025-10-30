@@ -239,6 +239,10 @@ function void fn073054()
 	{
 		// Spawn Big Arms
 		objA1.update_address = 0x074262
+	#if STANDALONE
+		level.boss_encounter = 2
+		playMusic(MUSIC_BIGARMS)
+	#endif
 	}
 	fn0852ae()
 }
@@ -810,6 +814,7 @@ function void fn0734fa()
 		{
 			// Spawn Big Arms for Knuckles
 			objA0.update_address = 0x073054
+			playMusic(MUSIC_CTRL_FADEOUT)
 		}
 		else if (Game.getSetting(SETTING_LBZ_BIGARMS))
 		{
