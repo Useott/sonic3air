@@ -1069,18 +1069,21 @@ void Game::openOptionsMenuFromAITMenu()
 {
 	setMenuMusic();
 	GameApp::instance().openOptionsMenu();
+	AudioOut::instance().moveIngameMusicToMenu();
 }
 
 void Game::openModsMenu()
 {
 	setMenuMusic();
 	GameApp::instance().openModsMenu();
+	AudioOut::instance().moveIngameMusicToMenu();
 }
 
 void Game::openTimeAttackMenu()
 {
 	setMenuMusic();
 	GameApp::instance().openTimeAttackMenu();
+	AudioOut::instance().moveIngameMusicToMenu();
 }
 
 void Game::setMenuMusic()
@@ -1107,7 +1110,6 @@ void Game::setMenuMusic()
 	}
 	else mMenuMusic = 0x2d;
 
-	AudioOut::instance().moveIngameMusicToMenu();
 	AudioOut::instance().setMenuMusic(mMenuMusic);
 }
 
