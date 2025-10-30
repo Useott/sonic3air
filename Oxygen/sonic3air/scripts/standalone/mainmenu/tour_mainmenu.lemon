@@ -30,6 +30,7 @@ function void TourMenus.Menu()
 	u32[0x801004] = touchMemBackup
 	TourMenus.beforeMainMenuOpens()
 	TourMenus.setMaxEntryNumber()
+	setMenuMusic()
 
 	u16 screenTouchCounter = 0
 	u16 framesSinceLastTouch = 0
@@ -75,8 +76,7 @@ function void TourMenus.Menu()
 	VDP.Config.setNameTableBasePlaneB(0)
 	VDP.Config.setNameTableBasePlaneA(0)
 
-	if (!Audio.isPlayingAudio(0x2d))
-		Audio.playAudio("2D", AudioContext.CONTEXT_MUSIC) // I don't want this to be affected by the Competition Menu Theme option
+	playMenuMusic()
 
 	levelselect.characters = 0
 	global.zone = 0

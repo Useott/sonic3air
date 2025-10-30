@@ -1050,15 +1050,10 @@ void Game::returnToMainMenu()
 {
 	mReturnToMenuTriggered = true;
 
-	// Do not restart competition music
-	if (AudioOut::instance().isPlayingSfxId(0x2d))
+	// Do not restart menu music
+	if (AudioOut::instance().isPlayingSfxId(mMenuMusic))
 	{
 		AudioOut::instance().moveIngameMusicToMenu();
-	}
-	else
-	{
-		// Do a quick fade-out of the music (especially for transition from Blue Sphere mode and Competition Mode)
-		AudioOut::instance().fadeOutChannel(0, 0.15f);
 	}
 
 	mTimeoutUntilDiscordRefresh = 0.0f;
@@ -1066,25 +1061,54 @@ void Game::returnToMainMenu()
 
 void Game::openOptionsMenu()
 {
+	setMenuMusic();
 	GameApp::instance().openOptionsMenuInGame();
 }
 
 void Game::openOptionsMenuFromAITMenu()
 {
+	setMenuMusic();
 	GameApp::instance().openOptionsMenu();
-	AudioOut::instance().moveIngameMusicToMenu();
 }
 
 void Game::openModsMenu()
 {
+	setMenuMusic();
 	GameApp::instance().openModsMenu();
-	AudioOut::instance().moveIngameMusicToMenu();
 }
 
 void Game::openTimeAttackMenu()
 {
+	setMenuMusic();
 	GameApp::instance().openTimeAttackMenu();
+}
+
+void Game::setMenuMusic()
+{
+	Application::instance().getSimulation().getCodeExec().getLemonScriptRuntime().callFunctionByName("setMenuMusic");
+	const lemon::AnyBaseValue menuMusic = Application::instance().getSimulation().getCodeExec().getLemonScriptRuntime().getGlobalVariableValue("hardcodedMenuMusic", &lemon::PredefinedDataTypes::STRING);
+	lemon::StringRef menuMusicStringLemon = lemon::StringRef(menuMusic.get<uint64>());
+	std::string menuMusicString = std::string{menuMusicStringLemon.getString()};
+
+	if (!menuMusicString.empty())
+	{
+		if (menuMusicString.length() == 2 && isHexDigit(menuMusicString[0]) && isHexDigit(menuMusicString[1]))
+		{
+			mMenuMusic = rmx::parseInteger(String("0x") + menuMusicString);
+		}
+		else if (menuMusicString.length() == 4 && menuMusicString[0] == '0' && menuMusicString[1] == 'x')
+		{
+			mMenuMusic = rmx::parseInteger(menuMusicString);
+		}
+		else
+		{
+			mMenuMusic = rmx::getMurmur2_64(menuMusicString);
+		}
+	}
+	else mMenuMusic = 0x2d;
+
 	AudioOut::instance().moveIngameMusicToMenu();
+	AudioOut::instance().setMenuMusic(mMenuMusic);
 }
 
 bool Game::onTimeAttackFinish()

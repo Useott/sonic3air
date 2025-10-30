@@ -214,3 +214,33 @@ function void onScreenTouch(s16 px, s16 py, s16 fordev)
 	screenTouchX = px
 	screenTouchY = py
 }
+
+// This function is called by hardcoded menus to change the default music
+// Please override this function instead of modifying the variable somewhere else
+global string hardcodedMenuMusic
+
+function void setMenuMusic()
+{
+	hardcodedMenuMusic = setMenuMusicCheckHex("2d")
+}
+
+function string setMenuMusicCheckHex(string audioKey)
+{
+	if (audioKey.length() == 2 && isHexDigit(audioKey.getSubString(0, 1)) && isHexDigit(audioKey.getSubString(1, 1)))
+	{
+		audioKey = "0x" + audioKey
+	}
+
+	return audioKey
+}
+
+// for use in lemon only
+function void playMenuMusic()
+{
+	if (!Audio.isPlayingAudio(hardcodedMenuMusic) && !Audio.isPlayingAudio(toInteger(hardcodedMenuMusic)))
+	{
+		Audio.playAudio(hardcodedMenuMusic, AudioContext.CONTEXT_MUSIC)
+		if (!Audio.isPlayingAudio(hardcodedMenuMusic))
+			Audio.playAudio(toInteger(hardcodedMenuMusic), AudioContext.CONTEXT_MUSIC)
+	}
+}

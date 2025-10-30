@@ -92,6 +92,8 @@ public:
 	void onGameRecordingHeaderLoaded(const std::string& buildString, const std::vector<uint8>& buffer);
 	void onGameRecordingHeaderSave(std::vector<uint8>& buffer);
 
+	uint64 mMenuMusic = 0x2d;
+
 private:
 	void checkActiveModsUsedFeatures();
 
@@ -121,9 +123,11 @@ private:
 	void openOptionsMenuFromAITMenu();
 	void openModsMenu();
 	void openTimeAttackMenu();
+	void setMenuMusic();
 
 	inline bool isNormalGame()	{ return isInNormalGameMode(); }
 	inline bool isTimeAttack()	{ return isInTimeAttackMode(); }
+	inline bool isHexDigit(char ch)	{ return (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F'); }
 	bool onTimeAttackFinish();
 
 	void changePlanePatternRectAtex(uint16 px, uint16 py, uint16 width, uint16 height, uint8 planeIndex, uint8 atex);

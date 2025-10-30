@@ -338,8 +338,7 @@ function void Extras.Menu(u8 fadeInMethod)
 	Extras.addedOpenAchievementsToEntryList = 1
 	Extras.initAchievementsEntries()
 
-	if (!Audio.isPlayingAudio(0x2d))
-		Audio.playAudio("2D", AudioContext.CONTEXT_MUSIC) // I don't want this to be affected by the Competition Menu Theme option
+	playMenuMusic()
 	u32 frameCounter = 0
 
 	constant u8 RESULT_NONE			= 0

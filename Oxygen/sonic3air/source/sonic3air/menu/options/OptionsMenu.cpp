@@ -298,8 +298,8 @@ void OptionsMenu::onFadeIn()
 		optionEntry.loadValue();
 	}
 
-	// Play "Competition Menu" music inside this menu
-	AudioOut::instance().setMenuMusic(0x2d);
+	// Play the default menu music inside this menu
+	AudioOut::instance().setMenuMusic(Game::instance().mMenuMusic);
 
 	mPlayingSoundTest = nullptr;
 }

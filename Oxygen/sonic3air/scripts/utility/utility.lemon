@@ -818,3 +818,68 @@ function bool isValidUpdateAddress(u32 address)
 	// Or a callable function address
 	return ((D0 >> 28) == 1)
 }
+
+#if STANDALONE
+
+function bool isHexDigit(u64 character)
+{
+	// Port from C++ code
+	string ch = stringformat("%s", character)
+	return (ch >= "0" && ch <= "9") || (ch >= "a" && ch <= "f") || (ch >= "A" && ch <= "F")
+}
+
+function u64 toInteger(u64 keystr)
+{
+	string str = stringformat("%s", keystr)
+	u64 integer = 0
+	bool isHexNumber = str.getSubString(0, 2) == "0x"
+	bool has0x = isHexNumber
+
+	// Quick check to see if it's a hex number without the 0x (only with 2 characters, such as music)
+	u16 i
+	bool foundHexDigit = false
+	if (str.length() == 2)
+	{
+		for (i = 0; i < str.length(); ++i)
+		{
+			string ch = str.getSubString(i, 1)
+			if (isHexDigit(ch))
+			{
+				if ((ch >= "a" && ch <= "f") || (ch >= "A" && ch <= "F"))
+					foundHexDigit = true
+			}
+			else
+			{
+				foundHexDigit = false
+				break
+			}
+		}
+	}
+
+	if (foundHexDigit)
+		isHexNumber = true
+
+	for (i = (has0x * 2); i < str.length(); ++i)
+	{
+		integer *= (isHexNumber) ? 0x10 : 10
+
+		string ch = str.getSubString(i, 1)
+		if (ch >= "0" && ch <= "9")
+		{
+			integer += str.getCharacter(i) - 48
+		}
+		else if (ch >= "a" && ch <= "f")
+		{
+			integer += str.getCharacter(i) - 87
+		}
+		else if (ch >= "A" && ch <= "F")
+		{
+			integer += str.getCharacter(i) - 55
+		}
+		else return 0
+	}
+
+	return integer
+}
+
+#endif
