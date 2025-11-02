@@ -544,6 +544,7 @@ function void fn0746f4()
 		}
 	}
 	else
+	{
 #endif
 	// Wait until defeated Robotnik leaves the screen to the top
 	--objA0.position.y.u16
@@ -554,6 +555,7 @@ function void fn0746f4()
 	}
 
 #if STANDALONE
+	}
 	bool isKnucklesFight = (camera.position.y.u16 < 0x0500)
 	if (!isKnucklesFight)
 	{
