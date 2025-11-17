@@ -293,6 +293,11 @@ bool EngineMain::startupEngine()
 	mAudioOut = &EngineMain::getDelegate().createAudioOut();
 	mAudioOut->startup();
 
+	// Networking
+	RMX_LOG_INFO("Networking initialization...");
+	const bool useIPv6 = false;
+	mInternal.mEngineServerClient.setupClient(useIPv6);
+
 	// ImGui integration
 	ImGuiIntegration::setEnabled(config.mDevMode.mEnabled);
 	ImGuiIntegration::startup();
@@ -458,6 +463,9 @@ bool EngineMain::initConfigAndSettings()
 	{
 		config.mDisplayIndex = mArguments.mDisplayIndex;
 	}
+
+	// Enable dev mode if requested
+	config.mDevMode.mEnabled = config.mDevMode.mEnableAtStartup;
 
 	// Evaluate fail-safe mode
 	if (config.mFailSafeMode)

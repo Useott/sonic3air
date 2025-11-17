@@ -91,10 +91,6 @@ namespace global
 			{
 				{
 					DrawerTexture& texture = mAchievementImage[achievement.mType];
-					if (!texture.isValid())
-					{
-						EngineMain::instance().getDrawer().createTexture(texture);
-					}
 					texture.accessBitmap() = bitmap;
 					texture.bitmapUpdated();
 				}
@@ -109,10 +105,6 @@ namespace global
 
 				{
 					DrawerTexture& texture = mAchievementImage[achievement.mType | 0x80000000];
-					if (!texture.isValid())
-					{
-						EngineMain::instance().getDrawer().createTexture(texture);
-					}
 					texture.accessBitmap() = bitmap;
 					texture.bitmapUpdated();
 				}
