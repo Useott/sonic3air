@@ -1899,6 +1899,8 @@ std::string OptionsMenu::checkForAvailableTranslation(std::string text)
 	"Sound Effect",
 	"AIZ 1 Post-fire Music:",
 	"Act 2 DAC channel",
+	"Dev Mode is providing debugging and mod development tools.\nIf you just want to play the game or use mods, leave it disabled.",
+	"App restart required to switch Dev Mode on or off!",
 	};
 
 	uint8 id = 255;

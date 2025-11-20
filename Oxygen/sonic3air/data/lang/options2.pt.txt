@@ -74,3 +74,5 @@ Tocar jingle
 Tocar efeito sonoro
 Apos queimada da AIZ1:
 Canal DAC do Ato 2
+O Dev Mode disponibiliza ferramentas de depuracao e desenvolvimento de mods.\nCaso apenas queira jogar o jogo e usar mods, deixe desativado.
+O jogo deve ser reiniciado para ligar/desligar o Dev Mode!

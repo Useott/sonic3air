@@ -486,6 +486,6 @@ void DevModeMenuEntry::renderEntry(RenderContext& renderContext_)
 		const int baseX = renderContext.mCurrentPosition.x;
 		int& py = renderContext.mCurrentPosition.y;
 		py += 14;
-		drawer.printText(global::mOxyfontSmall, Recti(baseX, py, 0, 10), "App restart required to switch Dev Mode on or off!", 5, Color(1.0f, 0.8f, 0.6f, renderContext.mTabAlpha));
+		drawer.printText(global::mOxyfontSmall, Recti(baseX, py, 0, 10), OptionsMenu::checkForAvailableTranslation("App restart required to switch Dev Mode on or off!"), 5, Color(1.0f, 0.8f, 0.6f, renderContext.mTabAlpha));
 	}
 }
