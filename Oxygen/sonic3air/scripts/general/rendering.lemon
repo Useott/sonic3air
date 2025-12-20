@@ -247,7 +247,7 @@ function void RenderSprites()
 	{
 		u32 backupA3 = A3
 		u32 backupA4 = A4
-		u16 backupA4_2 = u16[A4]
+		u32 backupA4_2 = u32[A4]
 		u32 backupA5 = A5
 		u32 backupA6 = A6
 		u32 backupD0 = D0
@@ -279,7 +279,7 @@ function void RenderSprites()
 		D7 = backupD7
 		A3 = backupA3
 		A4 = backupA4
-	u16[A4] = backupA4_2
+	u32[A4] = backupA4_2
 		A5 = backupA5
 		A6 = backupA6
 	}

@@ -195,7 +195,7 @@ function void updateGameObjectLoopRenderOnly()
 
 #if STANDALONE
 	u32 backupA0_2 = A0
-	A0 = backupA0 - 0xff7e1000
+	A0 = backupA0 - 0xff7e1030
 	while (backupD7 >= 0)
 	{
 		if (u32[A0] != 0)
