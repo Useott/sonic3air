@@ -246,9 +246,9 @@ Configuration::Configuration()
 	mUseAudioThreading = false;
 #endif
 
-#if defined(PLATFORM_ANDROID)
-	// Use a much larger default UI scale on Android, otherwise it's too finicky to interact with ImGui at all
-	mDevMode.mUIScale = 2.0f;
+#if defined(PLATFORM_ANDROID) || defined(PLATFORM_WEB)
+	// Use a much larger default UI scale on mobile platforms, otherwise it's too finicky to interact with ImGui at all
+	mDevMode.mUIScale = 2.5f;
 #endif
 }
 
@@ -631,6 +631,7 @@ void Configuration::serializeDevMode(JsonSerializer& serializer)
 		{
 			serializer.serialize("Scale", mDevMode.mUIScale);
 			serializer.serializeHexColorRGB("AccentColor", mDevMode.mUIAccentColor);
+			serializer.serialize("ScrollByDragging", mDevMode.mScrollByDragging);
 			serializer.serializeArray("OpenWindows", mDevMode.mOpenUIWindows);
 			serializer.serialize("MainWindowOpen", mDevMode.mMainWindowOpen);
 			serializer.serialize("UseTabsInMainWindow", mDevMode.mUseTabsInMainWindow);

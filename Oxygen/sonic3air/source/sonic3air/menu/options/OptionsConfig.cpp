@@ -93,6 +93,13 @@ void OptionsConfig::buildSystem()
 	}
 #endif
 
+#if defined(SUPPORT_IMGUI) && !defined(PLATFORM_WEB)	// Hide the file browser option in the Web version, as it already has its own file manager with more functionality
+	CATEGORY("Data Management")
+	{
+		configBuilder.addSetting("Open File Browser", option::_OPEN_FILE_BROWSER);
+	}
+#endif
+
 	CATEGORY("More Info")
 	{
 		//configBuilder.addSetting("Open Game Homepage", option::_OPEN_HOMEPAGE);

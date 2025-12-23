@@ -90,6 +90,11 @@ bool EngineDelegate::onEnginePreStartup()
 	return true;
 }
 
+bool EngineDelegate::isDedicatedApplication()
+{
+	return true;
+}
+
 bool EngineDelegate::setupCustomGameProfile()
 {
 	GameProfile& gameProfile = GameProfile::instance();

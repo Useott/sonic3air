@@ -18,7 +18,8 @@
 #include "oxygen/application/modding/ModManager.h"
 #include "oxygen/application/video/VideoOut.h"
 #include "oxygen/download/DownloadManager.h"
-#include "oxygen/devmode/ImGuiIntegration.h"
+#include "oxygen/menu/imgui/ImGuiIntegration.h"
+#include "oxygen/menu/devmode/DevModeMainWindow.h"
 #include "oxygen/drawing/opengl/OpenGLDrawer.h"
 #include "oxygen/drawing/software/SoftwareDrawer.h"
 #include "oxygen/file/PackedFileProvider.h"
@@ -35,7 +36,7 @@
 #include "oxygen/simulation/PersistentData.h"
 #include "oxygen/simulation/Simulation.h"
 #if defined(PLATFORM_ANDROID)
-	#include "oxygen/platform/AndroidJavaInterface.h"
+	#include "oxygen/platform/android/AndroidJavaInterface.h"
 #endif
 
 
@@ -97,7 +98,7 @@ EngineMain::~EngineMain()
 
 void EngineMain::execute()
 {
-	// Startup the Oxygen engine part that is independent from the application / project
+	// Startup the Oxygen Engine part that is independent from the application / project
 	if (startupEngine())
 	{
 		// Enter the application run loop
@@ -186,7 +187,8 @@ void EngineMain::switchToRenderMethod(Configuration::RenderMethod newRenderMetho
 		// Check OpenGL in the config again, it could have changed - namely if OpenGL initialization failed
 		nowUsingOpenGL = (config.mRenderMethod == Configuration::RenderMethod::OPENGL_FULL || config.mRenderMethod == Configuration::RenderMethod::OPENGL_SOFT);
 
-		ImGuiIntegration::onWindowRecreated(nowUsingOpenGL);
+		if (ImGuiIntegration::hasInstance())
+			ImGuiIntegration::instance().onWindowRecreated(nowUsingOpenGL);
 	}
 
 	if (nowUsingOpenGL)
@@ -298,10 +300,6 @@ bool EngineMain::startupEngine()
 	const bool useIPv6 = false;
 	mInternal.mEngineServerClient.setupClient(useIPv6);
 
-	// ImGui integration
-	ImGuiIntegration::setEnabled(config.mDevMode.mEnabled);
-	ImGuiIntegration::startup();
-
 	// Done
 	RMX_LOG_INFO("Engine startup successful");
 	return true;
@@ -320,8 +318,6 @@ void EngineMain::run()
 
 void EngineMain::shutdown()
 {
-	ImGuiIntegration::shutdown();
-
 	destroyWindow();
 
 	// Shutdown subsystems
@@ -534,18 +530,34 @@ void EngineMain::updateGameProfilePaths()
 
 bool EngineMain::initFileSystem()
 {
-	// Create mod data folder (the default mod directory)
 	Configuration& config = Configuration::instance();
-	FTX::FileSystem->createDirectory(config.mGameAppDataPath + L"mods");
 
-	// Add real file system provider for the game data path, if it isn't located in local "data" directory
-	//  -> This is relevant for Oxygen Engine using an external game data path
-	if (config.mGameDataPath != L"data" && config.mGameDataPath != L"./data")
+	if (mDelegate.isDedicatedApplication())
 	{
-		rmx::RealFileProvider* provider = new rmx::RealFileProvider();
-		FTX::FileSystem->addManagedFileProvider(*provider);
-		FTX::FileSystem->addMountPoint(*provider, L"data/", config.mGameDataPath + L'/', 0x10);
+		// Add Oxygen Engine data path if it exists in the expected place
+		//  -> This is relevant when starting an external project app (like S3AIR) during development
+		const std::wstring engineBasePath = L"../oxygenengine/";
+		if (FTX::FileSystem->exists(engineBasePath))
+		{
+			rmx::RealFileProvider* provider = new rmx::RealFileProvider();
+			FTX::FileSystem->addManagedFileProvider(*provider);
+			FTX::FileSystem->addMountPoint(*provider, L"data/", engineBasePath + L"data/", 0x10);
+		}
 	}
+	else
+	{
+		// Add real file system provider for the game data path, if it isn't located in local "data" directory
+		//  -> This is relevant for Oxygen Engine using an external game data path
+		if (config.mGameDataPath != L"data" && config.mGameDataPath != L"./data")
+		{
+			rmx::RealFileProvider* provider = new rmx::RealFileProvider();
+			FTX::FileSystem->addManagedFileProvider(*provider);
+			FTX::FileSystem->addMountPoint(*provider, L"data/", config.mGameDataPath + L'/', 0x10);
+		}
+	}
+
+	// Create mod data folder (the default mod directory)
+	FTX::FileSystem->createDirectory(config.mGameAppDataPath + L"mods");
 
 	// Add package providers
 	return loadFilePackages(false);
