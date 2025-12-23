@@ -28,6 +28,7 @@ function void TourMenus.Menu()
 	zeroMemory(0xff0000, 0xffff)
 	zeroMemory(0x800000, 0xfffff)
 	u32[0x801004] = touchMemBackup
+	Init() // This doesn't seem to do any bad
 	TourMenus.beforeMainMenuOpens()
 	TourMenus.setMaxEntryNumber()
 	setMenuMusic()

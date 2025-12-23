@@ -1350,12 +1350,12 @@ function void applyWaterRipple()
 		u16 offset = Math.roundToInt(1.0f * Math.sin(2.0f * 3.1415f * 512 * float(255 - (line + camera.position.y.u16) % 256) + float(u16(u8[0x801010])) / 20.5f))
 		Renderer.setScrollOffsetH(1, line, (-u32[0xffffe000 + line * 4] >> 16) + offset + 1)
 
-		// LBZ 2's background already has its own water ripple effect
-		if (global.zone_act == 0x0601)
+		// Part of LBZ 2's background already has its own water ripple effect
+		if (global.zone_act == 0x0601 && (line + camera.background.y.u16) < 976)
 			continue
 
 		offset = Math.roundToInt(2.0f * Math.sin(2.0f * 3.1415f * 256 * float(255 - (line + camera.background.y.u16) % 256) + float(u16(u8[0x801010])) / 41.0f))
-		Renderer.setScrollOffsetH(0, line, (-u32[0xffffe000 + line * 4]) + offset + 1)
+		Renderer.setScrollOffsetH(0, line, (-u32[0xffffe000 + line * 4]) + offset + 2)
 	}
 }
 

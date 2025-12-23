@@ -464,7 +464,7 @@ function void Standalone.playAudio(u8 sfxId, bool swap)
 			if (!isMainCharacter(CHARACTER_KNUCKLES) && checkpoint.number < 1)
 				soundKey = "0f_intro"
 		}
-		else if (sfxId == MUSIC_LEVELCLEAR && global.zone_act == 0x0601)
+		else if (sfxId == MUSIC_LEVELCLEAR && global.zone_act.apparent == 0x0601)
 		{
 			soundKey = "32_sonic3"
 		}
