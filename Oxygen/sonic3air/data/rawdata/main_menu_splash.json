@@ -1,3 +1,9 @@
+{
+	// Yes, this very file!
+	"main_menu_splashes": { "File": "main_menu_splash.json" }
+}
+
+{" // This and the last line only exist just so this list looks ok in my text editor
 happens
 superdude was here // by Superdude
 past use knows best
@@ -11,3 +17,4 @@ not unlike sonic 2 absolute
 rated an unknown number of stars
 unlike sonic i chuckle
 First we tou then we hou, lets touhou // By Mazher94
+"}

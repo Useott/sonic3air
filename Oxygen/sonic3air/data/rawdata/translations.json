@@ -12,7 +12,4 @@
 	"lang_pt_options2": { "File": "../lang/options2.pt.txt" },
 	"lang_pt_extras": { "File": "../lang/extras.pt.txt" },
 	"lang_pt_pause": { "File": "../lang/pause.pt.txt" },
-
-	// Not a translation!
-	"main_menu_splashes": { "File": "../lang/0main_menu_splash.txt" }
 }
