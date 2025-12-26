@@ -422,7 +422,13 @@ function void fn02d47e()
 	if (D0.u16 == 3)
 		D0 = 1
 	objA0.animation.sprite = D0.u8
+#if STANDALONE
+	// Prevent the stars from unloading
+	AddAsDynamicObject()
+	DrawObject()
+#else
 	fn01b662()
+#endif
 }
 
 
