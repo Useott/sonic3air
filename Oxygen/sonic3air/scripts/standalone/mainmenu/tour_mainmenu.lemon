@@ -24,6 +24,12 @@ function string TourMenus.GetCustomMenuName(u8 menu)
 
 function string TourMenus.getRandomSplashText()
 {
+	if (System.getSystemClockData(DATE_DAY) == 22 && System.getSystemClockData(DATE_MONTH) == 3)
+	{
+		if (System.rand() % 8 == 0)
+			return "Happy birthday Useott!"
+	}
+
 	u32 bytes = System.loadExternalRawData("main_menu_splashes", 0x800000)
 	// First, get the number of lines
 	u16 numLines = 0
@@ -49,7 +55,12 @@ function string TourMenus.getRandomSplashText()
 			{
 				string splash
 				for (u32 char = lineStart; char < i; ++char)
+				{
+					// Ignore comments, such as this
+					if (u16[0x800000 + char] == 0x2f2f)
+						break
 					splash += getStringFromCharacter(u8[0x800000 + char])
+				}
 
 				return splash
 			}
