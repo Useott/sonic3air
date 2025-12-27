@@ -726,10 +726,11 @@ function void fn00d1fa()
 		TourMenus.handleFading(3)
 
 		u16[0xffffeee4] = 1
+		System.savePersistentData(0xffffeee4, 2, "persistentdata", "useTriangleFade", false)
 		Renderer.drawRect(0, 0, getScreenWidth(), getScreenHeight(), 255, 0xff80, false)
 		for (u8 i; i < 6; ++i)
 			yieldExecution()
-		EntryFunctions.TourMenus()
+		Game.returnToMainMenu()
 		yieldExecution()
 	#endif
 	}

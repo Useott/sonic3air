@@ -469,9 +469,10 @@ function void Extras.Menu(u8 fadeInMethod)
 		TourMenus.handleFading(3)
 
 		u16[0xffffeee4] = 1
+		System.savePersistentData(0xffffeee4, 2, "persistentdata", "useTriangleFade", false)
 		for (u8 i; i < 12; ++i)
 			yieldExecution()
-		EntryFunctions.TourMenus()
+		Game.returnToMainMenu()
 		yieldExecution()
 	}
 }

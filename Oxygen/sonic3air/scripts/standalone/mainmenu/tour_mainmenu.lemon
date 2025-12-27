@@ -72,6 +72,9 @@ function string TourMenus.getRandomSplashText()
 
 function void TourMenus.Menu()
 {
+	System.loadPersistentData(0xffffeee4, 2, "persistentdata", "useTriangleFade", false)
+	System.removePersistentData("persistentdata", "useTriangleFade", false)
+
 	bool useTriangleFade = u16[0xffffeee4]
 	TourMenus.splashText = TourMenus.getRandomSplashText()
 	u32 touchMemBackup = u32[0x801004]
