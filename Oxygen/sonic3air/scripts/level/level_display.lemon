@@ -263,7 +263,7 @@ function void UpdateLevelDisplay()
 			RenderAIZ1HorizonDuringFireBreath(px, py)
 
 			px = -((s16(camera.foreground.x.u16) - 0x2f10) / 2)
-			py = 0x0300 - camera.foreground.y.u16
+			py = 0x02e0 - camera.foreground.y.u16
 			RenderAIZ1CloudsDuringFireBreath(px, py)
 
 			if (camera.foreground.x.u16 > 0x2d80 && camera.foreground.x.u16 < 0x2f10)

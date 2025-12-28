@@ -2324,8 +2324,42 @@ function void RenderAIZ1CloudsDuringFireBreath(s16 px, s16 py)
 {
 	u16 i
 	s16 originalpx = px
-	s16 offset = -(level.framecounter / 3) % 0xa0
+	s16 offset = -(level.framecounter / 2) % 0x100
 
+	for (i = 0; i < 10; ++i)
+	{
+		if (i % 2 == 0)
+		{
+			Renderer.drawVdpSprite(px + 8 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0217, 0x1001)
+			Renderer.drawVdpSprite(px + 16 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0218, 0x1001)
+			Renderer.drawVdpSprite(px + 24 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001)
+			Renderer.drawVdpSprite(px + 32 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001)
+			Renderer.drawVdpSprite(px + 40 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x021d, 0x1001)
+
+			Renderer.drawVdpSprite(px + offset, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x025b, 0x1001)
+			Renderer.drawVdpSprite(px + 8 + offset, py + 8, 0, sprite_attribute.FLIP_X | sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021e, 0x1001)
+			Renderer.drawVdpSprite(px + 16 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021a, 0x1001)
+			Renderer.drawVdpSprite(px + 24 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021c, 0x1001)
+			Renderer.drawVdpSprite(px + 32 + offset, py + 8, 0, sprite_attribute.FLIP_X | sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021a, 0x1001)
+			Renderer.drawVdpSprite(px + 40 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021e, 0x1001)
+			Renderer.drawVdpSprite(px + 48 + offset, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x025c, 0x1001)
+
+			Renderer.drawVdpSprite(px + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x0221, 0x1001)
+			Renderer.drawVdpSprite(px + 8 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x0222, 0x1001)
+			Renderer.drawVdpSprite(px + 16 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x0223, 0x1001)
+			Renderer.drawVdpSprite(px + 24 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x025e, 0x1001)
+			Renderer.drawVdpSprite(px + 32 + offset, py + 16, 0, sprite_attribute.FLIP_X | sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021f, 0x1001)
+			Renderer.drawVdpSprite(px + 40 + offset, py + 16, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0222, 0x1001)
+			Renderer.drawVdpSprite(px + 48 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x025f, 0x1001)
+
+			Renderer.drawVdpSprite(px + 32 + offset, py + 24, 0, sprite_attribute.FLIP_X | sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0215, 0x1001)
+		}
+		px += 0x80
+	}
+
+	px = originalpx
+	py += 32
+	offset = -(level.framecounter / 3) % 0xa0
 	for (i = 0; i < 10; ++i)
 	{
 		if (i % 2 == 0)
@@ -2346,7 +2380,7 @@ function void RenderAIZ1CloudsDuringFireBreath(s16 px, s16 py)
 
 	px = originalpx
 	py += 16
-	offset = -(level.framecounter / 6) % (0x80 * 3)
+	offset = -(level.framecounter / 6) % 0x180
 	for (i = 0; i < 10; ++i)
 	{
 		if (i % 3 == 1)
