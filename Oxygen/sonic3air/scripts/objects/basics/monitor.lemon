@@ -269,7 +269,7 @@ function void MonitorIntact.Init()
 	objA0.box_size.y = 0x10
 
 #if STANDALONE
-	if (Game.getSetting(SETTING_MONITOR_STYLE) == 1)
+	if (Game.getSetting(SETTING_MONITOR_STYLE) == 1 && !(System.getSystemClockData(DATE_DAY) >= 25 && System.getSystemClockData(DATE_MONTH) == 12))
 	{
 		objA0.box_size.x = 0x11
 		objA0.box_size.y = 0x0f

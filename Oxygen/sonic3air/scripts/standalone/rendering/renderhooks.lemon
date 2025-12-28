@@ -138,28 +138,31 @@ function bool Standalone.onWriteToSpriteTable(s16 px, s16 py, u16 renderQueue)
 	// Monitor
 	if (objA0.update_address >= 0x01d566 && objA0.update_address <= 0x01d61e)
 	{
+		bool giftMonitors = System.getSystemClockData(DATE_DAY) >= 25 && System.getSystemClockData(DATE_MONTH) == 12
 		u8 flags = ((objA0.render_flags & render_flag.FLIP_Y) ? SPRITE_FLAG_FLIP_Y : 0) | (prioFlag ? SPRITE_FLAG_PRIO : 0)
 		if (objA0.animation.sprite == 11)
 		{
-			if (Game.getSetting(SETTING_MONITOR_STYLE))
+			if (Game.getSetting(SETTING_MONITOR_STYLE) && !giftMonitors)
 			{
 				Renderer.drawCustomSprite("monitor_s2_broken", px, py, 0x00, flags, renderQueue)
 			}
 			else
 			{
-				Renderer.drawCustomSprite("monitor_s3_broken", px, py, 0x00, flags, renderQueue)
+				Renderer.drawCustomSprite(giftMonitors ? "monitor_gift_broken" : "monitor_s3_broken", px, py, 0x00, flags, renderQueue)
 			}
 		}
 		else
 		{
-			if (Game.getSetting(SETTING_MONITOR_STYLE))
+			if (Game.getSetting(SETTING_MONITOR_STYLE) && !giftMonitors)
 			{
 				Renderer.drawCustomSprite("monitor_s2_intact", px, py, 0x00, flags, renderQueue)
 				py += (objA0.render_flags & render_flag.FLIP_Y) ? 2 : -2
 			}
 			else
 			{
-				Renderer.drawCustomSprite("monitor_s3_intact", px, py, 0x00, flags, renderQueue)
+				if (giftMonitors)
+					Renderer.drawCustomSprite("monitor_gift_intact_overlay", px, py, 0x00, flags, renderQueue + 1)
+				Renderer.drawCustomSprite(giftMonitors ? "monitor_gift_intact" : "monitor_s3_intact", px, py, 0x00, flags, renderQueue)
 				py += (objA0.render_flags & render_flag.FLIP_Y) ? 5 : -5
 			}
 
