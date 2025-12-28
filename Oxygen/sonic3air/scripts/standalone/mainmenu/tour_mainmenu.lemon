@@ -26,8 +26,18 @@ function string TourMenus.getRandomSplashText()
 {
 	if (System.getSystemClockData(DATE_DAY) == 22 && System.getSystemClockData(DATE_MONTH) == 3)
 	{
-		if (System.rand() % 8 == 0)
+		if (System.rand() % 2 == 0)
 			return "Happy birthday Useott!"
+	}
+	else if (System.getSystemClockData(DATE_DAY) == 1 && System.getSystemClockData(DATE_MONTH) == 1)
+	{
+		u8 rand = System.rand()
+		if (rand % 6 == 0)
+			return stringformat("%d is gonna be my year trust", System.getSystemClockData(DATE_YEAR))
+		else if (rand % 6 == 1)
+			return stringformat("Happy %d!", System.getSystemClockData(DATE_YEAR))
+		else if (rand % 6 == 2)
+			return "now survive 365 more days"
 	}
 
 	u32 bytes = System.loadExternalRawData("main_menu_splashes", 0x800000)
