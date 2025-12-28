@@ -266,8 +266,12 @@ function void UpdateLevelDisplay()
 			py = 0x02e0 - camera.foreground.y.u16
 			RenderAIZ1CloudsDuringFireBreath(px, py)
 
-			if (camera.foreground.x.u16 > 0x2d80 && camera.foreground.x.u16 < 0x2f10)
+			if (camera.foreground.x.u16 + getScreenWidth() >= 0x2ed0 && camera.foreground.x.u16 < 0x2f10)
 				zeroMemory(0xffff9258, 8)
+		}
+		else if (u64[0xffff9258] == 0)
+		{
+			fillMemory_u16(0xffff9258, 8, 0x60ba)
 		}
 	}
 #endif

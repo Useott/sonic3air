@@ -2322,6 +2322,10 @@ function void RenderAIZ1HorizonDuringFireBreath(s16 px, s16 py)
 
 function void RenderAIZ1CloudsDuringFireBreath(s16 px, s16 py)
 {
+	u32 vscrollBufferAddress = (u8[0x818080] != 0) ? 0x818000 : 0xffffeeea
+	float scroll = float(u32[vscrollBufferAddress] - 0x2e00015) / float(0x1b3)
+	u8 alpha = u32[vscrollBufferAddress] > 0x80000000 ? 0xff : Math.lerp(u8(0xff), 0, float(clamp(scroll - 0.35f, 0.0f, 0.75f)) * 2.5f)
+
 	u16 i
 	s16 originalpx = px
 	s16 offset = -(level.framecounter / 2) % 0x100
@@ -2330,29 +2334,29 @@ function void RenderAIZ1CloudsDuringFireBreath(s16 px, s16 py)
 	{
 		if (i % 2 == 0)
 		{
-			Renderer.drawVdpSprite(px + 8 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0217, 0x1001)
-			Renderer.drawVdpSprite(px + 16 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0218, 0x1001)
-			Renderer.drawVdpSprite(px + 24 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001)
-			Renderer.drawVdpSprite(px + 32 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001)
-			Renderer.drawVdpSprite(px + 40 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x021d, 0x1001)
+			Renderer.drawVdpSpriteWithAlpha(px + 8 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0217, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 16 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0218, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 24 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 32 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 40 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x021d, 0x1001, alpha)
 
-			Renderer.drawVdpSprite(px + offset, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x025b, 0x1001)
-			Renderer.drawVdpSprite(px + 8 + offset, py + 8, 0, sprite_attribute.FLIP_X | sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021e, 0x1001)
-			Renderer.drawVdpSprite(px + 16 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021a, 0x1001)
-			Renderer.drawVdpSprite(px + 24 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021c, 0x1001)
-			Renderer.drawVdpSprite(px + 32 + offset, py + 8, 0, sprite_attribute.FLIP_X | sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021a, 0x1001)
-			Renderer.drawVdpSprite(px + 40 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021e, 0x1001)
-			Renderer.drawVdpSprite(px + 48 + offset, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x025c, 0x1001)
+			Renderer.drawVdpSpriteWithAlpha(px + offset, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x025b, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 8 + offset, py + 8, 0, sprite_attribute.FLIP_X | sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021e, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 16 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021a, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 24 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021c, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 32 + offset, py + 8, 0, sprite_attribute.FLIP_X | sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021a, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 40 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021e, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 48 + offset, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x025c, 0x1001, alpha)
 
-			Renderer.drawVdpSprite(px + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x0221, 0x1001)
-			Renderer.drawVdpSprite(px + 8 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x0222, 0x1001)
-			Renderer.drawVdpSprite(px + 16 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x0223, 0x1001)
-			Renderer.drawVdpSprite(px + 24 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x025e, 0x1001)
-			Renderer.drawVdpSprite(px + 32 + offset, py + 16, 0, sprite_attribute.FLIP_X | sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021f, 0x1001)
-			Renderer.drawVdpSprite(px + 40 + offset, py + 16, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0222, 0x1001)
-			Renderer.drawVdpSprite(px + 48 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x025f, 0x1001)
+			Renderer.drawVdpSpriteWithAlpha(px + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x0221, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 8 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x0222, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 16 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x0223, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 24 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x025e, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 32 + offset, py + 16, 0, sprite_attribute.FLIP_X | sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021f, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 40 + offset, py + 16, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0222, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 48 + offset, py + 16, 0, sprite_attribute.PALETTE.LINE3 | 0x025f, 0x1001, alpha)
 
-			Renderer.drawVdpSprite(px + 32 + offset, py + 24, 0, sprite_attribute.FLIP_X | sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0215, 0x1001)
+			Renderer.drawVdpSpriteWithAlpha(px + 32 + offset, py + 24, 0, sprite_attribute.FLIP_X | sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0215, 0x1001, alpha)
 		}
 		px += 0x80
 	}
@@ -2364,17 +2368,17 @@ function void RenderAIZ1CloudsDuringFireBreath(s16 px, s16 py)
 	{
 		if (i % 2 == 0)
 		{
-			Renderer.drawVdpSprite(px + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0260, 0x1001)
-			Renderer.drawVdpSprite(px + 8 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001)
-			Renderer.drawVdpSprite(px + 16 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001)
-			Renderer.drawVdpSprite(px + 24 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0260, 0x1001)
+			Renderer.drawVdpSpriteWithAlpha(px + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0260, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 8 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 16 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 24 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0260, 0x1001, alpha)
 
-			Renderer.drawVdpSprite(px + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001)
-			Renderer.drawVdpSprite(px + 8 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0218, 0x1001)
-			Renderer.drawVdpSprite(px + 16 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001)
-			Renderer.drawVdpSprite(px + 24 + offset, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x0261, 0x1001)
+			Renderer.drawVdpSpriteWithAlpha(px + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 8 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0218, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 16 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 24 + offset, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x0261, 0x1001, alpha)
 		}
-		else Renderer.drawVdpSprite(px + offset, py + 8, 4, sprite_attribute.PALETTE.LINE3 | 0x025b, 0x1001)
+		else Renderer.drawVdpSpriteWithAlpha(px + offset, py + 8, 4, sprite_attribute.PALETTE.LINE3 | 0x025b, 0x1001, alpha)
 		px += 0x50
 	}
 
@@ -2385,17 +2389,17 @@ function void RenderAIZ1CloudsDuringFireBreath(s16 px, s16 py)
 	{
 		if (i % 3 == 1)
 		{
-			Renderer.drawVdpSprite(px + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0260, 0x1001)
-			Renderer.drawVdpSprite(px + 8 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001)
-			Renderer.drawVdpSprite(px + 16 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001)
-			Renderer.drawVdpSprite(px + 24 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0260, 0x1001)
+			Renderer.drawVdpSpriteWithAlpha(px + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x0260, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 8 + offset, py, 0, sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 16 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 24 + offset, py, 0, sprite_attribute.FLIP_X | sprite_attribute.PALETTE.LINE3 | 0x0260, 0x1001, alpha)
 
-			Renderer.drawVdpSprite(px + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001)
-			Renderer.drawVdpSprite(px + 8 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0218, 0x1001)
-			Renderer.drawVdpSprite(px + 16 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001)
-			Renderer.drawVdpSprite(px + 24 + offset, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x0261, 0x1001)
+			Renderer.drawVdpSpriteWithAlpha(px + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0216, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 8 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x0218, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 16 + offset, py + 8, 0, sprite_attribute.FLIP_Y | sprite_attribute.PALETTE.LINE3 | 0x021b, 0x1001, alpha)
+			Renderer.drawVdpSpriteWithAlpha(px + 24 + offset, py + 8, 0, sprite_attribute.PALETTE.LINE3 | 0x0261, 0x1001, alpha)
 		}
-		else Renderer.drawVdpSprite(px + offset, py, 4, sprite_attribute.PALETTE.LINE3 | 0x025b, 0x1001)
+		else Renderer.drawVdpSpriteWithAlpha(px + offset, py, 4, sprite_attribute.PALETTE.LINE3 | 0x025b, 0x1001, alpha)
 		px += 0x80
 	}
 

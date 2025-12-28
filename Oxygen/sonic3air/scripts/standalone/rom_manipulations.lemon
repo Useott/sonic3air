@@ -172,7 +172,7 @@ function void ROMManipulation.AIZ1.ModifyWaterPalette()
 function void ROMManipulation.AIZ1.ReplaceTree16x16Blocks()
 {
 	// Replace the pre-burn cutscene tree
-	System.loadExternalRawData("aiz1_tree_patch", 0x3a4cca, 0, 0x990, true, false)
+	System.loadExternalRawData("aiz1_tree_patch", 0x3a4cda, 0, 0x990, true, false)
 }
 
 
