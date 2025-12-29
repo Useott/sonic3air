@@ -1049,12 +1049,6 @@ void Game::returnToMainMenu()
 {
 	mReturnToMenuTriggered = true;
 
-	// Do not restart menu music
-	if (AudioOut::instance().isPlayingSfxId(mMenuMusic))
-	{
-		AudioOut::instance().moveIngameMusicToMenu();
-	}
-
 	mTimeoutUntilDiscordRefresh = 0.0f;
 }
 

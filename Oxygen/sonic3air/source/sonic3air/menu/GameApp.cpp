@@ -210,7 +210,6 @@ void GameApp::openTitleScreen()
 
 void GameApp::openMainMenu()
 {
-	AudioOut::instance().stopSoundContext(AudioOut::CONTEXT_INGAME + AudioOut::CONTEXT_MUSIC);
 	AudioOut::instance().stopSoundContext(AudioOut::CONTEXT_INGAME + AudioOut::CONTEXT_SOUND);
 
 	if (mMenuBackground->getParent() == mGameView)
