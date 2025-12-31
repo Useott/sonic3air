@@ -115,7 +115,7 @@ void SettingsWindow::buildContent()
 
 		ImGui::Checkbox("Use Tabs in Main Window", &config.mDevMode.mUseTabsInMainWindow);
 
-		if (ImGui::DragFloat("UI Scale", &config.mDevMode.mUIScale, 0.003f, 0.5f, 4.0f, "%.1f"))
+		if (ImGui::DragFloat("UI Scale", &config.mDevMode.mUIScale, 0.003f, 0.5f, 4.0f, "<   %.1f   >"))
 		{
 			ImGuiIntegration::instance().refreshImGuiStyle();
 		}
@@ -140,7 +140,7 @@ void SettingsWindow::buildContent()
 
 	// External file editor settings
 	//  -> Only really makes sense on desktop platforms
-#if defined(PLATFORM_WINDOWS) || defined(PLATFORM_LINUX) || defined(PLATFORM_MACOS)
+#if defined(PLATFORM_IS_DESKTOP)
 	if (ImGui::CollapsingHeader("External Code Editor"))
 	{
 		ImGuiHelpers::ScopedIndent si;
@@ -183,9 +183,8 @@ void SettingsWindow::buildContent()
 			if (active)
 				editor.mInputText.set(*editor.mConfigPathVariable);
 
-			if (ImGui::InputText(*String(0, "%s File Location", editor.mExecutableName.c_str()), editor.mInputText.mInternalUTF8, sizeof(editor.mInputText.mInternalUTF8)))
+			if (ImGuiHelpers::InputText(*String(0, "%s File Location", editor.mExecutableName.c_str()), editor.mInputText))
 			{
-				editor.mInputText.refreshFromInternal();
 				*editor.mConfigPathVariable = editor.mInputText.get();
 				editor.mCheckResult.reset();
 			}
@@ -223,9 +222,8 @@ void SettingsWindow::buildContent()
 				static ImGuiHelpers::WideInputString argsText;
 				argsText.set(editorConfig.mCustomEditorArgs);
 
-				if (ImGui::InputText("Arguments Format", argsText.mInternalUTF8, sizeof(argsText.mInternalUTF8)))
+				if (ImGuiHelpers::InputText("Arguments Format", argsText))
 				{
-					argsText.refreshFromInternal();
 					editorConfig.mCustomEditorArgs = argsText.get();
 				}
 			}

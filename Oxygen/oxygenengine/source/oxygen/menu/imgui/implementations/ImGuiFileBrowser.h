@@ -28,7 +28,7 @@ public:
 	ImGuiFileBrowser();
 
 	virtual void buildImGuiContent() override;	// Builds a fullscreen window variant of the file browser
-	
+
 	virtual bool shouldBlockOtherProviders() const override  { return true; }
 
 	void buildWindowContent();
@@ -52,6 +52,7 @@ private:
 	std::wstring mBasePath;
 	std::wstring mFullPath;
 	std::vector<std::wstring> mLocalPath;
+	bool mIsReadOnlyLocation = false;
 	bool mRefreshFileEntries = false;
 
 	std::vector<std::wstring> mDirectories;

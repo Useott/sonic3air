@@ -16,6 +16,7 @@
 #include "oxygen/menu/imgui/ImGuiIntegration.h"
 #include "oxygen/menu/imgui/ImGuiHelpers.h"
 #include "oxygen/menu/devmode/DevModeMainWindow.h"	// Only used for "DevModeWindowBase::allowDragScrolling"
+#include "oxygen/platform/PlatformFlags.h"
 #include "oxygen/platform/PlatformFunctions.h"
 
 #if defined(PLATFORM_ANDROID)
@@ -71,6 +72,15 @@ namespace
 		return rmx::endsWithCaseInsensitive(filename, L".zip");
 	}
 
+	void mountModZipFile(std::wstring_view filepath)
+	{
+		if (isZipFileName(filepath) && rmx::startsWith(filepath, ModManager::instance().getModsBasePath()))
+		{
+			const std::wstring modsLocalFilePath = std::wstring(filepath.substr(ModManager::instance().getModsBasePath().length()));
+			ModManager::instance().addZipFileProvider(modsLocalFilePath);
+		}
+	}
+
 	void unmountModZipFile(std::wstring_view filepath)
 	{
 		if (isZipFileName(filepath) && rmx::startsWith(filepath, ModManager::instance().getModsBasePath()))
@@ -78,6 +88,18 @@ namespace
 			const std::wstring modsLocalFilePath = std::wstring(filepath.substr(ModManager::instance().getModsBasePath().length()));
 			ModManager::instance().tryRemoveZipFileProvider(modsLocalFilePath);
 		}
+	}
+
+	int filterFileNameInput(ImGuiInputTextCallbackData* data)
+	{
+		static const char FORBIDDEN_CHARACTERS[] = "/\\*?:|<>\"";
+
+		for (char character : FORBIDDEN_CHARACTERS)
+		{
+			if (data->EventChar == character)
+				return 1;
+		}
+		return 0;
 	}
 }
 
@@ -91,10 +113,6 @@ ImGuiFileBrowser::ImGuiFileBrowser()
 
 void ImGuiFileBrowser::buildImGuiContent()
 {
-	// Draw a dark fullscreen background
-	ImGui::GetBackgroundDrawList()->AddRectFilled(ImVec2(0, 0), ImVec2((float)FTX::screenWidth(), (float)FTX::screenHeight()), 0xfa101010);
-
-	// The actual window
 	if (ImGui::Begin("Fullscreen File Browser", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
 	{
 		ImGui::SetWindowPos(ImVec2((float)FTX::screenWidth() * 0.05f, (float)FTX::screenHeight() * 0.01f), ImGuiCond_Always);
@@ -117,9 +135,9 @@ void ImGuiFileBrowser::buildImGuiContent()
 			mRemoveContentProvider = true;
 		}
 
-	#if defined(PLATFORM_WINDOWS) || defined(PLATFORM_MACOS) || defined(PLATFORM_LINUX)
+	#if defined(PLATFORM_HAS_MOUSE)
 		ImGui::Text("Please use your mouse to interact with this window.");
-	#elif defined(PLATFORM_ANDROID) || defined(PLATFORM_WEB)
+	#elif defined(PLATFORM_HAS_TOUCH_INPUT)
 		ImGui::Text("Please use touch input to interact with this window.");
 	#else
 		ImGui::Text("Please use a mouse or touch input to interact with this window.");
@@ -131,7 +149,7 @@ void ImGuiFileBrowser::buildImGuiContent()
 		ImGui::SetNextWindowPos(settingsPopupPos);
 		if (ImGui::BeginPopup("FileBrowser_Settings"))
 		{
-			if (ImGui::DragFloat("UI Scale", &Configuration::instance().mDevMode.mUIScale, 0.003f, 0.5f, 4.0f, "%.1f"))
+			if (ImGui::DragFloat("UI Scale", &Configuration::instance().mDevMode.mUIScale, 0.003f, 0.5f, 4.0f, "<   %.1f   >"))
 			{
 				ImGuiIntegration::instance().refreshImGuiStyle();
 			}
@@ -175,7 +193,13 @@ void ImGuiFileBrowser::buildWindowContent()
 			case AndroidJavaInterface::BinaryDialogResult::SUCCESS:
 			{
 				std::wstring_view filename = std::wstring_view(fileSelection.mPath).substr(fileSelection.mPath.find_last_of(L'/') + 1);
-				FTX::FileSystem->saveFile(mFullPath + WString(filename).toStdWString(), fileSelection.mFileContent);
+				const std::wstring filePath = mFullPath + WString(filename).toStdWString();
+				if (FTX::FileSystem->exists(filePath))
+				{
+					// TODO: First show a confirmation dialog here?
+					unmountModZipFile(filePath);
+				}
+				FTX::FileSystem->saveFile(filePath, fileSelection.mFileContent);
 
 				fileSelection = AndroidJavaInterface::FileSelection();	// Reset
 				mRefreshFileEntries = true;
@@ -195,10 +219,17 @@ void ImGuiFileBrowser::buildWindowContent()
 void ImGuiFileBrowser::updateFullPath()
 {
 	mFullPath = mBasePath;
+	mIsReadOnlyLocation = false;
+
 	for (const std::wstring& dir : mLocalPath)
 	{
 		mFullPath += dir + L"/";
+
+		// Regard zip file content as read-only
+		if (isZipFileName(dir))
+			mIsReadOnlyLocation = true;
 	}
+
 	mRefreshFileEntries = true;
 }
 
@@ -251,12 +282,13 @@ void ImGuiFileBrowser::drawFileBrowser()
 		mRefreshFileEntries = true;
 	}
 
-	ImGui::SameLine();
-	ImGui::Text("  ");
-
 #if defined(PLATFORM_ANDROID) || defined(DEBUG)
 	// "Import file" button
 	ImGui::SameLine();
+	ImGui::Text("  |  ");
+	ImGui::SameLine();
+
+	ImGui::BeginDisabled(mIsReadOnlyLocation);
 	if (ImGui::Button("Import file..."))
 	{
 	#if defined(PLATFORM_ANDROID)
@@ -264,6 +296,7 @@ void ImGuiFileBrowser::drawFileBrowser()
 		javaInterface.openFileSelectionDialog();
 	#endif
 	}
+	ImGui::EndDisabled();
 #endif
 
 	ImGui::Separator();
@@ -359,7 +392,7 @@ void ImGuiFileBrowser::drawFileBrowser()
 		{
 			ImGui::TableNextRow();
 			ImGui::TableNextColumn();
-			ImGui::TextColored(ImGuiHelpers::COLOR_GRAY60, " - Empty folder -");
+			ImGui::TextColored(ImGuiHelpers::COLOR_GRAY60, " - Empty " PLATFORM_DIRECTORY_STRING " -");
 		}
 
 		ImGui::EndTable();
@@ -488,12 +521,17 @@ void ImGuiFileBrowser::drawActionsMenu(bool openMenuNow)
 		}
 		else
 		{
+			// Don't allow modifications for read-only locations, and for the mods base directory
+			// TODO: Protect other directories in the same way...?
+			const bool canModify = !mIsReadOnlyLocation && (mFullPath + *mOpenActionsForDirectory + L'/') != ModManager::instance().getModsBasePath();
+
 			ImGui::Image(ImGuiHelpers::getTextureRef(mFolderIconTexture), ImVec2(16, 16) * mUIScale);
 			ImGui::SameLine();
 			ImGui::TextColored(FOLDER_COLOR, "%s", rmx::convertToUTF8(*mOpenActionsForDirectory).c_str());
 
 			ImGui::Separator();
 
+			ImGui::BeginDisabled(!canModify);
 			if (ImGui::Button("Rename", BUTTON_SIZE))
 			{
 				openRenamingPopup = true;
@@ -505,6 +543,7 @@ void ImGuiFileBrowser::drawActionsMenu(bool openMenuNow)
 				openConfirmDeletionPopup = true;
 				ImGui::CloseCurrentPopup();
 			}
+			ImGui::EndDisabled();
 
 		#if defined(OPEN_EXTERNAL_TEXT)		// Only for platforms that support it
 			ImGui::Separator();
@@ -529,14 +568,18 @@ void ImGuiFileBrowser::drawActionsMenu(bool openMenuNow)
 		}
 		else
 		{
+			const bool canModify = !mIsReadOnlyLocation;
+
 			ImGui::Image(ImGuiHelpers::getTextureRef(getFileIcon(mOpenActionsForFile->mFilename)), ImVec2(16, 16) * mUIScale);
 			ImGui::SameLine();
 			ImGui::Text("%s", rmx::convertToUTF8(mOpenActionsForFile->mFilename).c_str());
 
-			if (isZipFileName(mOpenActionsForFile->mFilename))
+			if (isZipFileName(mOpenActionsForFile->mFilename) && rmx::startsWith(mFullPath, ModManager::instance().getModsBasePath()))	// Second check is needed because mod manager won't mount zips outside of the mods base directory
 			{
 				if (ImGui::Button("Open zip file", BUTTON_SIZE))
 				{
+					// Make sure the zip file is mounted
+					mountModZipFile(mFullPath + mOpenActionsForFile->mFilename);
 					mLocalPath.push_back(mOpenActionsForFile->mFilename);
 					updateFullPath();
 					ImGui::CloseCurrentPopup();
@@ -545,6 +588,7 @@ void ImGuiFileBrowser::drawActionsMenu(bool openMenuNow)
 
 			ImGui::Separator();
 
+			ImGui::BeginDisabled(!canModify);
 			if (ImGui::Button("Rename", BUTTON_SIZE))
 			{
 				openRenamingPopup = true;
@@ -556,6 +600,7 @@ void ImGuiFileBrowser::drawActionsMenu(bool openMenuNow)
 				openConfirmDeletionPopup = true;
 				ImGui::CloseCurrentPopup();
 			}
+			ImGui::EndDisabled();
 
 		#if defined(PLATFORM_ANDROID)
 			ImGui::Separator();
@@ -594,7 +639,7 @@ void ImGuiFileBrowser::drawConfirmDeletionPopup(bool openPopupNow)
 	{
 		if (nullptr != mOpenActionsForFile || nullptr != mOpenActionsForDirectory)
 		{
-			ImGui::Text(nullptr != mOpenActionsForFile ? "Really delete file " : "Really delete folder ");
+			ImGui::Text(nullptr != mOpenActionsForFile ? "Really delete file " : "Really delete " PLATFORM_DIRECTORY_STRING " ");
 			ImGui::SameLineNoSpace();
 			if (nullptr != mOpenActionsForFile)
 			{
@@ -678,7 +723,7 @@ void ImGuiFileBrowser::drawRenamingPopup(bool openPopupNow)
 	{
 		if (nullptr != mOpenActionsForFile || nullptr != mOpenActionsForDirectory)
 		{
-			ImGui::Text(nullptr != mOpenActionsForFile ? "Rename file " : "Rename folder ");
+			ImGui::Text(nullptr != mOpenActionsForFile ? "Rename file " : "Rename " PLATFORM_DIRECTORY_STRING " ");
 			ImGui::SameLineNoSpace();
 			if (nullptr != mOpenActionsForFile)
 			{
@@ -695,11 +740,7 @@ void ImGuiFileBrowser::drawRenamingPopup(bool openPopupNow)
 			{
 				ImGui::SetKeyboardFocusHere();
 			}
-			if (ImGui::InputText("##NewName", newNameInput.mInternalUTF8, sizeof(newNameInput.mInternalUTF8), ImGuiInputTextFlags_CharsNoBlank | ImGuiInputTextFlags_AutoSelectAll))
-			{
-				// TODO: Check for invalid characters for the file name (including slashes and hacks like "..")
-				newNameInput.refreshFromInternal();
-			}
+			ImGuiHelpers::InputText("##NewName", newNameInput, ImGuiInputTextFlags_CharsNoBlank | ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_CallbackCharFilter, &filterFileNameInput);
 
 			ImGui::Separator();
 
