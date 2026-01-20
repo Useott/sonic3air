@@ -88,14 +88,6 @@ namespace lemon
 		static void exec_OPT_WRITE_MEMORY_DISCARD(const RuntimeOpcodeContext context)
 		{
 			context.mControlFlow->mValueStackPtr -= 2;
-			const uint64 address = *(context.mControlFlow->mValueStackPtr+1);
-			OpcodeExecUtils::writeMemory<T>(*context.mControlFlow, address, (T)(*(context.mControlFlow->mValueStackPtr)));
-		}
-
-		template<typename T>
-		static void exec_OPT_WRITE_MEMORY_EXCHANGED_DISCARD(const RuntimeOpcodeContext context)
-		{
-			context.mControlFlow->mValueStackPtr -= 2;
 			const uint64 address = *(context.mControlFlow->mValueStackPtr);
 			OpcodeExecUtils::writeMemory<T>(*context.mControlFlow, address, (T)(*(context.mControlFlow->mValueStackPtr+1)));
 		}
@@ -332,7 +324,7 @@ namespace lemon
 							int64* value = const_cast<Runtime&>(runtime).accessGlobalVariableValue(runtime.getProgram().getGlobalVariableByID(variableId));
 							runtimeOpcode.setParameter(value);
 
-							switch (DataTypeHelper::getSizeOfBaseType(opcodes[0].mDataType))
+							switch (BaseTypeHelper::getSizeOfBaseType(opcodes[0].mDataType))
 							{
 								case 1:  runtimeOpcode.mExecFunc = &OptimizedOpcodeExec::exec_OPT_SET_VARIABLE_VALUE_EXTERNAL_DISCARD<uint8>;   break;
 								case 2:  runtimeOpcode.mExecFunc = &OptimizedOpcodeExec::exec_OPT_SET_VARIABLE_VALUE_EXTERNAL_DISCARD<uint16>;  break;
@@ -363,19 +355,12 @@ namespace lemon
 			}
 
 			// Merge: Write memory and discard its result
-			if (opcodes[0].mType == Opcode::Type::WRITE_MEMORY && opcodes[0].mParameter == 0)
+			if (opcodes[0].mType == Opcode::Type::WRITE_MEMORY)
 			{
 				if (opcodes[1].mType == Opcode::Type::MOVE_STACK && opcodes[1].mParameter == -1)
 				{
 					RuntimeOpcode& runtimeOpcode = buffer.addOpcode(8);
-					if (opcodes[0].mParameter == 0)
-					{
-						SELECT_EXEC_FUNC_BY_DATATYPE_INT(OptimizedOpcodeExec::exec_OPT_WRITE_MEMORY_DISCARD, opcodes[0].mDataType);
-					}
-					else
-					{
-						SELECT_EXEC_FUNC_BY_DATATYPE_INT(OptimizedOpcodeExec::exec_OPT_WRITE_MEMORY_EXCHANGED_DISCARD, opcodes[0].mDataType);
-					}
+					SELECT_EXEC_FUNC_BY_DATATYPE_INT(OptimizedOpcodeExec::exec_OPT_WRITE_MEMORY_DISCARD, opcodes[0].mDataType);
 					outNumOpcodesConsumed = 2;
 					return true;
 				}
@@ -388,7 +373,7 @@ namespace lemon
 				{
 					uint64 address = opcodes[0].mParameter;
 					MemoryAccessHandler::SpecializationResult result;
-					runtime.getMemoryAccessHandler()->getDirectAccessSpecialization(result, address, DataTypeHelper::getSizeOfBaseType(opcodes[1].mDataType), false);
+					runtime.getMemoryAccessHandler()->getDirectAccessSpecialization(result, address, BaseTypeHelper::getSizeOfBaseType(opcodes[1].mDataType), false);
 					if (result.mResult == MemoryAccessHandler::SpecializationResult::Result::HAS_SPECIALIZATION)
 					{
 						RuntimeOpcode& runtimeOpcode = buffer.addOpcode(8);
@@ -420,7 +405,7 @@ namespace lemon
 				{
 					uint64 address = opcodes[0].mParameter;
 					MemoryAccessHandler::SpecializationResult result;
-					runtime.getMemoryAccessHandler()->getDirectAccessSpecialization(result, address, DataTypeHelper::getSizeOfBaseType(opcodes[1].mDataType), true);
+					runtime.getMemoryAccessHandler()->getDirectAccessSpecialization(result, address, BaseTypeHelper::getSizeOfBaseType(opcodes[1].mDataType), true);
 					if (result.mResult == MemoryAccessHandler::SpecializationResult::Result::HAS_SPECIALIZATION)
 					{
 						RuntimeOpcode& runtimeOpcode = buffer.addOpcode(8);

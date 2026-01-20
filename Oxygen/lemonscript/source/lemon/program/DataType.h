@@ -14,6 +14,7 @@
 
 namespace lemon
 {
+	class Function;
 
 	struct DataTypeDefinition
 	{
@@ -30,8 +31,8 @@ namespace lemon
 
 		struct BracketOperator
 		{
-			uint64 mGetterNameAndSignatureHash = 0;		// Function signature: (uint32 variableID, parameterType parameter) -> valueType
-			uint64 mSetterNameAndSignatureHash = 0;		// Function signature: (uint32 variableID, parameterType parameter, valueType value) -> void
+			Function* mGetter = 0;		// Function signature: (uint32 variableID, parameterType parameter) -> valueType
+			Function* mSetter = 0;		// Function signature: (valueType value, uint32 variableID, parameterType parameter) -> void
 			const DataTypeDefinition* mValueType = nullptr;
 			const DataTypeDefinition* mParameterType = nullptr;
 		};
@@ -54,7 +55,9 @@ namespace lemon
 		inline size_t getSizeOnStack() const { return (mBytes + 7) / 8; }
 		inline Class getClass() const		 { return mClass; }
 		inline BaseType getBaseType() const	 { return mBaseType; }
-		inline bool isPredefined() const	 { return mClass > Class::STRING; }
+
+		inline bool isVoid() const			 { return mClass == Class::VOID; }
+		inline bool isPredefined() const	 { return mClass <= Class::STRING; }
 
 		virtual uint16 getDataTypeHash() const  { return mID; }
 
@@ -128,9 +131,7 @@ namespace lemon
 	struct StringDataType : public DataTypeDefinition
 	{
 	public:
-		inline explicit StringDataType(uint16 id) :
-			DataTypeDefinition("string", id, Class::STRING, 8, BaseType::UINT_64)
-		{}
+		explicit StringDataType(uint16 id);
 
 		// Rather unfortunately, the data type hash for string needs to be the same as for u64, for feature level 1 compatibility regarding function overloading
 		uint16 getDataTypeHash() const override;
@@ -146,6 +147,7 @@ namespace lemon
 
 	struct PredefinedDataTypes
 	{
+	public:
 		inline static const VoidDataType VOID		  = VoidDataType();
 		inline static const AnyDataType ANY			  = AnyDataType();
 
@@ -165,16 +167,9 @@ namespace lemon
 
 		inline static const StringDataType STRING	  = StringDataType(13);
 
-		static void collectPredefinedDataTypes(std::vector<const DataTypeDefinition*>& outDataTypes);
-	};
-
-
-	struct DataTypeHelper
-	{
-		static size_t getSizeOfBaseType(BaseType baseType);
+	public:
 		static const DataTypeDefinition* getDataTypeDefinitionForBaseType(BaseType baseType);
-
-		static bool isPureIntegerBaseCast(BaseCastType baseCastType);
+		static void collectPredefinedDataTypes(std::vector<const DataTypeDefinition*>& outDataTypes);
 	};
 
 }

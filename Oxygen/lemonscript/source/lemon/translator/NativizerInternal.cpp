@@ -253,7 +253,7 @@ namespace lemon
 			case Node::Type::MEMORY_FIXED:
 			{
 				const bool swapBytes = (node.mValue & 0x01) != 0;
-				const size_t bytes = DataTypeHelper::getSizeOfBaseType(node.mDataType);
+				const size_t bytes = BaseTypeHelper::getSizeOfBaseType(node.mDataType);
 				if (swapBytes && bytes >= 2)
 				{
 					line += *String(0, "swapBytes%d(", bytes * 8);
@@ -557,15 +557,13 @@ namespace lemon
 
 						case Opcode::Type::WRITE_MEMORY:
 						{
-							const bool exchangedInputs = (opcode.mParameter != 0);
 							{
 								// Main assignment
 								Assignment& assignment = vectorAdd(mAssignments);
 								assignment.mDest			= &mNodes.emplace_back(Assignment::Node::Type::MEMORY, opcode.mDataType);
-								assignment.mDest->mChild[0]	= &mNodes.emplace_back(Assignment::Node::Type::VALUE_STACK, BaseType::UINT_32, stackPosition - (exchangedInputs ? 2 : 1));
-								assignment.mSource			= &mNodes.emplace_back(Assignment::Node::Type::VALUE_STACK, opcode.mDataType, stackPosition - (exchangedInputs ? 1 : 2));
+								assignment.mDest->mChild[0]	= &mNodes.emplace_back(Assignment::Node::Type::VALUE_STACK, BaseType::UINT_32, stackPosition - 2);
+								assignment.mSource			= &mNodes.emplace_back(Assignment::Node::Type::VALUE_STACK, opcode.mDataType, stackPosition - 1);
 							}
-							if (exchangedInputs)
 							{
 								// Add another assignment to copy the value to the top-of-stack, where it might be expected by the next assignments
 								Assignment& assignment = vectorAdd(mAssignments);

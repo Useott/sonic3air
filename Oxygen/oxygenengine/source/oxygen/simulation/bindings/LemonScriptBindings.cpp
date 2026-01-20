@@ -997,7 +997,7 @@ namespace
 		if (EngineMain::getDelegate().useDeveloperFeatures())
 		{
 			const int key = index + '0';
-			const bool result = (FTX::keyState(key) && FTX::keyChange(key) && !FTX::keyState(SDLK_LALT) && !FTX::keyState(SDLK_RALT) && !ImGuiIntegration::instance().isCapturingKeyboard());
+			const bool result = (FTX::keyState(key) && !FTX::keyState(SDLK_LALT) && !FTX::keyState(SDLK_RALT) && !ImGuiIntegration::instance().isCapturingKeyboard());
 			controlFlow.pushValueStack<uint8>(result ? 1 : 0);
 		}
 		else
@@ -1033,7 +1033,7 @@ namespace
 				std::wstring outputFilename = String(filename.getString()).toStdWString();
 				const bool containsAnySlash = (outputFilename.find('/') != std::wstring::npos || outputFilename.find('\\') != std::wstring::npos);
 				RMX_CHECK(!containsAnySlash, "The file name passed to debugDumpToFile was '" << filename.getString() << "', which contains a file path. This is not allowed, please use a file name only!", return);
-				RMX_CHECK(rmx::FileIO::isValidFileName(outputFilename), "The file name passed to debugDumpToFile was '" << filename.getString() << "', which contains illegal characters for file names (like \" < > : | ? * )", return);
+				RMX_CHECK(rmx::FileIO::isValidPathName(outputFilename), "The file name passed to debugDumpToFile was '" << filename.getString() << "', which contains illegal characters for file names (like \" < > : | ? * )", return);
 
 				outputFilename = Configuration::instance().mAppDataPath + L"output/" + outputFilename;
 

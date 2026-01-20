@@ -77,6 +77,15 @@ public:
 		bool mApplyModSettingsAfterLoadState = false;
 	};
 
+	struct AudioSettings
+	{
+		float mMasterVolume = 1.0f;
+		float mMusicVolume = 0.8f;
+		float mSoundVolume = 0.8f;
+		int   mSampleRate = 48000;
+		bool  mUseAudioThreading = true;		// Disabled in constructor for platforms that don't support it
+	};
+
 	struct GameRecorder
 	{
 		int mRecordingMode = -1;		// -1 = Auto, 0 = Recording disabled, 1 = Recording enabled
@@ -114,7 +123,6 @@ public:
 	{
 		STANDARD = 0,	// "settings.json"
 		INPUT = 1,		// "settings_input.json"
-		GLOBAL = 2		// "settings_global.json"
 	};
 
 	static const int NUM_PLAYERS = 4;
@@ -155,7 +163,7 @@ public:
 	std::wstring mExePath;
 	std::wstring mAppDataPath;				// App data path for the engine
 	std::wstring mGameAppDataPath;			// App data path for the game; can be the same as the app data path for the engine, or a sub-folder of it
-	std::wstring mSettingsFilenames[3];		// Uses SettingsType as key
+	std::wstring mSettingsFilenames[2];		// Uses SettingsType as key
 	std::wstring mEngineDataPath;
 	std::wstring mGameDataPath;
 	std::wstring mRomPath;					// From configuration
@@ -204,9 +212,7 @@ public:
 	int   mPerformanceDisplay = 0;
 
 	// Audio
-	int   mAudioSampleRate = 48000;
-	float mAudioVolume = 1.0f;
-	bool  mUseAudioThreading = true;		// Disabled in constructor for platforms that don't support it
+	AudioSettings mAudio;
 
 	// Input
 	std::vector<InputConfig::DeviceDefinition> mInputDeviceDefinitions;

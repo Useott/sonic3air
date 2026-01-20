@@ -27,7 +27,6 @@ namespace lemon
 		mModuleId(rmx::getMurmur2_64(name) & 0xffffffffffff0000ull),
 		mAppendedInfo(appendedInfo)
 	{
-		static_assert((size_t)Opcode::Type::_NUM_TYPES == 36);	// Otherwise DEFAULT_OPCODE_BASETYPES needs to get updated
 	}
 
 	Module::~Module()
@@ -95,6 +94,8 @@ namespace lemon
 
 	void Module::startCompiling(const GlobalsLookup& globalsLookup)
 	{
+		mScriptFeatureLevel = 1;	// Default for compiled scripts is feature level 1 unless the script explicitly defines feature level 2
+
 		if (mFunctions.empty())
 		{
 			// It's the same here as for variables, see below

@@ -289,7 +289,7 @@ bool EngineMain::startupEngine()
 
 	// Audio
 	RMX_LOG_INFO("Audio initialization...");
-	FTX::Audio->initialize(config.mAudioSampleRate, 2, 1024);
+	FTX::Audio->initialize(config.mAudio.mSampleRate, 2, 1024);
 
 	RMX_LOG_INFO("Startup of AudioOut");
 	mAudioOut = &EngineMain::getDelegate().createAudioOut();
@@ -435,7 +435,6 @@ bool EngineMain::initConfigAndSettings()
 	RMX_LOG_INFO("Loading settings");
 	const bool loadedSettings = config.loadSettings(config.mAppDataPath + L"settings.json", Configuration::SettingsType::STANDARD);
 	config.loadSettings(config.mAppDataPath + L"settings_input.json", Configuration::SettingsType::INPUT);
-	config.loadSettings(config.mAppDataPath + L"settings_global.json", Configuration::SettingsType::GLOBAL);
 	if (loadedSettings)
 	{
 	#if defined(PLATFORM_IS_DESKTOP)
@@ -450,6 +449,9 @@ bool EngineMain::initConfigAndSettings()
 			loadConfigJson();
 		}
 	#endif
+
+		// Remove old "settings_global.json", which was only used for legacy compatibility
+		FTX::FileSystem->removeFile(config.mAppDataPath + L"settings_global.json");
 	}
 	else
 	{
@@ -544,16 +546,16 @@ bool EngineMain::initFileSystem()
 			FTX::FileSystem->addMountPoint(*provider, L"data/", engineBasePath + L"data/", 0x10);
 		}
 	}
-	else
+
+	// In case the game data path isn't located in local "data" directory, add a real file system provider for it
+	//  -> This is relevant for Oxygen Engine using an external game data path
+	//  -> Also, the Mac build of S3AIR requires this logic, as game data is in a different subdirectory inside the app container than the binary
+	//  -> In other cases (such as S3AIR on other platforms), no additional real file provider is needed, so this part is skipped
+	if (config.mGameDataPath != L"data" && config.mGameDataPath != L"./data")
 	{
-		// Add real file system provider for the game data path, if it isn't located in local "data" directory
-		//  -> This is relevant for Oxygen Engine using an external game data path
-		if (config.mGameDataPath != L"data" && config.mGameDataPath != L"./data")
-		{
-			rmx::RealFileProvider* provider = new rmx::RealFileProvider();
-			FTX::FileSystem->addManagedFileProvider(*provider);
-			FTX::FileSystem->addMountPoint(*provider, L"data/", config.mGameDataPath + L'/', 0x10);
-		}
+		rmx::RealFileProvider* provider = new rmx::RealFileProvider();
+		FTX::FileSystem->addManagedFileProvider(*provider);
+		FTX::FileSystem->addMountPoint(*provider, L"data/", config.mGameDataPath + L'/', 0x10);
 	}
 
 	// Create mod data folder (the default mod directory)

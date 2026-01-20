@@ -182,8 +182,8 @@
 	// Sound effects                                //
 	//----------------------------------------------//
 
-	"33": { "Name": "Ring 1", "Source": "Emulation", "Type": "Sound", "Volume": "0.8" },	// Alternating ring sound (emulation plays left)
-	"34": { "Name": "Ring 2", "Source": "Emulation", "Type": "Sound", "Volume": "0.8" },	// Ring sound always playing right
+	"33": { "Name": "Ring", "Source": "Emulation", "Type": "Sound" },	// Alternating ring sound (emulation plays left)
+	"34": { "Name": "Ring", "Source": "Emulation", "Type": "Sound" },	// Ring sound always playing right
 	"35": { "Name": "Damage/Death", "Source": "Emulation", "Type": "Sound" },
 	"36": { "Name": "Brake", "Source": "Emulation", "Type": "Sound" },		// Brake
 	"37": { "Name": "Spike damage", "Source": "Emulation", "Type": "Sound" },
@@ -191,7 +191,7 @@
 	"39": { "Name": "Splash", "Source": "Emulation", "Type": "Sound" },
 	"3A": { "Name": "Classic Shield", "Source": "Emulation", "Type": "Sound" },
 	"3B": { "Name": "Drowning", "Source": "Emulation", "Type": "Sound" },
-	"3C": { "Name": "Roll", "Source": "Emulation", "Type": "Sound", "Volume": "0.7" },		// Roll
+	"3C": { "Name": "Roll", "Source": "Emulation", "Type": "Sound" },		// Roll
 	"3D": { "Name": "Small explosion", "Source": "Emulation", "Type": "Sound" },
 	"3E": { "Name": "Fire Shield", "Source": "Emulation", "Type": "Sound" },
 	"3F": { "Name": "Bubble Shield", "Source": "Emulation", "Type": "Sound" },
@@ -222,7 +222,7 @@
 	"56": { "Name": "Landing", "Source": "Emulation", "Type": "Sound" },
 	"57": { "Name": "Water bursts out", "Source": "Emulation", "Type": "Sound" },
 	"58": { "Name": "Something closes", "Source": "Emulation", "Type": "Sound" },
-	"59": { "Name": "Something collapses", "Source": "Emulation", "Type": "Sound", "Volume": "0.7" },		// Collapse sound (which is a bit loud imho)
+	"59": { "Name": "Something collapses", "Source": "Emulation", "Type": "Sound" },		// Collapse sound
 	"5A": { "Name": "Something charges up", "Source": "Emulation", "Type": "Sound" },
 	"5B": { "Name": "Beep", "File": "sfx5B.ogg", "Type": "Sound" },			// Still using the recorded version, as the emulated version somehow feels off (though I can't really say why)
 	"5C": { "Name": "Spark", "Source": "Emulation", "Type": "Sound" },
@@ -309,7 +309,7 @@
 	"A8": { "Name": "Laser/Energy bridge", "Source": "Emulation", "Type": "Sound" },
 	"A9": { "Name": "Aquaphobia", "Source": "Emulation", "Type": "Sound" },
 	"AA": { "Name": "Bumper bounce", "Source": "Emulation", "Type": "Sound" },
-	"AB": { "Name": "Spin dash is charged", "Source": "EmulationContinuous", "Type": "Sound", "Volume": "0.8" },		// Spindash charge; needs to be emulated dynamically (i.e. "continuous") because of reverb effect
+	"AB": { "Name": "Spin dash is charged", "Source": "EmulationContinuous", "Type": "Sound" },		// Spindash charge; needs to be emulated dynamically (i.e. "continuous") because of reverb effect
 	"AC": { "Name": "Got a continue", "Source": "Emulation", "Type": "Sound" },
 	"AD": { "Name": "Countdown ends", "Source": "Emulation", "Type": "Sound" },
 	"AE": { "Name": "Bounce", "Source": "Emulation", "Type": "Sound" },
@@ -330,7 +330,7 @@
 	
 	// Continuous sounds have to be emulated
 	"BC": { "Name": "Waterfall", "Source": "EmulationContinuous", "Type": "Sound" },
-	"BD": { "Name": "Flying ship", "Source": "EmulationContinuous", "Type": "Sound", "Volume": "0.5" },
+	"BD": { "Name": "Flying ship", "Source": "EmulationContinuous", "Type": "Sound" },
 	"BE": { "Name": "Egg Mobile moves", "Source": "EmulationContinuous", "Type": "Sound" },
 	"BF": { "Name": "Big Icedus moves ice rocks around", "Source": "EmulationContinuous", "Type": "Sound" },
 

@@ -56,6 +56,7 @@ namespace lemon
 			BaseType::VOID,			// RETURN
 			BaseType::VOID,			// EXTERNAL_CALL
 			BaseType::VOID,			// EXTERNAL_JUMP
+			BaseType::VOID,			// DUPLICATE
 		};
 
 		void readAddressHooks(VectorBinarySerializer& serializer, std::vector<ScriptFunction::AddressHook>& addressHook)
@@ -105,11 +106,14 @@ namespace lemon
 		//  - 0x12 = Support for deprecation flags in function alias names
 		//  - 0x13 = Source file info with local paths
 		//  - 0x14 = Label address hooks and disabled address hooks
+		//  - 0x15 = Script feature level of module
+
+		static_assert((size_t)Opcode::Type::_NUM_TYPES == 37);	// Otherwise DEFAULT_OPCODE_BASETYPES needs to get updated
 
 		// Signature and version number
 		const uint32 SIGNATURE = *(uint32*)"LMD|";	// "Lemonscript Module"
 		const uint16 MINIMUM_VERSION = 0x14;
-		uint16 version = 0x14;
+		uint16 version = 0x15;
 
 		if (outerSerializer.isReading())
 		{
@@ -151,6 +155,8 @@ namespace lemon
 		// Serialize module
 		serializer & module.mFirstFunctionID;
 		serializer & module.mFirstVariableID;
+		if (version >= 0x15)
+			serializer & module.mScriptFeatureLevel;
 
 		// Serialize source file info
 		{

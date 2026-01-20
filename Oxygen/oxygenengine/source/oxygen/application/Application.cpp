@@ -147,6 +147,37 @@ void Application::deinitialize()
 	updateWindowDisplayIndex();
 }
 
+void Application::beginFrame()
+{
+	// Handle text input
+	{
+		// Start or stop text input from SDL
+		//  -> The start call is required to even get any "textinput" callbacks
+		//  -> On devices that support it (like Android), active text input will also bring up the virtual keyboard
+		if (mRequestActiveTextInput != (bool)SDL_IsTextInputActive())
+		{
+			if (mRequestActiveTextInput)
+			{
+				SDL_StartTextInput();
+			}
+			else
+			{
+				SDL_StopTextInput();
+			}
+		}
+
+		// Reset for next frame, so text input gets deactivated if nobody requests it again
+		mRequestActiveTextInput = false;
+	}
+
+	GuiBase::beginFrame();
+}
+
+void Application::endFrame()
+{
+	GuiBase::endFrame();
+}
+
 void Application::sdlEvent(const SDL_Event& ev)
 {
 	GuiBase::sdlEvent(ev);
@@ -410,9 +441,9 @@ void Application::keyboard(const rmx::KeyboardEvent& ev)
 				case SDLK_KP_PLUS:
 				case SDLK_KP_MINUS:
 				{
-					int volume = roundToInt(Configuration::instance().mAudioVolume * 100.0f);
+					int volume = roundToInt(Configuration::instance().mAudio.mMasterVolume * 100.0f);
 					volume = clamp((ev.key == SDLK_KP_PLUS) ? volume + 5 : volume - 5, 0, 100);
-					Configuration::instance().mAudioVolume = (float)volume / 100.0f;
+					Configuration::instance().mAudio.mMasterVolume = (float)volume / 100.0f;
 					LogDisplay::instance().setLogDisplay(String(0, "Audio volume: %d%%", volume));
 					break;
 				}
@@ -843,6 +874,11 @@ bool Application::hasKeyboard() const
 bool Application::hasVirtualGamepad() const
 {
 	return (EngineMain::instance().getPlatformFlags() & 0x0002) != 0;
+}
+
+void Application::requestActiveTextInput()
+{
+	mRequestActiveTextInput = true;
 }
 
 int Application::updateWindowDisplayIndex()
