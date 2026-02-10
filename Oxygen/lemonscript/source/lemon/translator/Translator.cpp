@@ -9,7 +9,7 @@
 #include "lemon/pch.h"
 #include "lemon/translator/Translator.h"
 #include "lemon/translator/SourceCodeWriter.h"
-#include "lemon/program/Function.h"
+#include "lemon/program/function/Function.h"
 
 
 namespace lemon
@@ -252,7 +252,7 @@ namespace lemon
 					{
 						if (k > 0)
 							line << ", ";
-						translateTokenInternal(line, static_cast<const StatementToken&>(pt.mContent[k]));
+						translateTokenInternal(line, pt.mContent[k].as<StatementToken>());
 					}
 					switch (pt.mParenthesisType)
 					{
@@ -269,7 +269,7 @@ namespace lemon
 					{
 						if (k > 0)
 							line << ", ";
-						translateTokenInternal(line, static_cast<const StatementToken&>(cslt.mContent[k][0]));
+						translateTokenInternal(line, cslt.mContent[k][0].as<StatementToken>());
 					}
 					break;
 				}

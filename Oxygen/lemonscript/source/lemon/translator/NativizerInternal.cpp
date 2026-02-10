@@ -9,7 +9,7 @@
 #include "lemon/pch.h"
 #include "lemon/translator/NativizerInternal.h"
 #include "lemon/translator/SourceCodeWriter.h"
-#include "lemon/program/Function.h"
+#include "lemon/program/function/Function.h"
 #include "lemon/program/OpcodeHelper.h"
 
 
@@ -128,9 +128,9 @@ namespace lemon
 
 					case Variable::Type::USER:
 					{
-						line += "static_cast<GlobalVariable&>(context.mControlFlow->getProgram().getGlobalVariableByID(";
+						line += "context.mControlFlow->getProgram().getGlobalVariableByID(";
 						outputParameter(line, node.mParameterOffset, BaseType::UINT_32);
-						line += ")).setValue(";
+						line += ").as<GlobalVariable>().setValue(";
 						closeParenthesis = true;
 						break;
 					}
@@ -225,9 +225,9 @@ namespace lemon
 
 					case Variable::Type::USER:
 					{
-						line += "static_cast<GlobalVariable&>(context.mControlFlow->getProgram().getGlobalVariableByID(";
+						line += "context.mControlFlow->getProgram().getGlobalVariableByID(";
 						outputParameter(line, node.mParameterOffset, BaseType::UINT_32);
-						line += ")).getValue()";
+						line += ").as<GlobalVariable>().getValue()";
 						break;
 					}
 
@@ -510,14 +510,19 @@ namespace lemon
 							size_t parameterOffset;
 							switch (type)
 							{
-								case Variable::Type::EXTERNAL:
+								case Variable::Type::LOCAL:
 								{
-									parameterOffset = mParameters.add(opcodeIndex, 8, ParameterInfo::Semantics::EXTERNAL_VARIABLE, opcode.mDataType);
+									parameterOffset = mParameters.add(opcodeIndex, 4, ParameterInfo::Semantics::LOCAL_VARIABLE);
 									break;
 								}
 								case Variable::Type::GLOBAL:
 								{
 									parameterOffset = mParameters.add(opcodeIndex, 8, ParameterInfo::Semantics::GLOBAL_VARIABLE);
+									break;
+								}
+								case Variable::Type::EXTERNAL:
+								{
+									parameterOffset = mParameters.add(opcodeIndex, 8, ParameterInfo::Semantics::EXTERNAL_VARIABLE, opcode.mDataType);
 									break;
 								}
 								default:

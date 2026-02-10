@@ -13,6 +13,7 @@
 #include "lemon/runtime/OpcodeExecUtils.h"
 #include "lemon/program/OpcodeHelper.h"
 #include "lemon/program/Program.h"
+#include "lemon/program/function/NativeFunction.h"
 
 
 namespace lemon
@@ -121,15 +122,15 @@ namespace lemon
 
 		static void exec_GET_VARIABLE_VALUE_LOCAL(const RuntimeOpcodeContext context)
 		{
-			const uint32 variableId = context.getParameter<uint32>();
-			*context.mControlFlow->mValueStackPtr = context.readLocalVariable<int64>(variableId);
+			const uint32 variableOffset = context.getParameter<uint32>();
+			*context.mControlFlow->mValueStackPtr = context.readLocalVariable<int64>(variableOffset);
 			++context.mControlFlow->mValueStackPtr;
 		}
 
 		static void exec_GET_VARIABLE_VALUE_USER(const RuntimeOpcodeContext context)
 		{
 			const uint32 variableId = context.getParameter<uint32>();
-			const UserDefinedVariable& variable = static_cast<UserDefinedVariable&>(context.mControlFlow->getProgram().getGlobalVariableByID(variableId));
+			const UserDefinedVariable& variable = context.mControlFlow->getProgram().getGlobalVariableByID(variableId).as<UserDefinedVariable>();
 			variable.mGetter(*context.mControlFlow);	// This is supposed to write a value to the value stack
 		}
 
@@ -143,14 +144,14 @@ namespace lemon
 		static void exec_SET_VARIABLE_VALUE_LOCAL(const RuntimeOpcodeContext context)
 		{
 			const int64 value = *(context.mControlFlow->mValueStackPtr-1);
-			const uint32 variableId = context.getParameter<uint32>();
-			context.writeLocalVariable<int64>(variableId, value);
+			const uint32 variableOffset = context.getParameter<uint32>();
+			context.writeLocalVariable<int64>(variableOffset, value);
 		}
 
 		static void exec_SET_VARIABLE_VALUE_USER(const RuntimeOpcodeContext context)
 		{
 			const uint32 variableId = context.getParameter<uint32>();
-			UserDefinedVariable& variable = static_cast<UserDefinedVariable&>(context.mControlFlow->getProgram().getGlobalVariableByID(variableId));
+			UserDefinedVariable& variable = context.mControlFlow->getProgram().getGlobalVariableByID(variableId).as<UserDefinedVariable>();
 			variable.mSetter(*context.mControlFlow);	// This is supposed to read the value to set from the value stack (but also leave it there)
 		}
 
@@ -364,7 +365,7 @@ namespace lemon
 
 
 
-	void DefaultOpcodeProvider::buildRuntimeOpcodeStatic(RuntimeOpcodeBuffer& buffer, const Opcode* opcodes, int numOpcodesAvailable, int firstOpcodeIndex, int& outNumOpcodesConsumed, const Runtime& runtime)
+	void DefaultOpcodeProvider::buildRuntimeOpcodeStatic(RuntimeOpcodeBuffer& buffer, const Opcode* opcodes, int numOpcodesAvailable, int firstOpcodeIndex, int& outNumOpcodesConsumed, const Runtime& runtime, const ScriptFunction& function)
 	{
 		const Opcode& opcode = opcodes[0];
 		outNumOpcodesConsumed = 1;
@@ -446,12 +447,18 @@ namespace lemon
 				const Variable::Type type = (Variable::Type)(variableId >> 28);
 				switch (type)
 				{
-					case Variable::Type::LOCAL:		runtimeOpcode.mExecFunc = &OpcodeExec::exec_GET_VARIABLE_VALUE_LOCAL;	break;
-					case Variable::Type::USER:		runtimeOpcode.mExecFunc = &OpcodeExec::exec_GET_VARIABLE_VALUE_USER;	break;
+					case Variable::Type::LOCAL:
+					{
+						const LocalVariable& variable = function.getLocalVariableByID(variableId);
+						runtimeOpcode.setParameter(variable.getLocalMemoryOffset());
+						runtimeOpcode.mExecFunc = &OpcodeExec::exec_GET_VARIABLE_VALUE_LOCAL;
+						break;
+					}
 
 					case Variable::Type::GLOBAL:
 					{
-						int64* value = const_cast<Runtime&>(runtime).accessGlobalVariableValue(runtime.getProgram().getGlobalVariableByID(variableId));
+						const GlobalVariable& variable = runtime.getProgram().getGlobalVariableByID(variableId).as<GlobalVariable>();
+						int64* value = const_cast<Runtime&>(runtime).accessGlobalVariableValue(variable);
 						runtimeOpcode.setParameter(value);
 
 						switch (BaseTypeHelper::getSizeOfBaseType(opcode.mDataType))
@@ -464,9 +471,15 @@ namespace lemon
 						break;
 					}
 
+					case Variable::Type::USER:
+					{
+						runtimeOpcode.mExecFunc = &OpcodeExec::exec_GET_VARIABLE_VALUE_USER;
+						break;
+					}
+
 					case Variable::Type::EXTERNAL:
 					{
-						const ExternalVariable& variable = static_cast<ExternalVariable&>(runtime.getProgram().getGlobalVariableByID(variableId));
+						const ExternalVariable& variable = runtime.getProgram().getGlobalVariableByID(variableId).as<ExternalVariable>();
 						runtimeOpcode.setParameter(variable.mAccessor());
 
 						switch (variable.getDataType()->getBytes())
@@ -488,12 +501,18 @@ namespace lemon
 				const Variable::Type type = (Variable::Type)(variableId >> 28);
 				switch (type)
 				{
-					case Variable::Type::LOCAL:		runtimeOpcode.mExecFunc = &OpcodeExec::exec_SET_VARIABLE_VALUE_LOCAL;	 break;
-					case Variable::Type::USER:		runtimeOpcode.mExecFunc = &OpcodeExec::exec_SET_VARIABLE_VALUE_USER;	 break;
+					case Variable::Type::LOCAL:
+					{
+						const LocalVariable& variable = function.getLocalVariableByID(variableId);
+						runtimeOpcode.setParameter(variable.getLocalMemoryOffset());
+						runtimeOpcode.mExecFunc = &OpcodeExec::exec_SET_VARIABLE_VALUE_LOCAL;
+						break;
+					}
 
 					case Variable::Type::GLOBAL:
 					{
-						int64* value = const_cast<Runtime&>(runtime).accessGlobalVariableValue(runtime.getProgram().getGlobalVariableByID(variableId));
+						const GlobalVariable& variable = runtime.getProgram().getGlobalVariableByID(variableId).as<GlobalVariable>();
+						int64* value = const_cast<Runtime&>(runtime).accessGlobalVariableValue(variable);
 						runtimeOpcode.setParameter(value);
 
 						switch (BaseTypeHelper::getSizeOfBaseType(opcode.mDataType))
@@ -506,9 +525,15 @@ namespace lemon
 						break;
 					}
 
+					case Variable::Type::USER:
+					{
+						runtimeOpcode.mExecFunc = &OpcodeExec::exec_SET_VARIABLE_VALUE_USER;
+						break;
+					}
+
 					case Variable::Type::EXTERNAL:
 					{
-						const ExternalVariable& variable = static_cast<ExternalVariable&>(runtime.getProgram().getGlobalVariableByID(variableId));
+						const ExternalVariable& variable = runtime.getProgram().getGlobalVariableByID(variableId).as<ExternalVariable>();
 						runtimeOpcode.setParameter(variable.mAccessor());
 
 						switch (variable.getDataType()->getBytes())
@@ -682,7 +707,7 @@ namespace lemon
 				{
 					// If this is a native function, replace with a runtime opcode that just executes the function without the usual overheads
 					const Function* function = runtime.getProgram().getFunctionBySignature((uint64)opcode.mParameter);
-					if (nullptr != function && function->getType() == Function::Type::NATIVE && function->hasFlag(Function::Flag::ALLOW_INLINE_EXECUTION))
+					if (nullptr != function && function->isA<NativeFunction>() && function->hasFlag(Function::Flag::ALLOW_INLINE_EXECUTION))
 					{
 						runtimeOpcode.mExecFunc = &OpcodeExec::exec_INLINE_NATIVE_CALL;
 						runtimeOpcode.setParameter((uint64)function);
@@ -713,9 +738,9 @@ namespace lemon
 		runtimeOpcode.mSuccessiveHandledOpcodes = (runtimeOpcode.mExecFunc == &OpcodeExec::exec_NOT_HANDLED) ? 0 : 1;
 	}
 
-	bool DefaultOpcodeProvider::buildRuntimeOpcode(RuntimeOpcodeBuffer& buffer, const Opcode* opcodes, int numOpcodesAvailable, int firstOpcodeIndex, int& outNumOpcodesConsumed, const Runtime& runtime)
+	bool DefaultOpcodeProvider::buildRuntimeOpcode(RuntimeOpcodeBuffer& buffer, const Opcode* opcodes, int numOpcodesAvailable, int firstOpcodeIndex, int& outNumOpcodesConsumed, const Runtime& runtime, const ScriptFunction& function)
 	{
-		buildRuntimeOpcodeStatic(buffer, opcodes, numOpcodesAvailable, firstOpcodeIndex, outNumOpcodesConsumed, runtime);
+		buildRuntimeOpcodeStatic(buffer, opcodes, numOpcodesAvailable, firstOpcodeIndex, outNumOpcodesConsumed, runtime, function);
 		return true;
 	}
 

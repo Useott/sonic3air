@@ -8,8 +8,10 @@
 
 #include "lemon/pch.h"
 #include "lemon/program/ModuleSerializer.h"
-#include "lemon/program/Module.h"
 #include "lemon/program/GlobalsLookup.h"
+#include "lemon/program/Module.h"
+#include "lemon/program/Opcode.h"
+#include "lemon/program/function/ScriptFunction.h"
 
 
 namespace lemon
@@ -107,13 +109,14 @@ namespace lemon
 		//  - 0x13 = Source file info with local paths
 		//  - 0x14 = Label address hooks and disabled address hooks
 		//  - 0x15 = Script feature level of module
+		//  - 0x16 = Data type differentiation between arrays and custom types
 
 		static_assert((size_t)Opcode::Type::_NUM_TYPES == 37);	// Otherwise DEFAULT_OPCODE_BASETYPES needs to get updated
 
 		// Signature and version number
 		const uint32 SIGNATURE = *(uint32*)"LMD|";	// "Lemonscript Module"
-		const uint16 MINIMUM_VERSION = 0x14;
-		uint16 version = 0x15;
+		const uint16 MINIMUM_VERSION = 0x16;
+		uint16 version = 0x16;
 
 		if (outerSerializer.isReading())
 		{
@@ -260,7 +263,7 @@ namespace lemon
 			size_t i = 0;
 			for (; i < module.mGlobalVariables.size(); ++i)
 			{
-				if (module.mGlobalVariables[i]->getType() == Variable::Type::GLOBAL)
+				if (module.mGlobalVariables[i]->isA<lemon::GlobalVariable>())
 					break;
 			}
 			serializer.writeAs<uint32>(i);		// Number of user-defined variables
@@ -271,8 +274,8 @@ namespace lemon
 			for (; i < module.mGlobalVariables.size(); ++i)
 			{
 				const Variable& variable = *module.mGlobalVariables[i];
-				RMX_CHECK(variable.getType() == Variable::Type::GLOBAL, "Mix of global variables and others", return false);
-				const GlobalVariable& globalVariable = static_cast<const GlobalVariable&>(variable);
+				RMX_CHECK(variable.isA<GlobalVariable>(), "Mix of global variables and others", return false);
+				const GlobalVariable& globalVariable = variable.as<GlobalVariable>();
 
 				variable.getName().serialize(serializer);
 				serializer.write(variable.getDataType()->getID());
@@ -384,16 +387,56 @@ namespace lemon
 				{
 					FlyweightString name;
 					name.serialize(serializer);
-					const BaseType baseType = (BaseType)serializer.read<uint8>();
-					module.addDataType(name.getString().data(), baseType);
+					const DataTypeDefinition::Class dataTypeClass = (DataTypeDefinition::Class)serializer.read<uint8>();
+					switch (dataTypeClass)
+					{
+						case DataTypeDefinition::Class::ARRAY:
+						{
+							const DataTypeDefinition* elementType = nullptr;
+							globalsLookup.serializeDataType(serializer, elementType);
+							const uint32 arraySize = serializer.read<uint32>();
+							module.addArrayDataType(*elementType, arraySize);
+							break;
+						}
+
+						case DataTypeDefinition::Class::CUSTOM:
+						{
+							const BaseType baseType = (BaseType)serializer.read<uint8>();
+							module.addCustomDataType(name.getString().data(), baseType);
+							break;
+						}
+
+						default:
+							break;
+					}
 				}
 			}
 			else
 			{
-				for (const CustomDataType* dataType : module.mDataTypes)
+				for (const DataTypeDefinition* dataType : module.mDataTypes)
 				{
 					dataType->getName().serialize(serializer);
-					serializer.writeAs<uint8>(dataType->getBaseType());
+					serializer.writeAs<uint8>(dataType->getClass());
+
+					switch (dataType->getClass())
+					{
+						case DataTypeDefinition::Class::ARRAY:
+						{
+							const DataTypeDefinition* elementType = &dataType->as<ArrayDataType>().mElementType;
+							globalsLookup.serializeDataType(serializer, elementType);
+							serializer.writeAs<uint32>(dataType->as<ArrayDataType>().mArraySize);
+							break;
+						}
+
+						case DataTypeDefinition::Class::CUSTOM:
+						{
+							serializer.writeAs<uint8>(dataType->getBaseType());
+							break;
+						}
+
+						default:
+							break;
+					}
 				}
 			}
 		}
@@ -577,13 +620,13 @@ namespace lemon
 				const Function& function = *module.mFunctions[i];
 
 				uint8 flags = 0;
-				flags |= FLAG_NATIVE_FUNCTION * (function.getType() == Function::Type::NATIVE);
+				flags |= FLAG_NATIVE_FUNCTION * (function.isA<NativeFunction>());
 				flags |= FLAG_HAS_ALIAS_NAMES * (!function.mAliasNames.empty());
 				flags |= FLAG_HAS_RETURN_TYPE * (function.mReturnType != &PredefinedDataTypes::VOID);
 				flags |= FLAG_HAS_PARAMETERS  * (!function.mParameters.empty());
-				if (function.getType() == Function::Type::SCRIPT)
+				if (function.isA<ScriptFunction>())
 				{
-					const ScriptFunction& scriptFunc = static_cast<const ScriptFunction&>(function);
+					const ScriptFunction& scriptFunc = function.as<ScriptFunction>();
 					flags |= FLAG_HAS_LABELS		* (!scriptFunc.mLabels.empty());
 					flags |= FLAG_HAS_ADDRESS_HOOKS * (!scriptFunc.mAddressHooks.empty());
 					flags |= FLAG_HAS_PRAGMAS		* (!scriptFunc.mPragmas.empty());
@@ -618,10 +661,10 @@ namespace lemon
 					}
 				}
 
-				if (function.getType() == Function::Type::SCRIPT)
+				if (function.isA<ScriptFunction>())
 				{
 					// Load script function
-					const ScriptFunction& scriptFunc = static_cast<const ScriptFunction&>(function);
+					const ScriptFunction& scriptFunc = function.as<ScriptFunction>();
 
 					// Source information
 					serializer.writeAs<uint16>(scriptFunc.mSourceFileInfo->mIndex);

@@ -100,7 +100,8 @@ namespace lemon
 		mLineNumber = mFunction.mStartLineNumber;
 
 		// Create scope
-		addOpcode(Opcode::Type::MOVE_VAR_STACK, mFunction.mLocalVariablesByID.size());
+		RMX_ASSERT((mFunction.mLocalVariablesMemorySize % 8) == 0, "Expected local variables total size to be a multiple of 8 bytes");
+		addOpcode(Opcode::Type::MOVE_VAR_STACK, mFunction.mLocalVariablesMemorySize / 8);
 
 		// Go through parameters in reverse order
 		for (int index = (int)mFunction.getParameters().size() - 1; index >= 0; --index)
@@ -145,7 +146,7 @@ namespace lemon
 		// Make sure it ends with a return in any case
 		if (mOpcodes.empty() || mOpcodes.back().mType != Opcode::Type::RETURN)
 		{
-			CHECK_ERROR(mFunction.getReturnType()->getClass() == DataTypeDefinition::Class::VOID, "Function '" << mFunction.getName() << "' must return a " << mFunction.getReturnType()->getName() << " value", blockNode.getLineNumber());
+			CHECK_ERROR(mFunction.getReturnType()->isA<VoidDataType>(), "Function '" << mFunction.getName() << "' must return a " << mFunction.getReturnType()->getName() << " value", blockNode.getLineNumber());
 			addOpcode(Opcode::Type::RETURN);
 		}
 		else
@@ -201,7 +202,7 @@ namespace lemon
 	Opcode& FunctionCompiler::addOpcode(Opcode::Type type, const DataTypeDefinition* dataType, int64 parameter)
 	{
 		BaseType baseType = dataType->getBaseType();
-		if (dataType->getClass() == DataTypeDefinition::Class::INTEGER && dataType->as<IntegerDataType>().mSemantics == IntegerDataType::Semantics::BOOLEAN)
+		if (dataType->isA<IntegerDataType>() && dataType->as<IntegerDataType>().mSemantics == IntegerDataType::Semantics::BOOLEAN)
 		{
 			baseType = BaseType::BOOL;
 		}
@@ -297,11 +298,11 @@ namespace lemon
 			case Node::Type::BLOCK:
 			{
 				const BlockNode& blockNode = node.as<BlockNode>();
-				// TODO: Get correct number of local variables in this scope
-				const int numVariables = 0;
-				scopeBegin(numVariables);
+				// TODO: Get correct size of local variables in this scope
+				const int memorySize = 0;
+				scopeBegin(memorySize);
 				buildOpcodesFromNodes(blockNode, context);
-				scopeEnd(numVariables);
+				scopeEnd(memorySize);
 				break;
 			}
 
@@ -339,7 +340,7 @@ namespace lemon
 				{
 					addJumpToLabel(Opcode::Type::JUMP_SWITCH, *labelToken);
 				}
-				addOpcode(Opcode::Type::MOVE_VAR_STACK, -1);	// Consume top of stack if none of the jumps did
+				addOpcode(Opcode::Type::MOVE_VAR_STACK, -1);	// Consume top of stack if none of the jumps did -- TODO: Isn't this meant to be MOVE_STACK (via "addMoveStackOpcode") instead?
 				break;
 			}
 
@@ -366,13 +367,13 @@ namespace lemon
 				const ReturnNode& returnNode = node.as<ReturnNode>();
 				if (returnNode.mStatementToken.valid())
 				{
-					CHECK_ERROR(mFunction.getReturnType()->getClass() != DataTypeDefinition::Class::VOID, "Function '" << mFunction.getName() << "' with 'void' return type cannot return a value", node.getLineNumber());
+					CHECK_ERROR(!mFunction.getReturnType()->isA<VoidDataType>(), "Function '" << mFunction.getName() << "' with 'void' return type cannot return a value", node.getLineNumber());
 					compileTokenTreeToOpcodes(*returnNode.mStatementToken);
 					addCastOpcodeIfNecessary(returnNode.mStatementToken->mDataType, mFunction.getReturnType());
 				}
 				else
 				{
-					CHECK_ERROR(mFunction.getReturnType()->getClass() == DataTypeDefinition::Class::VOID, "Function '" << mFunction.getName() << "' must return a " << mFunction.getReturnType()->getName() << " value", node.getLineNumber());
+					CHECK_ERROR(mFunction.getReturnType()->isA<VoidDataType>(), "Function '" << mFunction.getName() << "' must return a " << mFunction.getReturnType()->getName() << " value", node.getLineNumber());
 				}
 				addOpcode(Opcode::Type::RETURN);
 				break;
@@ -742,8 +743,16 @@ namespace lemon
 			case VariableToken::TYPE:
 			{
 				const VariableToken& vt = token.as<VariableToken>();
-				const Opcode::Type opcodeType = isLValue ? Opcode::Type::SET_VARIABLE_VALUE : Opcode::Type::GET_VARIABLE_VALUE;
-				addOpcode(opcodeType, vt.mDataType, vt.mVariable->getID());
+				if (vt.mDataType->isA<ArrayDataType>())
+				{
+					// Push variable ID
+					addOpcode(Opcode::Type::PUSH_CONSTANT, vt.mVariable->getID());
+				}
+				else
+				{
+					const Opcode::Type opcodeType = isLValue ? Opcode::Type::SET_VARIABLE_VALUE : Opcode::Type::GET_VARIABLE_VALUE;
+					addOpcode(opcodeType, vt.mDataType, vt.mVariable->getID());
+				}
 				break;
 			}
 
@@ -841,7 +850,7 @@ namespace lemon
 				CHECK_ERROR(false, "Token type should be eliminated by now", mLineNumber);
 		}
 
-		if (consumeResult && token.mDataType->getClass() != DataTypeDefinition::Class::VOID)
+		if (consumeResult && !token.mDataType->isA<VoidDataType>())
 		{
 			const int sizeOnStack = (int)token.mDataType->getSizeOnStack();
 			RMX_ASSERT(sizeOnStack != 0, "Invalid stack size of type " << token.mDataType->getName().getString());
@@ -1088,19 +1097,19 @@ namespace lemon
 		addOpcode(opcodeType, leftToken->mDataType);
 	}
 
-	void FunctionCompiler::scopeBegin(int numVariables)
+	void FunctionCompiler::scopeBegin(int memoryToReserve)
 	{
-		if (numVariables > 0)
+		if (memoryToReserve > 0)
 		{
-			addOpcode(Opcode::Type::MOVE_VAR_STACK, numVariables);
+			addOpcode(Opcode::Type::MOVE_VAR_STACK, memoryToReserve);
 		}
 	}
 
-	void FunctionCompiler::scopeEnd(int numVariables)
+	void FunctionCompiler::scopeEnd(int memoryToFree)
 	{
-		if (numVariables > 0)
+		if (memoryToFree > 0)
 		{
-			addOpcode(Opcode::Type::MOVE_VAR_STACK, -numVariables);
+			addOpcode(Opcode::Type::MOVE_VAR_STACK, -memoryToFree);
 		}
 	}
 
