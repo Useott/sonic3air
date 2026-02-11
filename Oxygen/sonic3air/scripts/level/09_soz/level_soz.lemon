@@ -1992,7 +1992,15 @@ function void SOZ.drawDarkSandPit(u16 px, u16 py, u16 width)
 
 	for (u16 i = 0; i < width; i += 0x80)
 	{
-		Renderer.drawCustomSprite("obj_dark_sand_pit_overlay", px + i - camera.foreground.x.u16, py + 0x38 - camera.foreground.y.u16, 0, SPRITE_FLAG_PRIO, 0x8000)
+		if (global.act == 1)
+		{
+			// Tint the sprite based on how dark the stage is
+			u8 lightstate = u8[0xfffff7c3] / 2
+			u32 tint = lightstate == 0 ? 0xffffffff : lightstate == 1 ? 0xaa6688ff : 0x000044ff
+
+			Renderer.drawSpriteTinted("obj_dark_sand_pit_overlay", px + i - camera.foreground.x.u16, py + 0x38 - camera.foreground.y.u16, 0, SPRITE_FLAG_PRIO, 0x8000, 0, tint, 0x10000)
+		}
+		else Renderer.drawSprite("obj_dark_sand_pit_overlay", px + i - camera.foreground.x.u16, py + 0x38 - camera.foreground.y.u16, 0, SPRITE_FLAG_PRIO, 0x8000)
 	}
 }
 #endif
