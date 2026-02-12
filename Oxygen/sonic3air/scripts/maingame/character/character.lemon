@@ -3947,7 +3947,8 @@ function void UpdateMusicOnWaterTransition()
 	if (u8[A1 + 0x2c] <= 12 && A1 == 0xffffb000)
 	{
 	#if STANDALONE
-		playMusic(MUSIC_CTRL_FADEOUT)	// Make sure that drowning jingle is really stopped (needed in case the super theme is active and it's fast level music)
+		if (Game.getSetting(SETTING_DROWNING_MUSIC))
+			playMusic(MUSIC_CTRL_FADEOUT)	// Make sure that drowning jingle is really stopped (needed in case the super theme is active and it's fast level music)
 		u8[A1 + 0x2c] = 30				// Needs to be done before choosing the music
 		if (Game.getSetting(SETTING_DROWNING_MUSIC))
 	#endif
