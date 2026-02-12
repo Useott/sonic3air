@@ -412,7 +412,7 @@ function void fn03097e()
 
 	DrawObject()
 
-	if (global.framecounter % 3 == 0)
+	if (global.framecounter % 6 == 0)
 	{
 		if (allocDynamicObjectStdExtended())
 		{
