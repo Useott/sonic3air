@@ -367,29 +367,34 @@ function void fn03093c()
 //# address-hook(0x03097e) end(0x0309c6)
 function void fn03097e()
 {
-	if (u16[A0 + 0x30] != 0)
+#if STANDALONE
+	if (shouldUnloadObjectAtPosition(objA0.position.x.u16, 0x400) == false)
+#endif
 	{
-		objA0.position.y.u16 += 8
-		--u16[A0 + 0x30]
-		if (u16[A0 + 0x30] == 0)
+		if (u16[A0 + 0x30] != 0)
 		{
-			level.HCZ_breakable_bar_flags = 0
+			objA0.position.y.u16 += 8
+			--u16[A0 + 0x30]
+			if (u16[A0 + 0x30] == 0)
+			{
+				level.HCZ_breakable_bar_flags = 0
+			}
 		}
-	}
 
-	D0.u8 = level.framecounter.low & 0x0f
-	if (D0.u8 == 0)
-	{
-		playSound(0xc0)
-	}
+		D0.u8 = level.framecounter.low & 0x0f
+		if (D0.u8 == 0)
+		{
+			playSound(0xc0)
+		}
 
-	--objA0.animation.timer
-	if (s8(objA0.animation.timer) < 0)
-	{
-		objA0.animation.timer = 0
-		++objA0.animation.sprite
-		if (objA0.animation.sprite >= 5)
-			objA0.animation.sprite = 0
+		--objA0.animation.timer
+		if (s8(objA0.animation.timer) < 0)
+		{
+			objA0.animation.timer = 0
+			++objA0.animation.sprite
+			if (objA0.animation.sprite >= 5)
+				objA0.animation.sprite = 0
+		}
 	}
 
 #if STANDALONE
@@ -523,10 +528,13 @@ function void WaterTunnelBubbles()
 	D6.u8 = 0
 	D5 = 0
 
+	u8 backupHCZ_water_current_flags.player1 = level.HCZ_water_current_flags.player1
+
 	u8 backupHCZ_breakable_bar_flags = level.HCZ_breakable_bar_flags
 	level.HCZ_breakable_bar_flags = 0
 	fn006f90()
 	level.HCZ_breakable_bar_flags = backupHCZ_breakable_bar_flags
+	level.HCZ_water_current_flags.player1 = backupHCZ_water_current_flags.player1
 	objA0.velocity.x = Math.roundToInt(float(objA0.velocity.x) / 1.5f)
 	objA0.velocity.y = Math.roundToInt(float(objA0.velocity.y) / 1.5f)
 	UpdateMovementStraightSimple()
@@ -537,6 +545,12 @@ function void WaterTunnelBubbles()
 	objA0.sprite_priority = 0x0380
 	objA0.box_size.x = 0x18
 	objA0.box_size.y = 0x18
+
+	if (abs(objA0.velocity.x) < 0x10 && abs(objA0.velocity.y) < 0x10)
+	{
+		UnloadObject()
+		return
+	}
 
 	objA0.render_flags = (render_flag.WORLD | render_flag.VISIBLE)
 
