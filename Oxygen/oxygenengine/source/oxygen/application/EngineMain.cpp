@@ -1,6 +1,6 @@
 /*
 *	Part of the Oxygen Engine / Sonic 3 A.I.R. software distribution.
-*	Copyright (C) 2017-2025 by Eukaryot
+*	Copyright (C) 2017-2026 by Eukaryot
 *
 *	Published under the GNU GPLv3 open source software license, see license.txt
 *	or https://www.gnu.org/licenses/gpl-3.0.en.html
@@ -567,7 +567,7 @@ bool EngineMain::initFileSystem()
 
 	// Sanity check if engine data exists
 	//  -> The Oxygen icon is a file that is always part of the engine data, so we just check for that
-	if (!FTX::FileSystem->exists(config.mGameDataPath + L"/oxygen_icon.png"))
+	if (!FTX::FileSystem->exists(config.mEngineDataPath + L"/oxygen_icon.png"))
 	{
 		if (mDelegate.isDedicatedApplication())
 			RMX_ERROR("Could not find engine data.\nThis can mean your game installation is broken and needs to be downloaded and installed again.\n\nIn case you manually replaced your data folder with the source data files, please make sure to also copy over the files from 'oxygenengine/data' as well.", )

@@ -1,6 +1,6 @@
 /*
 *	Part of the Oxygen Engine / Sonic 3 A.I.R. software distribution.
-*	Copyright (C) 2017-2025 by Eukaryot
+*	Copyright (C) 2017-2026 by Eukaryot
 *
 *	Published under the GNU GPLv3 open source software license, see license.txt
 *	or https://www.gnu.org/licenses/gpl-3.0.en.html
@@ -198,9 +198,19 @@ namespace lemon
 
 	void GlobalsLookup::registerDataType(const DataTypeDefinition* dataTypeDefinition)
 	{
-		RMX_ASSERT(dataTypeDefinition->getID() == mDataTypes.size(), "Wrong data type ID");
-		mDataTypes.push_back(dataTypeDefinition);
-		mAllIdentifiers[dataTypeDefinition->getName().getHash()].set(dataTypeDefinition);
+		// Check if data type was already added (which happens for data types added during compilation, like arrays)
+		const uint64 nameHash = dataTypeDefinition->getName().getHash();
+		const Identifier* existing = mapFind(mAllIdentifiers, nameHash);
+		if (nullptr != existing)
+		{
+			RMX_CHECK(existing->getType() == Identifier::Type::DATA_TYPE, "Data type name '" << dataTypeDefinition->getName() << "' was already used for a different global identifier", );
+		}
+		else
+		{
+			RMX_ASSERT(dataTypeDefinition->getID() == mDataTypes.size(), "Wrong data type ID");
+			mDataTypes.push_back(dataTypeDefinition);
+			mAllIdentifiers[nameHash].set(dataTypeDefinition);
+		}
 	}
 
 	const DataTypeDefinition* GlobalsLookup::readDataType(VectorBinarySerializer& serializer) const
