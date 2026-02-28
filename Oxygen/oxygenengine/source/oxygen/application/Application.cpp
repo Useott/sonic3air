@@ -492,7 +492,7 @@ void Application::update(float timeElapsed)
 	// ImGui frame start must be done here (instead of at the start of "render"), to ensure that the mouse capturing flag is set correctly
 	//  -> This is particularly relevant for touch input, where we would miss the first touch into an ImGui window and falsely pass it to the touch overlay
 	mImGuiIntegration.startFrame();
-	if (mImGuiIntegration.isCapturingMouse() || mImGuiIntegration.isCapturingKeyboard())
+	if (mImGuiIntegration.isCapturingMouse() || mImGuiIntegration.isCapturingKeyboard() || mImGuiIntegration.hasBlockingImGuiWindow())
 	{
 		FTX::System->consumeCurrentEvent();
 	}
@@ -767,8 +767,10 @@ void Application::setWindowMode(WindowMode windowMode, bool force)
 		{
 			if (mWindowMode >= WindowMode::FULLSCREEN_DESKTOP)
 			{
+				// Exit fullscreen first
 				SDL_SetWindowFullscreen(window, 0);
 			}
+
 			SDL_SetWindowSize(window, Configuration::instance().mWindowSize.x, Configuration::instance().mWindowSize.y);
 			SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex));
 			SDL_SetWindowResizable(window, SDL_TRUE);

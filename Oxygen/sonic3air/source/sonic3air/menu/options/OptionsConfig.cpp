@@ -93,7 +93,7 @@ void OptionsConfig::buildSystem()
 	}
 #endif
 
-#if defined(SUPPORT_IMGUI) && !defined(PLATFORM_WEB)	// Hide the file browser option in the Web version, as it already has its own file manager with more functionality
+#if defined(SUPPORT_IMGUI)
 	CATEGORY("Data Management")
 	{
 		configBuilder.addSetting("Open File Browser", option::_OPEN_FILE_BROWSER);
@@ -201,15 +201,22 @@ void OptionsConfig::buildDisplay()
 	CATEGORY("Window Mode")
 	{
 	#if !defined(PLATFORM_VITA)
+	#if defined(PLATFORM_LINUX)
+		// Under Linux, the fullscreen with desktop resolution works better, so that's what we present as option
+		const Configuration::WindowMode borderlessFullscreenMode = Configuration::WindowMode::FULLSCREEN_DESKTOP;
+	#else
+		const Configuration::WindowMode borderlessFullscreenMode = Configuration::WindowMode::FULLSCREEN_BORDERLESS;
+	#endif
+
 		configBuilder.addSetting("Current Screen:", option::WINDOW_MODE)
-			.addOption("Windowed", 0)
-			.addOption("Fullscreen", 1)
-			.addOption("Exclusive Fullscreen", 2);
+			.addOption("Windowed", (uint32)Configuration::WindowMode::WINDOWED)
+			.addOption("Fullscreen", (uint32)borderlessFullscreenMode)
+			.addOption("Exclusive Fullscreen", (uint32)Configuration::WindowMode::FULLSCREEN_EXCLUSIVE);
 
 		configBuilder.addSetting("Startup Screen:", option::WINDOW_MODE_STARTUP)
-			.addOption("Windowed", 0)
-			.addOption("Fullscreen", 1)
-			.addOption("Exclusive Fullscreen", 2);
+			.addOption("Windowed", (uint32)Configuration::WindowMode::WINDOWED)
+			.addOption("Fullscreen", (uint32)borderlessFullscreenMode)
+			.addOption("Exclusive Fullscreen", (uint32)Configuration::WindowMode::FULLSCREEN_EXCLUSIVE);
 	#else
 		// These aren't supposed to show up on the Vita
 		configBuilder.addSetting("Current Screen:", option::WINDOW_MODE)
