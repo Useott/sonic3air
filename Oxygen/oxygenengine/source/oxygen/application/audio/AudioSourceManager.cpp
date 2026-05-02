@@ -8,6 +8,7 @@
 
 #include "oxygen/pch.h"
 #include "oxygen/application/audio/AudioSourceManager.h"
+#include "oxygen/application/audio/ChipWritesAudioSource.h"
 #include "oxygen/application/audio/EmulationAudioSource.h"
 #include "oxygen/application/audio/OggAudioSource.h"
 
@@ -68,10 +69,17 @@ AudioSourceBase* AudioSourceManager::getAudioSourceForPlayback(SourceRegistratio
 		// Create a new audio source
 		if (sourceRegistration.mType == SourceRegistration::Type::FILE)
 		{
-			bool useCaching = !String(sourceRegistration.mAudioDefinition->mKeyString).endsWith("_fast");
-			if (sourceRegistration.mUseCaching != 0xff)
-				useCaching = (sourceRegistration.mUseCaching == 1 ? true : false);
-			audioSource = addOggAudioSource(sourceRegistration.mSourceFile, useCaching, sourceRegistration.mIsLooping, sourceRegistration.mLoopStart);
+			if (rmx::endsWith(sourceRegistration.mSourceFile, L".chipw"))
+			{
+				audioSource = addChipWritesAudioSource(sourceRegistration.mSourceFile, false);
+			}
+			else
+			{
+				const bool useCaching = !String(sourceRegistration.mAudioDefinition->mKeyString).endsWith("_fast");
+				if (sourceRegistration.mUseCaching != 0xff)
+					useCaching = (sourceRegistration.mUseCaching == 1 ? true : false);
+				audioSource = addOggAudioSource(sourceRegistration.mSourceFile, useCaching, sourceRegistration.mIsLooping, sourceRegistration.mLoopStart);
+			}
 		}
 		else
 		{
@@ -112,6 +120,17 @@ size_t AudioSourceManager::getMemoryUsage() const
 		memoryUsage += audioSource->getMemoryUsage();
 	}
 	return memoryUsage;
+}
+
+AudioSourceBase* AudioSourceManager::addChipWritesAudioSource(std::wstring_view filename, bool useCaching)
+{
+	// Register audio source
+	ChipWritesAudioSource* audioSource = new ChipWritesAudioSource(useCaching);
+	mAudioSources.push_back(audioSource);
+
+	// Load content
+	audioSource->load(filename);
+	return audioSource;
 }
 
 AudioSourceBase* AudioSourceManager::addEmulationAudioSource(uint8 soundId, AudioSourceBase::CachingType cachingType, const std::wstring& filename, uint32 sourceAddress, uint32 contentOffset)

@@ -12,6 +12,7 @@
 #include "oxygen/application/Configuration.h"
 #include "oxygen/application/EngineMain.h"
 #include "oxygen/application/audio/AudioOutBase.h"
+#include "oxygen/application/menu/SharedFonts.h"
 #include "oxygen/application/video/VideoOut.h"
 #include "oxygen/drawing/DrawerTexture.h"
 #include "oxygen/helper/FileHelper.h"
@@ -97,6 +98,7 @@ void GameView::updateGameViewport()
 {
 	const Configuration& config = Configuration::instance();
 	const Recti gameScreenRect = VideoOut::instance().getScreenRect();
+	mGameViewport.setResolution(gameScreenRect.getSize());
 
 	switch (config.mUpscaling)
 	{
@@ -104,28 +106,21 @@ void GameView::updateGameViewport()
 		case 0:
 		{
 			// Aspect fit
-			mGameViewport = RenderUtils::getLetterBoxRect(mRect, gameScreenRect.getAspectRatio());
+			mGameViewport.buildRectAspectFit(mRect);
 			break;
 		}
 
 		case 1:
 		{
 			// Integer upscaling
-			mGameViewport = RenderUtils::getLetterBoxRect(mRect, gameScreenRect.getAspectRatio());
-
-			if (!config.mDevMode.mEnabled)	// If dev mode is enabled, integer scale is handled differently, see below
+			if (config.mDevMode.mEnabled)
 			{
-				int height = gameScreenRect.height;
-				if (gameScreenRect.height == 0)
-					height = 224;
-				const int scale = mGameViewport.height / height;
-				if (scale >= 1)
-				{
-					mGameViewport.width = roundToInt((float)gameScreenRect.width * scale);
-					mGameViewport.height = roundToInt((float)gameScreenRect.height * scale);
-					mGameViewport.x = mRect.x + (mRect.width - mGameViewport.width) / 2;
-					mGameViewport.y = mRect.y + (mRect.height - mGameViewport.height) / 2;
-				}
+				// If dev mode is enabled, integer scale is handled differently, see below
+				mGameViewport.buildRectAspectFit(mRect);
+			}
+			else
+			{
+				mGameViewport.buildRectIntegerAspectFit(mRect);
 			}
 			break;
 		}
@@ -133,84 +128,35 @@ void GameView::updateGameViewport()
 		case 2:
 		{
 			// Halfway stretch to fill
-			const Recti letterBox = RenderUtils::getLetterBoxRect(mRect, gameScreenRect.getAspectRatio());
-			mGameViewport.setPos((letterBox.getPos() + mRect.getPos()) / 2);		// Average between letter box and full stretch
-			mGameViewport.setSize((letterBox.getSize() + mRect.getSize()) / 2);
+			mGameViewport.buildRectAspectFit(mRect, 0.5f);
 			break;
 		}
 
 		case 3:
 		{
 			// Stretch to fill
-			mGameViewport = mRect;
+			mGameViewport.setRectOnScreen(mRect);
 			break;
 		}
 
 		case 4:
 		{
 			// Scale to fill
-			mGameViewport = RenderUtils::getScaleToFillRect(mRect, gameScreenRect.getAspectRatio());
+			mGameViewport.buildRectScaleToFill(mRect);
 			break;
 		}
 	}
 
 	if (config.mDevMode.mEnabled)
 	{
-		// Consider integer scaling
-		Vec2f scaledSize = Vec2f(mGameViewport.getSize()) * config.mDevMode.mGameViewScale;
-		if (config.mUpscaling == 1)
-		{
-			int height = gameScreenRect.height;
-			if (gameScreenRect.height == 0)
-				height = 224;
-			const int scale = std::max((int)((float)mGameViewport.height * config.mDevMode.mGameViewScale) / height, 1);
-			scaledSize = Vec2f(gameScreenRect.getSize() * scale);
-		}
-
-		const Vec2f maxPos = Vec2f(mRect.getEndPos()) - scaledSize;
-		mGameViewport.x = roundToInt(maxPos.x * (1.0f + config.mDevMode.mGameViewAlignment.x) / 2.0f);
-		mGameViewport.y = roundToInt(maxPos.y * (1.0f + config.mDevMode.mGameViewAlignment.y) / 2.0f);
-		mGameViewport.setSize(Vec2i(scaledSize));
+		mGameViewport.buildRectWithAlignment(mRect, config.mDevMode.mGameViewScale, config.mDevMode.mGameViewAlignment, config.mUpscaling == 1);
 	}
 }
 
 bool GameView::translatePositionIntoGameViewport(Vec2f& outPosition, const Vec2f& inPosition) const
 {
-	if (translatePositionIntoRect(outPosition, mGameViewport, inPosition))
-	{
-		outPosition.x *= (float)VideoOut::instance().getScreenWidth();
-		outPosition.y *= (float)VideoOut::instance().getScreenHeight();
-		return true;
-	}
-	return false;
-}
-
-void GameView::translateRectIntoGameViewport(Rectf& outRect, const Rectf& inRect) const
-{
-	const float scaleX = (float)VideoOut::instance().getScreenWidth() / mGameViewport.width;
-	const float scaleY = (float)VideoOut::instance().getScreenHeight() / mGameViewport.height;
-	outRect.x = (outRect.x - mGameViewport.x) * scaleX;
-	outRect.y = (outRect.y - mGameViewport.y) * scaleY;
-	outRect.width = outRect.width * scaleX;
-	outRect.height = outRect.height * scaleY;
-}
-
-void GameView::translatePositionIntoScreenCoords(Vec2f& outPosition, const Vec2f& inPosition) const
-{
-	const float scaleX = mGameViewport.width / (float)VideoOut::instance().getScreenWidth();
-	const float scaleY = mGameViewport.height / (float)VideoOut::instance().getScreenHeight();
-	outPosition.x = mGameViewport.x + inPosition.x * scaleX;
-	outPosition.y = mGameViewport.y + inPosition.y * scaleY;
-}
-
-void GameView::translateRectIntoScreenCoords(Rectf& outRect, const Rectf& inRect) const
-{
-	const float scaleX = mGameViewport.width / (float)VideoOut::instance().getScreenWidth();
-	const float scaleY = mGameViewport.height / (float)VideoOut::instance().getScreenHeight();
-	outRect.x = mGameViewport.x + inRect.x * scaleX;
-	outRect.y = mGameViewport.y + inRect.y * scaleY;
-	outRect.width = inRect.width * scaleX;
-	outRect.height = inRect.height * scaleY;
+	const Vec2i innerPos = Vec2i(mGameViewport.getInnerPositionFromScreen(inPosition));
+	return mGameViewport.isValidInnerPosition(innerPos);
 }
 
 void GameView::initialize()
@@ -220,7 +166,7 @@ void GameView::initialize()
 	const Vec2i& resolution = Configuration::instance().mGameScreen;
 
 	RMX_LOG_INFO("Creating game screen texture");
-	mFinalGameTexture.setupAsRenderTarget(resolution.x, resolution.y);
+	mFinalGameTexture.setupAsRenderTarget(resolution);
 }
 
 void GameView::deinitialize()
@@ -573,27 +519,28 @@ void GameView::update(float timeElapsed)
 	{
 		if (EngineMain::getDelegate().useDeveloperFeatures())
 		{
-			if (!FTX::System->wasEventConsumed() && (FTX::keyChange(',') || FTX::keyChange('.') || FTX::keyChange('-')))
+			if (!FTX::System->wasEventConsumed() && (FTX::keyChange(',') || FTX::keyChange('.') || FTX::keyChange('-') || FTX::keyChange(SDLK_LALT) || FTX::keyChange(SDLK_RALT)))
 			{
 				mDebugVisualizations.mDebugOutput = -1;
 				if (FTX::keyState(','))
 				{
 					// Debug output for plane B
-					mDebugVisualizations.mDebugOutput = 0;
+					mDebugVisualizations.mDebugOutput = PlaneManager::PLANE_B;
 				}
 				else if (FTX::keyState('.'))
 				{
 					// Debug output for plane A or W
-					mDebugVisualizations.mDebugOutput = (FTX::keyState(SDLK_LALT) || FTX::keyState(SDLK_RALT)) ? 2 : 1;
+					mDebugVisualizations.mDebugOutput = (FTX::keyState(SDLK_LALT) || FTX::keyState(SDLK_RALT)) ? PlaneManager::PLANE_W : PlaneManager::PLANE_A;
 				}
 				else if (FTX::keyState('-'))
 				{
 					// Debug output for patterns
-					mDebugVisualizations.mDebugOutput = 3;
+					mDebugVisualizations.mDebugOutput = PlaneManager::PLANE_DEBUG;
 				}
 			}
 
 			DebugTracking& debugTracking = Application::instance().getSimulation().getCodeExec().getDebugTracking();
+			debugTracking.clearScriptLogValue("$plane");
 			debugTracking.clearScriptLogValue("~index");
 			debugTracking.clearScriptLogValue("~addr");
 			debugTracking.clearScriptLogValue("~ptrn");
@@ -603,7 +550,7 @@ void GameView::update(float timeElapsed)
 				// Get the mouse position inside the debug output
 				PlaneManager& planeManager = VideoOut::instance().getRenderParts().getPlaneManager();
 				Rectf rect;
-				if (mDebugVisualizations.mDebugOutput <= PlaneManager::PLANE_A)
+				if (mDebugVisualizations.mDebugOutput <= PlaneManager::PLANE_W)
 				{
 					const Vec2i playfieldSize = planeManager.getPlayfieldSizeInPixels();
 					rect = RenderUtils::getLetterBoxRect(mRect, (float)playfieldSize.x / (float)playfieldSize.y);
@@ -618,7 +565,11 @@ void GameView::update(float timeElapsed)
 				{
 					const uint32 index = (int)(relativePosition.x * 64.0f) + (int)(relativePosition.y * 32.0f) * 64;
 					debugTracking.updateScriptLogValue("~index", rmx::hexString(index, 4));
-					if (mDebugVisualizations.mDebugOutput < 2)
+
+					static const char* PLANE_NAMES[4] = { "Plane B", "Plane A", "Plane W", "VRAM Patterns" };
+					debugTracking.updateScriptLogValue("$plane", PLANE_NAMES[mDebugVisualizations.mDebugOutput - PlaneManager::PLANE_B]);
+
+					if (mDebugVisualizations.mDebugOutput <= PlaneManager::PLANE_W)
 					{
 						const uint16 address = planeManager.getPatternVRAMAddress(mDebugVisualizations.mDebugOutput, (uint16)index);
 						const uint16 pattern = planeManager.getPatternAtIndex(mDebugVisualizations.mDebugOutput, (uint16)index);
@@ -643,7 +594,8 @@ void GameView::render()
 	Drawer& drawer = EngineMain::instance().getDrawer();
 	VideoOut& videoOut = VideoOut::instance();
 	const Recti gameScreenRect = VideoOut::instance().getScreenRect();
-	mFinalGameTexture.setupAsRenderTarget(gameScreenRect.width, gameScreenRect.height);
+	mGameViewport.setResolution(gameScreenRect.getSize());
+	mFinalGameTexture.setupAsRenderTarget(gameScreenRect.getSize());
 
 	// Refresh simulation output image
 	if (mStillImage.mMode != StillImageMode::NONE)
@@ -796,23 +748,25 @@ void GameView::render()
 		const double averageTime = Profiling::getRootRegion().mAverageTime;
 		if (averageTime > 0.0)
 		{
-			drawer.printText(EngineMain::getDelegate().getDebugFont(3), Vec2i(gameScreenRect.width - 3, 2), String(0, "%d FPS", roundToInt((float)(1.0 / averageTime))), 3);
+			Font& font = SharedFonts::smallFontOutline.getFontSafe();
+			drawer.printText(font, Vec2i(gameScreenRect.width - 3, 2), String(0, "%d FPS", roundToInt((float)(1.0 / averageTime))), 3);
 		}
 	}
 
 	// Draw the combined image
+	const Recti& gameViewportRect = mGameViewport.getRectOnScreen();
 	drawer.setWindowRenderTarget(FTX::screenRect());
 	drawer.setBlendMode(BlendMode::OPAQUE);
-	drawer.drawUpscaledRect(mGameViewport, mFinalGameTexture);
+	drawer.drawUpscaledRect(gameViewportRect, mFinalGameTexture);
 
 	if (!FTX::Video->getVideoConfig().mAutoClearScreen)
 	{
 		// Draw black bars so no screen clearing is needed
-		const int x1 = mGameViewport.x;
-		const int x2 = mGameViewport.x + mGameViewport.width;
+		const int x1 = gameViewportRect.x;
+		const int x2 = gameViewportRect.x + gameViewportRect.width;
 		const int x3 = FTX::Video->getScreenWidth();
-		const int y1 = mGameViewport.y;
-		const int y2 = mGameViewport.y + mGameViewport.height;
+		const int y1 = gameViewportRect.y;
+		const int y2 = gameViewportRect.y + gameViewportRect.height;
 		const int y3 = FTX::Video->getScreenHeight();
 
 		drawer.drawRect(Recti(0, 0, x3, y1), Color::BLACK);

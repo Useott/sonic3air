@@ -18,21 +18,14 @@
 
 
 EmulationAudioSource::EmulationAudioSource(CachingType cachingType) :
-	AudioSourceBase(cachingType)
+	AudioSourceBase(AudioSourceType::EMULATION, cachingType)
 {
 	// Without caching, audio buffer content can be deleted as soon as it was played
 	mAudioBuffer.setPersistent(!isDynamic());
-
-	mMutex = SDL_CreateMutex();
 }
 
 EmulationAudioSource::~EmulationAudioSource()
 {
-	if (isJobRegistered())
-	{
-		FTX::JobManager->removeJob(*this);
-	}
-	SDL_DestroyMutex(mMutex);
 }
 
 bool EmulationAudioSource::initWithSfxId(uint8 soundId)
@@ -92,67 +85,9 @@ void EmulationAudioSource::injectTempoSpeedup(uint8 tempoSpeedup)
 	SDL_UnlockMutex(mMutex);
 }
 
-bool EmulationAudioSource::checkForUnload(float timestamp)
+void EmulationAudioSource::resetInternal()
 {
-	bool mayUnload = false;
-
-#if defined(PLATFORM_VITA)
-	// PSVITA has limited RAM, so...
-	if (((float)EngineMain::instance().getAudioOut().getAudioPlayer().getMemoryUsage() / 1048576.0f) >= 80.0f) // 80 MB
-	{
-		// Let's make an emergency forced unload since the buffer is getting too big
-		mayUnload = (timestamp - mLastUsedTimestamp > 10.0f); // Everything not used in the past 10 seconds
-	}
-	if (EngineMain::instance().getAudioOut().getAudioPlayer().getNumPlayingSounds() == 0) // No sound playing
-	{
-		// Since it's silenced, lets take the chance to unload stuff
-		mayUnload = (timestamp - mLastUsedTimestamp > 30.0f); // Everything not used in the past 30 seconds
-	}
-#endif
-
-	if (isDynamic())
-	{
-		// Ignore tracks not loaded
-		if (mAudioBuffer.getLengthInSec() > 0.2f)
-		{
-			// Unload after a few seconds already
-			mayUnload = (timestamp - mLastUsedTimestamp > 10.0f);
-		}
-	}
-	else
-	{
-		// Ignore short sounds, and tracks not loaded
-		if (mAudioBuffer.getLengthInSec() > 5.0f)
-		{
-			// Unload after 3 minutes
-		#if !defined(PLATFORM_VITA)
-			mayUnload = (timestamp - mLastUsedTimestamp > 180.0f);
-		#else
-			// PSVITA has limited RAM, so...
-			mayUnload = (timestamp - mLastUsedTimestamp > 60.0f); // 60 seconds and unload
-		#endif
-		}
-	}
-
-	if (mayUnload)
-	{
-		if (isJobRegistered())
-		{
-			FTX::JobManager->removeJob(*this);
-		}
-
-		SDL_LockMutex(mMutex);
-		mAudioBuffer.lock();
-		mAudioBuffer.clear();
-		mAudioBuffer.unlock();
-		mState = State::INACTIVE;
-		mReadTime = 0.0f;
-		mSoundDriver.reset();
-
-		SDL_UnlockMutex(mMutex);
-		return true;
-	}
-	return false;
+	mSoundDriver.reset();
 }
 
 AudioSourceBase::State EmulationAudioSource::startupInternal()

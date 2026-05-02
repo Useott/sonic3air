@@ -155,7 +155,7 @@ namespace
 			case WriteTarget::VRAM:
 			{
 				if (nullptr != LemonScriptBindings::mDebugNotificationInterface)
-					LemonScriptBindings::mDebugNotificationInterface->onVRAMWrite(mWriteAddress, 2);
+					LemonScriptBindings::mDebugNotificationInterface->onVRAMWrite(mWriteAddress, 2, value);
 
 				getEmulatorInterface().writeVRam16(mWriteAddress, value);
 				break;
@@ -194,7 +194,14 @@ namespace
 			// Optimized version of the code below
 			if (nullptr != LemonScriptBindings::mDebugNotificationInterface)
 			{
-				LemonScriptBindings::mDebugNotificationInterface->onVRAMWrite(mWriteAddress, bytes);
+				uint32 value = 0;
+				if (bytes == 2)
+				{
+					const uint8* ptr = emulatorInterface.getMemoryPointer(address, false, bytes);
+					if (nullptr != ptr)
+						value = *(uint16*)ptr;
+				}
+				LemonScriptBindings::mDebugNotificationInterface->onVRAMWrite(mWriteAddress, bytes, value);
 			}
 
 			emulatorInterface.copyFromMemoryToVRam(mWriteAddress, address, bytes);
@@ -205,7 +212,10 @@ namespace
 			if (nullptr != LemonScriptBindings::mDebugNotificationInterface)
 			{
 				for (uint16 i = 0; i < bytes; i += 2)
-					LemonScriptBindings::mDebugNotificationInterface->onVRAMWrite(mWriteAddress + mWriteIncrement * i/2, 2);
+				{
+					const uint16 value = emulatorInterface.readMemory16(address + i);
+					LemonScriptBindings::mDebugNotificationInterface->onVRAMWrite(mWriteAddress + mWriteIncrement * i/2, 2, value);
+				}
 			}
 
 			for (uint16 i = 0; i < bytes; i += 2)
@@ -223,7 +233,9 @@ namespace
 		RMX_CHECK(uint32(vramAddress) + bytes <= 0x10000, "Invalid VRAM access from " << rmx::hexString(vramAddress, 8) << " to " << rmx::hexString(uint32(vramAddress)+bytes-1, 8) << " in VDP_fillVRAMbyDMA", return);
 
 		if (nullptr != LemonScriptBindings::mDebugNotificationInterface)
-			LemonScriptBindings::mDebugNotificationInterface->onVRAMWrite(vramAddress, bytes);
+		{
+			LemonScriptBindings::mDebugNotificationInterface->onVRAMWrite(vramAddress, bytes, fillValue);
+		}
 
 		getEmulatorInterface().fillVRam(vramAddress, fillValue, bytes);
 		mWriteAddress = vramAddress + bytes;
@@ -232,7 +244,9 @@ namespace
 	void VDP_zeroVRAM(uint16 bytes)
 	{
 		if (nullptr != LemonScriptBindings::mDebugNotificationInterface)
-			LemonScriptBindings::mDebugNotificationInterface->onVRAMWrite(mWriteAddress, bytes);
+		{
+			LemonScriptBindings::mDebugNotificationInterface->onVRAMWrite(mWriteAddress, bytes, 0);
+		}
 
 		VDP_fillVRAMbyDMA(0, mWriteAddress, bytes);
 	}
@@ -319,13 +333,16 @@ namespace
 	void VDP_Config_setWindowPlaneSplitX(uint8 rightSideWindow, uint16 splitX)
 	{
 		RenderParts::instance().getPlaneManager().setWindowPlaneSplitX(rightSideWindow != 0, splitX);
-		RenderParts::instance().getScrollOffsetsManager().setPlaneWScrollOffset(Vec2i(0, 0));	// Reset scroll offset to default
 	}
 
 	void VDP_Config_setWindowPlaneSplitY(uint8 bottomWindow, uint16 splitY)
 	{
 		RenderParts::instance().getPlaneManager().setWindowPlaneSplitY(bottomWindow != 0, splitY);
-		RenderParts::instance().getScrollOffsetsManager().setPlaneWScrollOffset(Vec2i(0, 0));	// Reset scroll offset to default
+	}
+
+	void VDP_Config_setRenderPlaneABehindW(bool renderPlaneABehindW)
+	{
+		RenderParts::instance().getPlaneManager().setRenderPlaneABehindW(renderPlaneABehindW);
 	}
 
 	void VDP_Config_setPlaneWScrollOffset(uint16 x, uint8 y)
@@ -347,7 +364,9 @@ namespace
 	void setVRAM(uint16 vramAddress, uint16 value)
 	{
 		if (nullptr != LemonScriptBindings::mDebugNotificationInterface)
-			LemonScriptBindings::mDebugNotificationInterface->onVRAMWrite(vramAddress, 2);
+		{
+			LemonScriptBindings::mDebugNotificationInterface->onVRAMWrite(vramAddress, 2, value);
+		}
 
 		getEmulatorInterface().writeVRam16(vramAddress, value);
 	}
@@ -1080,6 +1099,9 @@ void RendererBindings::registerBindings(lemon::Module& module)
 
 		builder.addNativeFunction("VDP.Config.setPlaneWScrollOffset", lemon::wrap(&VDP_Config_setPlaneWScrollOffset), defaultFlags)
 			.setParameters("x", "y");
+
+		builder.addNativeFunction("VDP.Config.setRenderPlaneABehindW", lemon::wrap(&VDP_Config_setRenderPlaneABehindW), defaultFlags)
+			.setParameters("renderPlaneABehindW");
 
 		builder.addNativeFunction("VDP.Config.setSpriteAttributeTableBase", lemon::wrap(&VDP_Config_setSpriteAttributeTableBase), defaultFlags)
 			.setParameters("vramAddress");
