@@ -75,7 +75,7 @@ AudioSourceBase* AudioSourceManager::getAudioSourceForPlayback(SourceRegistratio
 			}
 			else
 			{
-				const bool useCaching = !String(sourceRegistration.mAudioDefinition->mKeyString).endsWith("_fast");
+				bool useCaching = !String(sourceRegistration.mAudioDefinition->mKeyString).endsWith("_fast");
 				if (sourceRegistration.mUseCaching != 0xff)
 					useCaching = (sourceRegistration.mUseCaching == 1 ? true : false);
 				audioSource = addOggAudioSource(sourceRegistration.mSourceFile, useCaching, sourceRegistration.mIsLooping, sourceRegistration.mLoopStart);
