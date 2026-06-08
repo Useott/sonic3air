@@ -20,6 +20,8 @@ constant u16 DataSelect.TextTiles.targetInVRAM = 0xac40
 #if STANDALONE
 	constant u8 DataSelect.CONTROLS_ACCEPT = 0xc0		// = CONTROL_START | CONTROL_A		-> Excluding CONTROL_C, which is [X] on an Xbox Controller, or Square on a PlayStation controller
 	constant u8 DataSelect.CONTROLS_CANCEL = 0x10		// = CONTROL_B
+	
+	global u8 DataSelect.slotFadeArray[10]
 #else
 	constant u8 DataSelect.CONTROLS_ACCEPT = 0xe0		// = CONTROL_START | CONTROL_A | CONTROL_C
 	constant u8 DataSelect.CONTROLS_CANCEL = 0x10		// = CONTROL_B
@@ -428,6 +430,10 @@ function void DataSelect.setup()
 			Game.setSecretUnlocked(SECRET_EMERALD_SELECT)
 
 	}
+	
+	for (u8 i = 0; i < 10; ++i)
+		DataSelect.slotFadeArray[i] = 0
+	DataSelect.slotFadeArray[1] = 0xff
 
 	// Load characters extended palettes
 	loadCharacterPalette(CHARACTER_SONIC,    0x802180, 0)
@@ -482,14 +488,25 @@ function void DataSelect.update()
 			u32[0xfffffc0c] = 0xeee0a88
 
 			s16 px = u16[0xffffe002] + 4
-			u32 tint = (dataselect.slot_selected == 0) ? 0xffffffff : 0x000000ff
+			
+			if (dataselect.slot_selected == 0)
+				DataSelect.slotFadeArray[0] = min(s16(DataSelect.slotFadeArray[0]) + 0x18, 0xff)
+			else DataSelect.slotFadeArray[0] = max(s16(DataSelect.slotFadeArray[0]) - 0x18, 0)
+			
+			u32 tint = DataSelect.slotFadeArray[0]
+			tint = (tint << 24) + (tint << 16) + (tint << 8) + 0x000000ff
 			Renderer.drawSpriteTinted("tour_data_select_slot_2", px, 4, 0, 0, 0x4000, 0, tint, 1.0f)
 			Renderer.drawText("sonic3_fontA", px + 48, 96, Standalone.getTranslatedString("misc_strings", 3), 0xffffffff, 2, 0, 0x9fff, false, true)
 			px += 96
 
 			for (u8 slot = 0; slot < 8; ++slot)
 			{
-				tint = (dataselect.slot_selected == slot + 1) ? 0xffffffff : 0x000000ff
+				if (dataselect.slot_selected == slot + 1)
+					DataSelect.slotFadeArray[slot + 1] = min(s16(DataSelect.slotFadeArray[slot + 1]) + 0x18, 0xff)
+				else DataSelect.slotFadeArray[slot + 1] = max(s16(DataSelect.slotFadeArray[slot + 1]) - 0x18, 0)
+				
+				tint = DataSelect.slotFadeArray[slot + 1]
+				tint = (tint << 24) + (tint << 16) + (tint << 8) + 0x000000ff
 				u8 flags = 0
 				u64 key = "tour_data_select_new"
 				if (s8[0xffffe6ac + (slot * 10)] >= 0)
@@ -512,7 +529,13 @@ function void DataSelect.update()
 			}
 
 			px -= 8
-			tint = (dataselect.slot_selected == 9) ? 0xffffffff : 0x000000ff
+			
+			if (dataselect.slot_selected == 9)
+				DataSelect.slotFadeArray[9] = min(s16(DataSelect.slotFadeArray[9]) + 0x18, 0xff)
+			else DataSelect.slotFadeArray[9] = max(s16(DataSelect.slotFadeArray[9]) - 0x18, 0)
+			
+			tint = DataSelect.slotFadeArray[9]
+			tint = (tint << 24) + (tint << 16) + (tint << 8) + 0x000000ff
 			Renderer.drawSpriteTinted("tour_data_select_slot_2", px, 4, 0, 0, 0x4000, 0, tint, 1.0f)
 			Renderer.drawText("sonic3_fontA", px + 48, 96, Standalone.getTranslatedString("misc_strings", 6), 0xffffffff, 2, 0, 0x9fff, false, true)
 		}
